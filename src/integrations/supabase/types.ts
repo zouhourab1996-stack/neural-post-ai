@@ -86,6 +86,36 @@ export type Database = {
         }
         Relationships: []
       }
+      trending_keywords: {
+        Row: {
+          category: string
+          competition: string | null
+          created_at: string
+          discovered_at: string
+          id: string
+          keyword: string
+          search_volume: string | null
+        }
+        Insert: {
+          category: string
+          competition?: string | null
+          created_at?: string
+          discovered_at?: string
+          id?: string
+          keyword: string
+          search_volume?: string | null
+        }
+        Update: {
+          category?: string
+          competition?: string | null
+          created_at?: string
+          discovered_at?: string
+          id?: string
+          keyword?: string
+          search_volume?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
