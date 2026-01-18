@@ -1,1 +1,7 @@
 project_id = "bltytefghazluwicnaii"
+
+[functions.generate-article]
+verify_jwt = false
+
+[functions.daily-automation]
+verify_jwt = false
