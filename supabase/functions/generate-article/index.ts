@@ -22,6 +22,56 @@ function getISODate(): string {
   return new Date().toISOString().split('T')[0];
 }
 
+// Fetch trending headlines from NewsAPI
+async function fetchNewsAPIHeadlines(category: string, apiKey: string): Promise<{
+  headlines: { title: string; source: string; url: string; description: string }[];
+}> {
+  try {
+    // Map our categories to NewsAPI categories
+    const categoryMap: Record<string, string> = {
+      'AI': 'technology',
+      'Tech': 'technology',
+      'Business': 'business',
+      'Science': 'science'
+    };
+    
+    const newsCategory = categoryMap[category] || 'technology';
+    
+    // Fetch top headlines from NewsAPI
+    const response = await fetch(
+      `https://newsapi.org/v2/top-headlines?category=${newsCategory}&language=en&pageSize=10&apiKey=${apiKey}`
+    );
+
+    if (!response.ok) {
+      console.error('NewsAPI error:', response.status);
+      return { headlines: [] };
+    }
+
+    const data = await response.json();
+    
+    if (data.articles && data.articles.length > 0) {
+      // Filter and map headlines
+      const headlines = data.articles
+        .filter((article: any) => article.title && article.title !== '[Removed]')
+        .slice(0, 5)
+        .map((article: any) => ({
+          title: article.title,
+          source: article.source?.name || 'Unknown',
+          url: article.url || '',
+          description: article.description || ''
+        }));
+      
+      console.log(`Fetched ${headlines.length} headlines from NewsAPI for ${category}`);
+      return { headlines };
+    }
+    
+    return { headlines: [] };
+  } catch (error) {
+    console.error('Error fetching NewsAPI headlines:', error);
+    return { headlines: [] };
+  }
+}
+
 // Fetch image from Pexels API
 async function fetchPexelsImage(query: string, apiKey: string): Promise<string | null> {
   try {
@@ -40,7 +90,6 @@ async function fetchPexelsImage(query: string, apiKey: string): Promise<string |
 
     const data = await response.json();
     if (data.photos && data.photos.length > 0) {
-      // Get a random image from top 5 results for variety
       const randomIndex = Math.floor(Math.random() * Math.min(5, data.photos.length));
       return data.photos[randomIndex].src.large2x || data.photos[randomIndex].src.large;
     }
@@ -51,32 +100,26 @@ async function fetchPexelsImage(query: string, apiKey: string): Promise<string |
   }
 }
 
-// Discover trending topics using DeepSeek
-async function discoverTrends(category: string, apiKey: string): Promise<{
-  trends: string[];
+// Discover SEO keywords using DeepSeek based on headline
+async function discoverKeywords(headline: string, category: string, apiKey: string): Promise<{
   keywords: { keyword: string; volume: string; competition: string }[];
 }> {
   const currentDate = getCurrentDate();
   
-  const trendPrompt = `You are an expert SEO analyst and tech journalist. Today is ${currentDate}.
+  const keywordPrompt = `You are an expert SEO analyst. Today is ${currentDate}.
 
-For the category "${category}", identify:
+For the news headline: "${headline}"
+Category: ${category}
 
-1. TOP 2 TRENDING TOPICS: What are the most newsworthy and trending topics in ${category} right now? Focus on:
-   - Breaking news and recent announcements (last 24-48 hours)
-   - Viral discussions on tech forums and social media
-   - Major company announcements, product launches, or research breakthroughs
-   - Emerging technologies gaining sudden attention
-
-2. SEO KEYWORDS: For each trend, identify 3-4 high-value SEO keywords that:
-   - Have high search volume potential
-   - Have relatively low competition (long-tail keywords)
-   - Are specific enough to rank for
-   - Include the current year (2025/2026) where relevant
+Identify 4-5 high-value SEO keywords that:
+- Have high search volume potential
+- Have relatively low competition (long-tail keywords)
+- Are specific enough to rank for
+- Include the current year (2025/2026) where relevant
+- Relate directly to the headline topic
 
 Return ONLY valid JSON in this exact format:
 {
-  "trends": ["Trend Topic 1 - specific and newsworthy", "Trend Topic 2 - specific and newsworthy"],
   "keywords": [
     {"keyword": "primary keyword phrase 2026", "volume": "high", "competition": "low"},
     {"keyword": "secondary keyword phrase", "volume": "medium", "competition": "low"},
@@ -94,16 +137,16 @@ Return ONLY valid JSON in this exact format:
     body: JSON.stringify({
       model: 'deepseek-chat',
       messages: [
-        { role: 'system', content: 'You are an SEO expert and tech trend analyst. Always respond with valid JSON only.' },
-        { role: 'user', content: trendPrompt }
+        { role: 'system', content: 'You are an SEO expert. Always respond with valid JSON only.' },
+        { role: 'user', content: keywordPrompt }
       ],
       temperature: 0.7,
-      max_tokens: 1000,
+      max_tokens: 500,
     }),
   });
 
   if (!response.ok) {
-    throw new Error(`DeepSeek API error during trend discovery: ${response.status}`);
+    throw new Error(`DeepSeek API error during keyword discovery: ${response.status}`);
   }
 
   const data = await response.json();
@@ -111,30 +154,33 @@ Return ONLY valid JSON in this exact format:
 
   try {
     const parsed = JSON.parse(content.replace(/```json\n?|\n?```/g, '').trim());
-    return {
-      trends: parsed.trends || [],
-      keywords: parsed.keywords || []
-    };
+    return { keywords: parsed.keywords || [] };
   } catch (e) {
-    console.error('Failed to parse trends:', content);
-    return { trends: [`Latest ${category} developments`], keywords: [] };
+    console.error('Failed to parse keywords:', content);
+    return { keywords: [] };
   }
 }
 
-// Generate the full article with SEO optimization
+// Generate the full article with SEO optimization using DeepSeek
 async function generateArticle(
-  trend: string, 
+  headline: string, 
+  description: string,
+  source: string,
   keywords: { keyword: string; volume: string; competition: string }[],
   category: string,
   apiKey: string
 ): Promise<any> {
   const currentDate = getCurrentDate();
   const keywordList = keywords.map(k => k.keyword).join(', ');
-  const primaryKeyword = keywords[0]?.keyword || trend;
+  const primaryKeyword = keywords[0]?.keyword || headline.split(' ').slice(0, 3).join(' ');
 
   const articlePrompt = `You are a senior tech journalist at a publication like TechCrunch or The Verge. Today is ${currentDate}.
 
-TASK: Write a comprehensive, in-depth article about: "${trend}"
+BREAKING NEWS HEADLINE: "${headline}"
+Source: ${source}
+Brief: ${description}
+
+TASK: Write a comprehensive, in-depth analytical article about this breaking news.
 
 MANDATORY SEO REQUIREMENTS:
 1. Primary Keyword: "${primaryKeyword}"
@@ -152,11 +198,12 @@ FRESHNESS SIGNAL (CRITICAL):
 - Include a "What This Means Going Forward" section for timeliness
 
 WRITING STYLE:
-- Analytical, authoritative, and engaging tone
+- Analytical, authoritative, and engaging tone - HUMAN-LIKE writing
 - Write like a top-tier tech journalist (TechCrunch/The Verge style)
 - Use data, statistics, and expert perspectives where relevant
 - Include thought-provoking analysis, not just news regurgitation
 - Break up text with bullet points, quotes, and subheadings
+- Make it engaging and readable for a general audience
 
 STRUCTURE (Minimum 1,500 words):
 1. **Headline (H1)**: SEO-optimized, includes primary keyword, under 60 chars
@@ -188,7 +235,7 @@ Return ONLY valid JSON:
       messages: [
         { 
           role: 'system', 
-          content: 'You are an elite tech journalist. Write comprehensive, SEO-optimized articles. Always respond with valid JSON. Articles must be at least 1,500 words.' 
+          content: 'You are an elite tech journalist. Write comprehensive, SEO-optimized articles that are engaging and human-like. Always respond with valid JSON. Articles must be at least 1,500 words.' 
         },
         { role: 'user', content: articlePrompt }
       ],
@@ -226,11 +273,15 @@ serve(async (req) => {
   try {
     const { category, autoPublish = false } = await req.json();
     
+    const NEWSAPI_KEY = Deno.env.get('NEWSAPI_KEY');
     const DEEPSEEK_API_KEY = Deno.env.get('DEEPSEEK_API_KEY');
     const PEXELS_API_KEY = Deno.env.get('PEXELS_API_KEY');
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     
+    if (!NEWSAPI_KEY) {
+      throw new Error('NEWSAPI_KEY is not configured');
+    }
     if (!DEEPSEEK_API_KEY) {
       throw new Error('DEEPSEEK_API_KEY is not configured');
     }
@@ -238,18 +289,34 @@ serve(async (req) => {
     const validCategories = ['AI', 'Tech', 'Business', 'Science'];
     const selectedCategory = validCategories.includes(category) ? category : 'AI';
 
-    console.log(`[${new Date().toISOString()}] Starting trend discovery for: ${selectedCategory}`);
+    console.log(`[${new Date().toISOString()}] Starting article generation for: ${selectedCategory}`);
 
-    // Phase 1: Discover Trends
-    const { trends, keywords } = await discoverTrends(selectedCategory, DEEPSEEK_API_KEY);
-    console.log(`Discovered trends: ${trends.join(', ')}`);
+    // Phase 1: Fetch Real-Time Headlines from NewsAPI
+    const { headlines } = await fetchNewsAPIHeadlines(selectedCategory, NEWSAPI_KEY);
+    
+    if (headlines.length === 0) {
+      throw new Error('No headlines found from NewsAPI');
+    }
+
+    // Pick the top headline for article generation
+    const selectedHeadline = headlines[0];
+    console.log(`Selected headline: ${selectedHeadline.title} (${selectedHeadline.source})`);
+
+    // Phase 2: Discover SEO Keywords for the headline
+    const { keywords } = await discoverKeywords(selectedHeadline.title, selectedCategory, DEEPSEEK_API_KEY);
     console.log(`Extracted keywords: ${keywords.map(k => k.keyword).join(', ')}`);
 
-    // Phase 2: Generate Article for first trend
-    const selectedTrend = trends[0] || `Latest ${selectedCategory} News`;
-    const article = await generateArticle(selectedTrend, keywords, selectedCategory, DEEPSEEK_API_KEY);
+    // Phase 3: Generate Article using DeepSeek
+    const article = await generateArticle(
+      selectedHeadline.title, 
+      selectedHeadline.description,
+      selectedHeadline.source,
+      keywords, 
+      selectedCategory, 
+      DEEPSEEK_API_KEY
+    );
     
-    // Phase 3: Fetch image from Pexels
+    // Phase 4: Fetch image from Pexels
     let imageUrl = null;
     if (PEXELS_API_KEY && article.image_query) {
       imageUrl = await fetchPexelsImage(article.image_query, PEXELS_API_KEY);
@@ -268,7 +335,7 @@ serve(async (req) => {
       is_trending: true,
     };
 
-    // Phase 4: Auto-publish if requested
+    // Phase 5: Auto-publish if requested
     if (autoPublish && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
       const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
@@ -284,7 +351,7 @@ serve(async (req) => {
         throw new Error(`Failed to save article: ${articleError.message}`);
       }
 
-      // Save keywords
+      // Save keywords with headline info
       const keywordsToSave = keywords.map(k => ({
         keyword: k.keyword,
         category: selectedCategory,
@@ -292,6 +359,15 @@ serve(async (req) => {
         competition: k.competition,
         discovered_at: getISODate(),
       }));
+
+      // Also save the original headline as a keyword for trending display
+      keywordsToSave.push({
+        keyword: selectedHeadline.title.slice(0, 100),
+        category: selectedCategory,
+        search_volume: 'high',
+        competition: 'low',
+        discovered_at: getISODate(),
+      });
 
       const { error: keywordsError } = await supabase
         .from('trending_keywords')
@@ -307,7 +383,8 @@ serve(async (req) => {
         success: true, 
         article: savedArticle,
         keywords: keywordsToSave,
-        trend: selectedTrend,
+        headline: selectedHeadline,
+        allHeadlines: headlines,
         published: true
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -319,7 +396,8 @@ serve(async (req) => {
       success: true, 
       article: finalArticle,
       keywords,
-      trend: selectedTrend,
+      headline: selectedHeadline,
+      allHeadlines: headlines,
       published: false
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

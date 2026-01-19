@@ -23,13 +23,25 @@ export default function Contact() {
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase.from("contact_submissions").insert([formData]);
+      // Save to database
+      const { error: dbError } = await supabase.from("contact_submissions").insert([formData]);
       
-      if (error) throw error;
+      if (dbError) {
+        console.error("Database error:", dbError);
+      }
+
+      // Also call edge function for email notification
+      const { error: fnError } = await supabase.functions.invoke('send-contact-email', {
+        body: formData
+      });
+
+      if (fnError) {
+        console.error("Function error:", fnError);
+      }
 
       setIsSubmitted(true);
       setFormData({ name: "", email: "", subject: "", message: "" });
-      toast.success("Message sent successfully!");
+      toast.success("Message sent successfully! We'll respond to touatihadi0@gmail.com soon.");
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Failed to send message. Please try again.");
