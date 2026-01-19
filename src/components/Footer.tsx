@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Zap, Mail, Twitter, Facebook, Linkedin, Github } from "lucide-react";
+import { Zap, Mail, Twitter, Facebook, Linkedin, Github, ExternalLink } from "lucide-react";
 
 const footerLinks = {
   company: [
@@ -20,6 +20,15 @@ const footerLinks = {
   ],
 };
 
+const newsSources = [
+  { name: "Reuters", url: "https://www.reuters.com" },
+  { name: "TechCrunch", url: "https://techcrunch.com" },
+  { name: "The Verge", url: "https://www.theverge.com" },
+  { name: "Wired", url: "https://www.wired.com" },
+  { name: "Ars Technica", url: "https://arstechnica.com" },
+  { name: "MIT Tech Review", url: "https://www.technologyreview.com" },
+];
+
 const socialLinks = [
   { icon: Twitter, href: "#", label: "Twitter" },
   { icon: Facebook, href: "#", label: "Facebook" },
@@ -38,7 +47,7 @@ export default function Footer() {
       </div>
 
       <div className="container-main py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
           {/* Brand */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-4">
@@ -110,13 +119,38 @@ export default function Footer() {
               ))}
             </ul>
           </div>
+
+          {/* News Sources - For AdSense Credibility */}
+          <div>
+            <h4 className="font-semibold text-foreground mb-4">News Sources</h4>
+            <ul className="space-y-2">
+              {newsSources.map((source) => (
+                <li key={source.name}>
+                  <a
+                    href={source.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-1 group"
+                  >
+                    {source.name}
+                    <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} NeuralPost. All rights reserved.
-          </p>
+          <div className="text-center md:text-left">
+            <p className="text-sm text-muted-foreground">
+              © {new Date().getFullYear()} NeuralPost. All rights reserved.
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              News powered by NewsAPI • Images by Pexels • Analysis by AI
+            </p>
+          </div>
           <div className="flex items-center gap-4">
             {socialLinks.map((social) => (
               <a
