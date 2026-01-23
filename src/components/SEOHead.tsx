@@ -16,6 +16,7 @@ interface SEOHeadProps {
 const SITE_URL = "https://prophetic.pw";
 const SITE_NAME = "NeuralPost";
 const DEFAULT_IMAGE = "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1200";
+const HASH_PREFIX = "/#";
 
 export default function SEOHead({
   title,
@@ -48,6 +49,8 @@ export default function SEOHead({
     };
 
     // Update canonical
+    // With HashRouter we want canonicals to include the `/#/...` fragment.
+    // window.location.href already includes the hash.
     const canonicalUrl = canonical || window.location.href;
     let canonicalLink = document.querySelector('link[rel="canonical"]');
     if (canonicalLink) {
@@ -116,10 +119,12 @@ export function generateArticleSchema(article: {
   category: string;
   author?: string;
 }) {
+  const articlePath = `/article/${article.slug}`;
+  const articleUrl = `${SITE_URL}${HASH_PREFIX}${articlePath}`;
   return {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
-    "@id": `${SITE_URL}/article/${article.slug}#article`,
+    "@id": `${articleUrl}#article`,
     "headline": article.title,
     "description": article.description,
     "image": {
@@ -146,7 +151,7 @@ export function generateArticleSchema(article: {
     },
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": `${SITE_URL}/article/${article.slug}`
+      "@id": articleUrl
     },
     "articleSection": article.category,
     "isAccessibleForFree": true
@@ -162,7 +167,7 @@ export function generateBreadcrumbSchema(items: { name: string; url: string }[])
       "@type": "ListItem",
       "position": index + 1,
       "name": item.name,
-      "item": `${SITE_URL}${item.url}`
+      "item": `${SITE_URL}${HASH_PREFIX}${item.url.startsWith("/") ? item.url : `/${item.url}`}`
     }))
   };
 }
