@@ -1,9 +1,15 @@
 # NeuralPost Robots.txt
-# https://neuralpost.ai
+# https://prophetic.pw
 
 User-agent: Googlebot
 Allow: /
 Crawl-delay: 1
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Googlebot-News
+Allow: /
 
 User-agent: Bingbot
 Allow: /
@@ -30,9 +36,10 @@ Allow: /
 Crawl-delay: 2
 
 # Sitemap location
-Sitemap: https://neuralpost.ai/sitemap.xml
+Sitemap: https://prophetic.pw/sitemap.xml
 
 # Disallow admin and private paths
 Disallow: /api/
 Disallow: /admin/
 Disallow: /*.json$
+Disallow: /404
