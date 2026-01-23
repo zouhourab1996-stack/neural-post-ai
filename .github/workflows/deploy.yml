@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -19,36 +19,32 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build project
-        run: npm run build
+      - name: Install dependencies and build
+        run: |
+          npm install
+          npm run build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
 
-      - name: Add custom domain (CNAME)
+      - name: Create CNAME for custom domain
         run: echo "prophetic.pw" > ./dist/CNAME
 
-      - name: Copy 404.html for SPA routing
-        run: |
-          # GitHub Pages serves /404.html for unknown routes; for SPAs we want it to load index.html
-          cp ./dist/index.html ./dist/404.html
+      - name: Create 404.html for SPA routing
+        run: cp ./dist/index.html ./dist/404.html
 
-      - name: Setup Pages
+      - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
 
-      - name: Upload artifact
+      - name: Upload artifact to Pages
         uses: actions/upload-pages-artifact@v3
         with:
           path: "./dist"
