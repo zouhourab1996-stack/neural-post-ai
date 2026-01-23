@@ -2,6 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- GitHub Pages SPA Redirect Script -->
+    <!-- This script handles routing from 404.html back to the SPA -->
+    <script>
+      (function() {
+        // Check if this is a redirect from 404.html
+        var redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        if (redirect && redirect !== location.href) {
+          history.replaceState(null, null, redirect);
+        }
+      })();
+    </script>
     
     <!-- Google Analytics 4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-1W7PC1JDKH"></script>
@@ -11,7 +25,6 @@
       gtag('js', new Date());
       gtag('config', 'G-1W7PC1JDKH');
     </script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Primary Meta Tags -->
     <title>NeuralPost - AI-Powered Tech News & Analysis | prophetic.pw</title>
