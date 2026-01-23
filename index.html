@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Primary Meta Tags -->
-    <title>NeuralPost - AI-Powered Tech News & Analysis</title>
+    <title>NeuralPost - AI-Powered Tech News & Analysis | prophetic.pw</title>
     <meta name="title" content="NeuralPost - AI-Powered Tech News & Analysis" />
     <meta name="description" content="Stay ahead with cutting-edge AI, technology, business, and science news. Expert analysis and breaking stories powered by artificial intelligence." />
     <meta name="keywords" content="AI news, technology news, artificial intelligence, tech analysis, business innovation, science news, machine learning, 2026 tech trends" />
     <meta name="author" content="NeuralPost" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <link rel="canonical" href="https://neuralpost.ai/" />
+    <link rel="canonical" href="https://prophetic.pw/" />
     
     <!-- Theme Color -->
     <meta name="theme-color" content="#6366f1" media="(prefers-color-scheme: light)" />
@@ -20,7 +20,7 @@
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://neuralpost.ai/" />
+    <meta property="og:url" content="https://prophetic.pw/" />
     <meta property="og:title" content="NeuralPost - AI-Powered Tech News & Analysis" />
     <meta property="og:description" content="Stay ahead with cutting-edge AI, technology, business, and science news. Expert analysis powered by artificial intelligence." />
     <meta property="og:image" content="https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1200" />
@@ -31,7 +31,7 @@
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://neuralpost.ai/" />
+    <meta name="twitter:url" content="https://prophetic.pw/" />
     <meta name="twitter:title" content="NeuralPost - AI-Powered Tech News & Analysis" />
     <meta name="twitter:description" content="Stay ahead with cutting-edge AI, technology, business, and science news. Expert analysis powered by artificial intelligence." />
     <meta name="twitter:image" content="https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1200" />
@@ -45,6 +45,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="NeuralPost" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="msapplication-TileColor" content="#6366f1" />
+    
+    <!-- Verification Tags (add your codes here) -->
+    <meta name="google-site-verification" content="" />
+    <meta name="msvalidate.01" content="" />
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -54,17 +60,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://images.pexels.com" />
+    <link rel="dns-prefetch" href="https://images.unsplash.com" />
     
-    <!-- JSON-LD Structured Data -->
+    <!-- JSON-LD Structured Data - Organization -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "NewsMediaOrganization",
+      "@id": "https://prophetic.pw/#organization",
       "name": "NeuralPost",
-      "url": "https://neuralpost.ai",
+      "url": "https://prophetic.pw",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://neuralpost.ai/favicon.ico"
+        "url": "https://prophetic.pw/favicon.ico",
+        "width": 180,
+        "height": 180
       },
       "description": "AI-powered news coverage of artificial intelligence, technology, business innovations, and scientific breakthroughs.",
       "sameAs": [
@@ -72,7 +82,7 @@
         "https://linkedin.com/company/neuralpost"
       ],
       "foundingDate": "2026",
-      "publishingPrinciples": "https://neuralpost.ai/about",
+      "publishingPrinciples": "https://prophetic.pw/about",
       "contactPoint": {
         "@type": "ContactPoint",
         "email": "touatihadi0@gmail.com",
@@ -81,16 +91,23 @@
     }
     </script>
     
-    <!-- WebSite Structured Data for Search -->
+    <!-- JSON-LD Structured Data - WebSite with SearchAction -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
+      "@id": "https://prophetic.pw/#website",
       "name": "NeuralPost",
-      "url": "https://neuralpost.ai",
+      "url": "https://prophetic.pw",
+      "publisher": {
+        "@id": "https://prophetic.pw/#organization"
+      },
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "https://neuralpost.ai/search?q={search_term_string}",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://prophetic.pw/search?q={search_term_string}"
+        },
         "query-input": "required name=search_term_string"
       }
     }
@@ -98,6 +115,12 @@
   </head>
 
   <body>
+    <noscript>
+      <div style="padding: 20px; text-align: center; background: #f8f9fa;">
+        <h1>NeuralPost - AI-Powered Tech News</h1>
+        <p>Please enable JavaScript to view this website.</p>
+      </div>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
