@@ -20,6 +20,7 @@ import { formatDistanceToNow, format } from "date-fns";
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
 import { useEffect } from "react";
+import { generateArticleSchema, generateBreadcrumbSchema } from "@/components/SEOHead";
 
 interface Article {
   id: string;
@@ -71,7 +72,7 @@ export default function Article() {
     enabled: !!article,
   });
 
-  // Update meta tags for SEO
+  // Update meta tags and inject JSON-LD schema for SEO
   useEffect(() => {
     if (article) {
       document.title = `${article.title} | NeuralPost`;
@@ -91,6 +92,49 @@ export default function Article() {
       
       const ogImage = document.querySelector('meta[property="og:image"]');
       if (ogImage && article.image_url) ogImage.setAttribute("content", article.image_url);
+
+      // Inject NewsArticle JSON-LD schema
+      const articleSchema = generateArticleSchema({
+        title: article.title,
+        description: article.meta_description,
+        image: article.image_url || "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1600&q=80",
+        slug: article.slug,
+        publishedTime: article.created_at,
+        modifiedTime: article.updated_at,
+        category: article.category,
+        author: "NeuralPost AI"
+      });
+
+      // Inject Breadcrumb JSON-LD schema
+      const breadcrumbSchema = generateBreadcrumbSchema([
+        { name: "Home", url: "/" },
+        { name: article.category, url: `/category/${article.category.toLowerCase()}` },
+        { name: article.title, url: `/article/${article.slug}` }
+      ]);
+
+      // Remove existing article schemas
+      document.querySelectorAll('script[data-schema="article"]').forEach(el => el.remove());
+      document.querySelectorAll('script[data-schema="breadcrumb"]').forEach(el => el.remove());
+
+      // Add article schema
+      const articleScriptEl = document.createElement("script");
+      articleScriptEl.type = "application/ld+json";
+      articleScriptEl.setAttribute("data-schema", "article");
+      articleScriptEl.textContent = JSON.stringify(articleSchema);
+      document.head.appendChild(articleScriptEl);
+
+      // Add breadcrumb schema
+      const breadcrumbScriptEl = document.createElement("script");
+      breadcrumbScriptEl.type = "application/ld+json";
+      breadcrumbScriptEl.setAttribute("data-schema", "breadcrumb");
+      breadcrumbScriptEl.textContent = JSON.stringify(breadcrumbSchema);
+      document.head.appendChild(breadcrumbScriptEl);
+
+      // Cleanup on unmount
+      return () => {
+        document.querySelectorAll('script[data-schema="article"]').forEach(el => el.remove());
+        document.querySelectorAll('script[data-schema="breadcrumb"]').forEach(el => el.remove());
+      };
     }
   }, [article]);
 
