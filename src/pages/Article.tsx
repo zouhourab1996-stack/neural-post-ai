@@ -76,11 +76,19 @@ export default function Article() {
   useEffect(() => {
     if (article) {
       document.title = `${article.title} | NeuralPost`;
+
+      const canonicalUrl = `${window.location.origin}/#/article/${article.slug}`;
       
       // Update meta description
       const metaDescription = document.querySelector('meta[name="description"]');
       if (metaDescription) {
         metaDescription.setAttribute("content", article.meta_description);
+      }
+
+      // Update canonical
+      const canonicalLink = document.querySelector('link[rel="canonical"]');
+      if (canonicalLink) {
+        canonicalLink.setAttribute("href", canonicalUrl);
       }
 
       // Update OpenGraph tags
@@ -89,6 +97,9 @@ export default function Article() {
       
       const ogDescription = document.querySelector('meta[property="og:description"]');
       if (ogDescription) ogDescription.setAttribute("content", article.meta_description);
+
+      const ogUrl = document.querySelector('meta[property="og:url"]');
+      if (ogUrl) ogUrl.setAttribute("content", canonicalUrl);
       
       const ogImage = document.querySelector('meta[property="og:image"]');
       if (ogImage && article.image_url) ogImage.setAttribute("content", article.image_url);
@@ -108,7 +119,7 @@ export default function Article() {
       // Inject Breadcrumb JSON-LD schema
       const breadcrumbSchema = generateBreadcrumbSchema([
         { name: "Home", url: "/" },
-        { name: article.category, url: `/category/${article.category.toLowerCase()}` },
+        { name: article.category, url: `/category/${article.category}` },
         { name: article.title, url: `/article/${article.slug}` }
       ]);
 
