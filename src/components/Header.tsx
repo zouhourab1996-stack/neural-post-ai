@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Menu, X, Sun, Moon, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const { theme, setTheme } = useTheme();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -29,7 +30,9 @@ export default function Header() {
     e.preventDefault();
     if (searchQuery.trim()) {
       // Navigate to search results - could be enhanced later
-      window.location.href = `/category/AI?search=${encodeURIComponent(searchQuery)}`;
+      navigate(`/category/AI?search=${encodeURIComponent(searchQuery)}`);
+      setIsSearchOpen(false);
+      setIsMenuOpen(false);
     }
   };
 
