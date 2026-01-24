@@ -116,13 +116,48 @@ function escapeHtml(text) {
 }
 
 /**
+ * Truncate title to SEO-friendly length (max 60 chars including site name)
+ */
+function truncateTitle(title, maxLength = 55) {
+  if (!title) return SITE_NAME;
+  if (title.length <= maxLength) return title;
+  return title.substring(0, maxLength - 3).trim() + '...';
+}
+
+/**
+ * Ensure meta description is within optimal range (120-160 chars)
+ */
+function normalizeDescription(description, minLength = 120, maxLength = 155) {
+  if (!description) return `Read the latest news and insights on ${SITE_NAME}.`;
+  
+  // If too short, pad with site info
+  if (description.length < minLength) {
+    const padding = ` Read more on ${SITE_NAME} for the latest updates.`;
+    return (description + padding).substring(0, maxLength);
+  }
+  
+  // If too long, truncate
+  if (description.length > maxLength) {
+    return description.substring(0, maxLength - 3).trim() + '...';
+  }
+  
+  return description;
+}
+
+/**
  * Generate the static HTML template for an article
  */
 function generateArticleHtml(article) {
   const articleUrl = `${SITE_URL}/article/${article.slug}/`;
   const imageUrl = article.image_url || DEFAULT_IMAGE;
-  const escapedTitle = escapeHtml(article.title);
-  const escapedDescription = escapeHtml(article.meta_description);
+  
+  // SEO-optimized title and description
+  const seoTitle = truncateTitle(article.title);
+  const seoDescription = normalizeDescription(article.meta_description);
+  
+  const escapedTitle = escapeHtml(seoTitle);
+  const escapedFullTitle = escapeHtml(article.title);
+  const escapedDescription = escapeHtml(seoDescription);
   const articleSchema = JSON.stringify(generateArticleSchema(article));
   const breadcrumbSchema = JSON.stringify(generateBreadcrumbSchema(article));
 
@@ -132,14 +167,14 @@ function generateArticleHtml(article) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <!-- Primary Meta Tags -->
+  <!-- Primary Meta Tags - SEO Optimized -->
   <title>${escapedTitle} | ${SITE_NAME}</title>
   <meta name="title" content="${escapedTitle} | ${SITE_NAME}" />
   <meta name="description" content="${escapedDescription}" />
   <meta name="author" content="NeuralPost AI" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   
-  <!-- Canonical URL -->
+  <!-- Canonical URL - Points to physical static path, NOT hash URL -->
   <link rel="canonical" href="${articleUrl}" />
   
   <!-- Open Graph / Facebook -->
@@ -176,9 +211,7 @@ function generateArticleHtml(article) {
   <!-- Redirect to SPA after bots have indexed -->
   <script>
     // Allow crawlers to see the static content, then redirect users to the SPA
-    // This check is simple; crawlers will not execute this, users will
     if (typeof window !== 'undefined' && window.location) {
-      // Small delay to ensure content is visible
       setTimeout(function() {
         window.location.replace('${SITE_URL}/#/article/${article.slug}');
       }, 100);
@@ -203,8 +236,10 @@ function generateArticleHtml(article) {
       padding: 40px;
       color: #888;
     }
-    h1 {
+    /* Using h2 for visual styling to avoid multiple h1 issue */
+    .article-title {
       font-size: 2rem;
+      font-weight: bold;
       margin-bottom: 1rem;
     }
     .meta {
@@ -235,9 +270,12 @@ function generateArticleHtml(article) {
 </head>
 <body>
   <article>
-    <span class="category">${escapeHtml(article.category)}</span>
-    <h1>${escapedTitle}</h1>
-    <p class="meta">Published: ${new Date(article.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+    <header>
+      <span class="category">${escapeHtml(article.category)}</span>
+      <!-- Single h1 tag for SEO - using full title for content -->
+      <h1 class="article-title">${escapedFullTitle}</h1>
+      <p class="meta">Published: ${new Date(article.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+    </header>
     <img src="${imageUrl}" alt="${escapedTitle}" />
     <p class="description">${escapedDescription}</p>
     <p class="loading">Loading full article...</p>
