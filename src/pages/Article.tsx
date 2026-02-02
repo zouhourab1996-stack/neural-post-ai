@@ -37,6 +37,32 @@ interface Article {
   updated_at: string;
 }
 
+// Component to insert ads within article content
+function ArticleContentWithAds({ content }: { content: string }) {
+  // Split content by double newlines (paragraphs in markdown)
+  const sections = content.split(/\n\n+/);
+  
+  // Insert ad after the 2nd section (or at the end if content is short)
+  const adInsertIndex = Math.min(2, sections.length - 1);
+  
+  const beforeAd = sections.slice(0, adInsertIndex + 1).join('\n\n');
+  const afterAd = sections.slice(adInsertIndex + 1).join('\n\n');
+  
+  return (
+    <>
+      <ReactMarkdown>{beforeAd}</ReactMarkdown>
+      
+      {sections.length > 2 && (
+        <aside className="ad-slot h-28 w-full my-8 rounded-xl" aria-label="Advertisement">
+          Advertisement Space - In-Article Rectangle
+        </aside>
+      )}
+      
+      {afterAd && <ReactMarkdown>{afterAd}</ReactMarkdown>}
+    </>
+  );
+}
+
 export default function Article() {
   const { slug } = useParams<{ slug: string }>();
 
@@ -301,7 +327,7 @@ export default function Article() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="article-content"
             >
-              <ReactMarkdown>{article.content}</ReactMarkdown>
+              <ArticleContentWithAds content={article.content} />
             </motion.div>
 
             {/* Mobile Share Buttons */}
