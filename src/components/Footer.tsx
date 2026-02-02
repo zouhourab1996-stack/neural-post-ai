@@ -10,7 +10,7 @@ const footerLinks = {
   legal: [
     { name: "Privacy Policy", path: "/privacy" },
     { name: "Terms of Service", path: "/terms" },
-    { name: "Cookie Policy", path: "#" },
+    { name: "Disclaimer", path: "/disclaimer" },
   ],
   categories: [
     { name: "AI", path: "/category/AI" },
