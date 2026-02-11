@@ -4,6 +4,8 @@
  * This script fetches all articles from Supabase and generates
  * physical HTML files with hardcoded SEO meta tags for each article.
  * This allows Googlebot to see content without executing JavaScript.
+ * 
+ * Uses BrowserRouter-compatible redirects via sessionStorage.
  */
 
 import { createClient } from '@supabase/supabase-js';
@@ -130,13 +132,11 @@ function truncateTitle(title, maxLength = 55) {
 function normalizeDescription(description, minLength = 120, maxLength = 155) {
   if (!description) return `Read the latest news and insights on ${SITE_NAME}.`;
   
-  // If too short, pad with site info
   if (description.length < minLength) {
     const padding = ` Read more on ${SITE_NAME} for the latest updates.`;
     return (description + padding).substring(0, maxLength);
   }
   
-  // If too long, truncate
   if (description.length > maxLength) {
     return description.substring(0, maxLength - 3).trim() + '...';
   }
@@ -146,12 +146,12 @@ function normalizeDescription(description, minLength = 120, maxLength = 155) {
 
 /**
  * Generate the static HTML template for an article
+ * Uses sessionStorage redirect for BrowserRouter compatibility
  */
 function generateArticleHtml(article) {
   const articleUrl = `${SITE_URL}/article/${article.slug}/`;
   const imageUrl = article.image_url || DEFAULT_IMAGE;
   
-  // SEO-optimized title and description
   const seoTitle = truncateTitle(article.title);
   const seoDescription = normalizeDescription(article.meta_description);
   
@@ -174,7 +174,7 @@ function generateArticleHtml(article) {
   <meta name="author" content="NeuralPost AI" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   
-  <!-- Canonical URL - Points to physical static path, NOT hash URL -->
+  <!-- Canonical URL - Clean physical path -->
   <link rel="canonical" href="${articleUrl}" />
   
   <!-- Open Graph / Facebook -->
@@ -208,17 +208,18 @@ function generateArticleHtml(article) {
   <script type="application/ld+json">${articleSchema}</script>
   <script type="application/ld+json">${breadcrumbSchema}</script>
   
-  <!-- Redirect to SPA after bots have indexed -->
+  <!-- BrowserRouter-compatible SPA redirect -->
+  <!-- Crawlers see the static HTML; JS users get redirected to SPA -->
   <script>
-    // Allow crawlers to see the static content, then redirect users to the SPA
     if (typeof window !== 'undefined' && window.location) {
+      sessionStorage.redirect = window.location.href;
       setTimeout(function() {
-        window.location.replace('${SITE_URL}/#/article/${article.slug}');
+        window.location.replace(window.location.origin + '/');
       }, 100);
     }
   </script>
   <noscript>
-    <meta http-equiv="refresh" content="0;url=${SITE_URL}/#/article/${article.slug}" />
+    <meta http-equiv="refresh" content="0;url=${SITE_URL}/" />
   </noscript>
   
   <style>
@@ -236,7 +237,6 @@ function generateArticleHtml(article) {
       padding: 40px;
       color: #888;
     }
-    /* Using h2 for visual styling to avoid multiple h1 issue */
     .article-title {
       font-size: 2rem;
       font-weight: bold;
@@ -248,12 +248,13 @@ function generateArticleHtml(article) {
       margin-bottom: 1.5rem;
     }
     .category {
-      background: #10b981;
-      color: white;
+      background: #4A235A;
+      color: #D4AF37;
       padding: 4px 12px;
       border-radius: 4px;
       font-size: 0.8rem;
       text-transform: uppercase;
+      font-weight: 600;
     }
     img {
       max-width: 100%;
@@ -272,7 +273,6 @@ function generateArticleHtml(article) {
   <article>
     <header>
       <span class="category">${escapeHtml(article.category)}</span>
-      <!-- Single h1 tag for SEO - using full title for content -->
       <h1 class="article-title">${escapedFullTitle}</h1>
       <p class="meta">Published: ${new Date(article.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
     </header>
@@ -360,13 +360,18 @@ function generateSitemap(articles) {
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
+  
+  <url>
+    <loc>${SITE_URL}/disclaimer/</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
 `;
 
-  // Add all article URLs
   for (const article of articles) {
     const articleDate = article.updated_at ? article.updated_at.split('T')[0] : now;
     sitemap += `
-  <!-- Article: ${escapeHtml(article.title)} -->
   <url>
     <loc>${SITE_URL}/article/${article.slug}/</loc>
     <lastmod>${articleDate}</lastmod>
@@ -392,7 +397,6 @@ function generateSitemap(articles) {
 async function main() {
   console.log('🚀 Starting Static Site Generation...\n');
 
-  // Fetch all articles from Supabase
   console.log('📡 Fetching articles from database...');
   const { data: articles, error } = await supabase
     .from('articles')
@@ -406,11 +410,9 @@ async function main() {
 
   console.log(`✅ Found ${articles.length} articles\n`);
 
-  // Create output directory
   const distDir = path.join(__dirname, '..', 'dist');
   const articleDir = path.join(distDir, 'article');
   
-  // Ensure dist directory exists (might not exist if running before build)
   if (!fs.existsSync(distDir)) {
     fs.mkdirSync(distDir, { recursive: true });
   }
@@ -419,7 +421,6 @@ async function main() {
     fs.mkdirSync(articleDir, { recursive: true });
   }
 
-  // Generate static HTML for each article
   console.log('📝 Generating static article pages...');
   for (const article of articles) {
     const slugDir = path.join(articleDir, article.slug);
@@ -435,7 +436,6 @@ async function main() {
     console.log(`  ✓ /article/${article.slug}/index.html`);
   }
 
-  // Generate updated sitemap
   console.log('\n📍 Generating sitemap.xml...');
   const sitemapContent = generateSitemap(articles);
   const sitemapPath = path.join(distDir, 'sitemap.xml');
