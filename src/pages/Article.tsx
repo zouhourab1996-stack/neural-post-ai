@@ -103,7 +103,7 @@ export default function Article() {
     if (article) {
       document.title = `${article.title} | NeuralPost`;
 
-      const canonicalUrl = `${window.location.origin}/#/article/${article.slug}`;
+      const canonicalUrl = `${window.location.origin}/article/${article.slug}/`;
       
       // Update meta description
       const metaDescription = document.querySelector('meta[name="description"]');

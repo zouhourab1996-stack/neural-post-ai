@@ -16,7 +16,6 @@ interface SEOHeadProps {
 const SITE_URL = "https://prophetic.pw";
 const SITE_NAME = "NeuralPost";
 const DEFAULT_IMAGE = "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1200";
-const HASH_PREFIX = "/#";
 
 export default function SEOHead({
   title,
@@ -48,10 +47,8 @@ export default function SEOHead({
       }
     };
 
-    // Update canonical
-    // With HashRouter we want canonicals to include the `/#/...` fragment.
-    // window.location.href already includes the hash.
-    const canonicalUrl = canonical || window.location.href;
+    // Canonical URL - use clean path, no hash
+    const canonicalUrl = canonical || `${SITE_URL}${window.location.pathname}`;
     let canonicalLink = document.querySelector('link[rel="canonical"]');
     if (canonicalLink) {
       canonicalLink.setAttribute("href", canonicalUrl);
@@ -119,8 +116,7 @@ export function generateArticleSchema(article: {
   category: string;
   author?: string;
 }) {
-  const articlePath = `/article/${article.slug}`;
-  const articleUrl = `${SITE_URL}${HASH_PREFIX}${articlePath}`;
+  const articleUrl = `${SITE_URL}/article/${article.slug}/`;
   return {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
@@ -167,7 +163,43 @@ export function generateBreadcrumbSchema(items: { name: string; url: string }[])
       "@type": "ListItem",
       "position": index + 1,
       "name": item.name,
-      "item": `${SITE_URL}${HASH_PREFIX}${item.url.startsWith("/") ? item.url : `/${item.url}`}`
+      "item": `${SITE_URL}${item.url.startsWith("/") ? item.url : `/${item.url}`}`
+    }))
+  };
+}
+
+// FAQ Schema Generator
+export function generateFAQSchema(faqs: { question: string; answer: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map((faq) => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  };
+}
+
+// HowTo Schema Generator
+export function generateHowToSchema(howTo: {
+  name: string;
+  description: string;
+  steps: { name: string; text: string }[];
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": howTo.name,
+    "description": howTo.description,
+    "step": howTo.steps.map((step, index) => ({
+      "@type": "HowToStep",
+      "position": index + 1,
+      "name": step.name,
+      "text": step.text
     }))
   };
 }

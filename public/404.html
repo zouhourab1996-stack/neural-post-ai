@@ -8,14 +8,10 @@
   <link rel="canonical" href="https://prophetic.pw/" />
   
   <!-- GitHub Pages SPA Redirect Script -->
-  <!-- This script stores the current URL and redirects to index.html -->
-  <!-- The SPA will then handle routing to the correct page -->
+  <!-- Stores the current URL and redirects to index.html -->
+  <!-- BrowserRouter reads the restored URL via history.replaceState -->
   <script>
-    // Store the original URL that the user tried to access
     sessionStorage.redirect = location.href;
-    
-    // Redirect to the root of the site
-    // The SPA will read sessionStorage.redirect and route accordingly
     location.replace(location.origin + '/');
   </script>
   
@@ -27,7 +23,7 @@
     }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      background: linear-gradient(135deg, #1B4F72 0%, #4A235A 50%, #1B4F72 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -42,8 +38,8 @@
     .spinner {
       width: 40px;
       height: 40px;
-      border: 3px solid rgba(129, 140, 248, 0.3);
-      border-top-color: #818cf8;
+      border: 3px solid rgba(212, 175, 55, 0.3);
+      border-top-color: #D4AF37;
       border-radius: 50%;
       animation: spin 1s linear infinite;
       margin: 0 auto 1.5rem;
@@ -64,7 +60,7 @@
       font-size: 1.25rem;
       font-weight: 700;
       margin-bottom: 2rem;
-      color: #818cf8;
+      color: #D4AF37;
     }
   </style>
 </head>
