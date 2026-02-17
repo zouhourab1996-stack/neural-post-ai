@@ -1,0 +1,13 @@
+# NeuralPost Robots.txt
+# https://prophetic.pw
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://prophetic.pw/sitemap.xml
+
+# Disallow private paths
+Disallow: /api/
+Disallow: /admin/
+Disallow: /*.json$
