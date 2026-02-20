@@ -11,3 +11,11 @@ Sitemap: https://prophetic.pw/sitemap.xml
 Disallow: /api/
 Disallow: /admin/
 Disallow: /*.json$
+
+# IndexNow for real-time indexing
+User-agent: Bingbot
+Allow: /
+User-agent: YandexBot
+Allow: /
+User-agent: SeznamBot
+Allow: /
