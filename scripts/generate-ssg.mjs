@@ -442,6 +442,25 @@ async function main() {
   fs.writeFileSync(sitemapPath, sitemapContent, 'utf8');
   console.log('  ✓ /sitemap.xml');
 
+  // Generate sitemap.txt (plain text format - more reliable with search engines)
+  console.log('\n📍 Generating sitemap.txt...');
+  const staticUrls = [
+    `${SITE_URL}/`,
+    `${SITE_URL}/category/AI`,
+    `${SITE_URL}/category/Tech`,
+    `${SITE_URL}/category/Business`,
+    `${SITE_URL}/category/Science`,
+    `${SITE_URL}/about`,
+    `${SITE_URL}/contact`,
+    `${SITE_URL}/privacy`,
+    `${SITE_URL}/terms`,
+    `${SITE_URL}/disclaimer`,
+  ];
+  const articleUrls = articles.map(a => `${SITE_URL}/article/${a.slug}`);
+  const allUrls = [...staticUrls, ...articleUrls];
+  fs.writeFileSync(path.join(distDir, 'sitemap.txt'), allUrls.join('\n'), 'utf8');
+  console.log('  ✓ /sitemap.txt');
+
   console.log('\n🎉 Static Site Generation complete!');
   console.log(`   Generated ${articles.length} article pages`);
   console.log(`   Updated sitemap.xml with all URLs`);

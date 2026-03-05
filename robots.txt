@@ -43,7 +43,7 @@ Crawl-delay: 2
 
 # Sitemap locations
 Sitemap: https://prophetic.pw/sitemap.xml
-Sitemap: https://bltytefghazluwicnaii.supabase.co/functions/v1/dynamic-sitemap
+Sitemap: https://prophetic.pw/sitemap.txt
 
 # Disallow admin and private paths
 Disallow: /api/
