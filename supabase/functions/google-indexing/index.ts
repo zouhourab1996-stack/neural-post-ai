@@ -132,8 +132,8 @@ serve(async (req) => {
         results.push(result);
         // Small delay to avoid rate limiting
         await new Promise(r => setTimeout(r, 100));
-      } catch (e) {
-        results.push({ url, error: e.message });
+      } catch (e: unknown) {
+        results.push({ url, error: e instanceof Error ? e.message : String(e) });
       }
     }
 
@@ -145,11 +145,11 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Google Indexing API error:", error);
     return new Response(JSON.stringify({
       success: false,
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
     }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
