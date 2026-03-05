@@ -1,21 +1,52 @@
 # NeuralPost Robots.txt
 # https://prophetic.pw
 
-User-agent: *
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Googlebot-Image
 Allow: /
 
-# Sitemap location
-Sitemap: https://prophetic.pw/sitemap.xml
+User-agent: Googlebot-News
+Allow: /
 
-# Disallow private paths
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+Crawl-delay: 2
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+User-agent: SeznamBot
+Allow: /
+
+User-agent: *
+Allow: /
+Crawl-delay: 2
+
+# Sitemap locations
+Sitemap: https://prophetic.pw/sitemap.xml
+Sitemap: https://bltytefghazluwicnaii.supabase.co/functions/v1/dynamic-sitemap
+
+# Disallow admin and private paths
 Disallow: /api/
 Disallow: /admin/
 Disallow: /*.json$
-
-# IndexNow for real-time indexing
-User-agent: Bingbot
-Allow: /
-User-agent: YandexBot
-Allow: /
-User-agent: SeznamBot
-Allow: /
+Disallow: /404

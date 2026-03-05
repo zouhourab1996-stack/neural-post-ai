@@ -31,12 +31,19 @@ Crawl-delay: 2
 User-agent: DuckDuckBot
 Allow: /
 
+User-agent: YandexBot
+Allow: /
+
+User-agent: SeznamBot
+Allow: /
+
 User-agent: *
 Allow: /
 Crawl-delay: 2
 
-# Sitemap location
+# Sitemap locations
 Sitemap: https://prophetic.pw/sitemap.xml
+Sitemap: https://bltytefghazluwicnaii.supabase.co/functions/v1/dynamic-sitemap
 
 # Disallow admin and private paths
 Disallow: /api/
