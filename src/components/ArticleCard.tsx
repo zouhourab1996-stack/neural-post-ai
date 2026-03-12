@@ -24,7 +24,7 @@ interface ArticleCardProps {
 
 export default function ArticleCard({ article, variant = "default", index = 0 }: ArticleCardProps) {
   const timeAgo = formatDistanceToNow(new Date(article.created_at), { addSuffix: true });
-  
+
   // Generate descriptive alt text for SEO
   const getAltText = () => {
     return `${article.title} - ${article.category} news article on NeuralPost`;
@@ -42,7 +42,7 @@ export default function ArticleCard({ article, variant = "default", index = 0 }:
         itemScope
         itemType="https://schema.org/NewsArticle"
       >
-        <Link to={`/article/${article.slug}`} className="block" itemProp="url">
+        <Link to={`/article/${article.slug}/`} className="block" itemProp="url">
           <div className="aspect-[16/10] overflow-hidden">
             <img
               src={article.image_url || fallbackImage}
@@ -92,7 +92,7 @@ export default function ArticleCard({ article, variant = "default", index = 0 }:
         itemScope
         itemType="https://schema.org/NewsArticle"
       >
-        <Link to={`/article/${article.slug}`} className="flex items-start gap-4 p-3 rounded-lg hover:bg-muted transition-colors" itemProp="url">
+        <Link to={`/article/${article.slug}/`} className="flex items-start gap-4 p-3 rounded-lg hover:bg-muted transition-colors" itemProp="url">
           <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden">
             <img
               src={article.image_url || `https://images.unsplash.com/photo-1677442136019-21780ecad995?w=200&q=80`}
@@ -128,7 +128,7 @@ export default function ArticleCard({ article, variant = "default", index = 0 }:
       itemScope
       itemType="https://schema.org/NewsArticle"
     >
-      <Link to={`/article/${article.slug}`} className="block" itemProp="url">
+      <Link to={`/article/${article.slug}/`} className="block" itemProp="url">
         <div className="aspect-video overflow-hidden">
           <img
             src={article.image_url || fallbackImage}

@@ -99,7 +99,7 @@ export default function Index() {
         <section className="mb-12" aria-labelledby="featured-heading">
           <div className="flex items-center justify-between mb-6">
             <h2 id="featured-heading" className="font-serif text-2xl font-bold">Featured Stories</h2>
-            <Link to="/category/AI">
+            <Link to="/category/AI/">
               <Button variant="ghost" className="text-primary">
                 View all <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
               </Button>

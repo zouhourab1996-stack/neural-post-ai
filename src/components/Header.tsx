@@ -8,10 +8,10 @@ import { useTheme } from "@/components/ThemeProvider";
 import TrendingTicker from "@/components/TrendingTicker";
 
 const categories = [
-  { name: "AI", path: "/category/AI" },
-  { name: "Tech", path: "/category/Tech" },
-  { name: "Business", path: "/category/Business" },
-  { name: "Science", path: "/category/Science" },
+  { name: "AI", path: "/category/AI/" },
+  { name: "Tech", path: "/category/Tech/" },
+  { name: "Business", path: "/category/Business/" },
+  { name: "Science", path: "/category/Science/" },
 ];
 
 export default function Header() {
@@ -30,7 +30,7 @@ export default function Header() {
     e.preventDefault();
     if (searchQuery.trim()) {
       // Navigate to search results - could be enhanced later
-      navigate(`/category/AI?search=${encodeURIComponent(searchQuery)}`);
+      navigate(`/category/AI/?search=${encodeURIComponent(searchQuery)}`);
       setIsSearchOpen(false);
       setIsMenuOpen(false);
     }

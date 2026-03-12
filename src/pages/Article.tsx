@@ -145,8 +145,8 @@ export default function Article() {
       // Inject Breadcrumb JSON-LD schema
       const breadcrumbSchema = generateBreadcrumbSchema([
         { name: "Home", url: "/" },
-        { name: article.category, url: `/category/${article.category}` },
-        { name: article.title, url: `/article/${article.slug}` }
+        { name: article.category, url: `/category/${article.category}/` },
+        { name: article.title, url: `/article/${article.slug}/` }
       ]);
 
       // Remove existing article schemas

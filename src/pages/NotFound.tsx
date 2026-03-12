@@ -63,7 +63,7 @@ const NotFound = () => {
           </Button>
           
           <Button asChild variant="outline" size="lg" className="gap-2">
-            <Link to="/category/AI">
+            <Link to="/category/AI/">
               <Search className="w-4 h-4" />
               Browse AI News
             </Link>
@@ -81,7 +81,7 @@ const NotFound = () => {
             {["AI", "Tech", "Business", "Science"].map((category) => (
               <Link
                 key={category}
-                to={`/category/${category}`}
+                to={`/category/${category}/`}
                 className="px-4 py-2 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-colors text-sm font-medium"
               >
                 {category}
