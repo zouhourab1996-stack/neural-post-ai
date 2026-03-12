@@ -85,7 +85,7 @@ export default function Sidebar({ trendingArticles }: SidebarProps) {
           {categoryConfig.map((category) => (
             <Link
               key={category.name}
-              to={`/category/${category.name}`}
+              to={`/category/${category.name}/`}
               className="flex items-center justify-between p-3 rounded-lg hover:bg-muted transition-colors group"
             >
               <div className="flex items-center gap-3">
