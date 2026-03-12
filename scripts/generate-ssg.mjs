@@ -1,472 +1,603 @@
 /**
- * Static Site Generation Script for Article Pages
- * 
- * This script fetches all articles from Supabase and generates
- * physical HTML files with hardcoded SEO meta tags for each article.
- * This allows Googlebot to see content without executing JavaScript.
- * 
- * Uses BrowserRouter-compatible redirects via sessionStorage.
+ * Static Site Generation Script for SEO-friendly routes on GitHub Pages
+ * - Generates physical HTML pages for articles, categories, and static routes
+ * - Generates sitemap.xml, sitemap.txt, rss.xml, and atom.xml
  */
 
-import { createClient } from '@supabase/supabase-js';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { createClient } from "@supabase/supabase-js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Configuration
-const SITE_URL = 'https://prophetic.pw';
-const SITE_NAME = 'NeuralPost';
-const DEFAULT_IMAGE = 'https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1200';
+const SITE_URL = "https://prophetic.pw";
+const SITE_NAME = "NeuralPost";
+const DEFAULT_IMAGE =
+  "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1200";
 
-// Get Supabase credentials from environment
-const supabaseUrl = process.env.VITE_SUPABASE_URL;
-const supabaseKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const FALLBACK_PROJECT_ID = "bltytefghazluwicnaii";
+const FALLBACK_SUPABASE_URL = `https://${FALLBACK_PROJECT_ID}.supabase.co`;
+const FALLBACK_PUBLISHABLE_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJsdHl0ZWZnaGF6bHV3aWNuYWlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg2NzY5MzksImV4cCI6MjA4NDI1MjkzOX0.LfH0E7PQ5kD9NpNDK0zSGSNSU3mnGvImeytOF5gqt3w";
+
+const supabaseUrl =
+  process.env.VITE_SUPABASE_URL ||
+  (process.env.VITE_SUPABASE_PROJECT_ID
+    ? `https://${process.env.VITE_SUPABASE_PROJECT_ID}.supabase.co`
+    : FALLBACK_SUPABASE_URL);
+
+const supabaseKey =
+  process.env.VITE_SUPABASE_PUBLISHABLE_KEY || FALLBACK_PUBLISHABLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('❌ Missing Supabase credentials. Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY');
+  console.error("❌ Missing database credentials for SSG.");
   process.exit(1);
 }
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-/**
- * Generate JSON-LD schema for an article
- */
-function generateArticleSchema(article) {
-  const articleUrl = `${SITE_URL}/article/${article.slug}/`;
-  return {
-    "@context": "https://schema.org",
-    "@type": "NewsArticle",
-    "@id": `${articleUrl}#article`,
-    "headline": article.title,
-    "description": article.meta_description,
-    "image": {
-      "@type": "ImageObject",
-      "url": article.image_url || DEFAULT_IMAGE,
-      "width": 1200,
-      "height": 630
-    },
-    "datePublished": article.created_at,
-    "dateModified": article.updated_at,
-    "author": {
-      "@type": "Person",
-      "name": "NeuralPost AI",
-      "url": `${SITE_URL}/about`
-    },
-    "publisher": {
-      "@type": "Organization",
-      "@id": `${SITE_URL}/#organization`,
-      "name": SITE_NAME,
-      "logo": {
-        "@type": "ImageObject",
-        "url": `${SITE_URL}/favicon.ico`
-      }
-    },
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": articleUrl
-    },
-    "articleSection": article.category,
-    "isAccessibleForFree": true
-  };
+const categories = ["AI", "Tech", "Business", "Science"];
+
+const staticPages = [
+  {
+    route: "/about",
+    title: "About NeuralPost",
+    description:
+      "Learn about NeuralPost and our mission to provide fast, high-quality AI-powered news coverage.",
+    heading: "About NeuralPost",
+    content:
+      "NeuralPost is a digital publication focused on AI, technology, business, and science coverage with clear analysis and daily updates.",
+  },
+  {
+    route: "/contact",
+    title: "Contact NeuralPost",
+    description:
+      "Contact NeuralPost for editorial questions, partnerships, and support.",
+    heading: "Contact",
+    content:
+      "For inquiries, feedback, or partnership opportunities, please reach out to the NeuralPost editorial team.",
+  },
+  {
+    route: "/privacy",
+    title: "Privacy Policy - NeuralPost",
+    description: "Read the privacy policy for NeuralPost.",
+    heading: "Privacy Policy",
+    content:
+      "This page outlines how NeuralPost collects, processes, and protects data in accordance with modern privacy standards.",
+  },
+  {
+    route: "/terms",
+    title: "Terms of Service - NeuralPost",
+    description: "Read the terms of service for using NeuralPost.",
+    heading: "Terms of Service",
+    content:
+      "These terms describe acceptable use, content ownership, and user responsibilities when accessing NeuralPost.",
+  },
+  {
+    route: "/disclaimer",
+    title: "Disclaimer - NeuralPost",
+    description: "Important legal and editorial disclaimers for NeuralPost.",
+    heading: "Disclaimer",
+    content:
+      "NeuralPost content is published for informational purposes and should not be treated as legal, medical, or investment advice.",
+  },
+];
+
+function normalizeRoute(route) {
+  if (!route || route === "/") return "/";
+  const cleaned = route.replace(/^\/+|\/+$/g, "");
+  return `/${cleaned}/`;
 }
 
-/**
- * Generate breadcrumb schema for an article
- */
-function generateBreadcrumbSchema(article) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": `${SITE_URL}/`
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": article.category,
-        "item": `${SITE_URL}/category/${article.category}/`
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
-        "name": article.title,
-        "item": `${SITE_URL}/article/${article.slug}/`
-      }
-    ]
-  };
+function toAbsoluteUrl(route) {
+  if (!route || route === "/") return `${SITE_URL}/`;
+  return `${SITE_URL}${normalizeRoute(route)}`;
 }
 
-/**
- * Escape HTML entities for safe insertion
- */
-function escapeHtml(text) {
-  if (!text) return '';
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
-
-/**
- * Truncate title to SEO-friendly length (max 60 chars including site name)
- */
-function truncateTitle(title, maxLength = 55) {
-  if (!title) return SITE_NAME;
-  if (title.length <= maxLength) return title;
-  return title.substring(0, maxLength - 3).trim() + '...';
-}
-
-/**
- * Ensure meta description is within optimal range (120-160 chars)
- */
-function normalizeDescription(description, minLength = 120, maxLength = 155) {
-  if (!description) return `Read the latest news and insights on ${SITE_NAME}.`;
-  
-  if (description.length < minLength) {
-    const padding = ` Read more on ${SITE_NAME} for the latest updates.`;
-    return (description + padding).substring(0, maxLength);
+function ensureDir(targetDir) {
+  if (!fs.existsSync(targetDir)) {
+    fs.mkdirSync(targetDir, { recursive: true });
   }
-  
-  if (description.length > maxLength) {
-    return description.substring(0, maxLength - 3).trim() + '...';
-  }
-  
-  return description;
 }
 
-/**
- * Generate the static HTML template for an article
- * Uses sessionStorage redirect for BrowserRouter compatibility
- */
-function generateArticleHtml(article) {
-  const articleUrl = `${SITE_URL}/article/${article.slug}/`;
-  const imageUrl = article.image_url || DEFAULT_IMAGE;
-  
-  const seoTitle = truncateTitle(article.title);
-  const seoDescription = normalizeDescription(article.meta_description);
-  
-  const escapedTitle = escapeHtml(seoTitle);
-  const escapedFullTitle = escapeHtml(article.title);
-  const escapedDescription = escapeHtml(seoDescription);
-  const articleSchema = JSON.stringify(generateArticleSchema(article));
-  const breadcrumbSchema = JSON.stringify(generateBreadcrumbSchema(article));
+function writeRouteIndex(distDir, route, html) {
+  const normalized = normalizeRoute(route);
 
+  if (normalized === "/") {
+    fs.writeFileSync(path.join(distDir, "index.html"), html, "utf8");
+    return;
+  }
+
+  const relativeDir = normalized.replace(/^\//, "").replace(/\/$/, "");
+  const outputDir = path.join(distDir, relativeDir);
+  ensureDir(outputDir);
+  fs.writeFileSync(path.join(outputDir, "index.html"), html, "utf8");
+}
+
+function escapeHtml(text = "") {
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function stripMarkdown(markdown = "") {
+  return String(markdown)
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/!\[[^\]]*\]\([^\)]+\)/g, " ")
+    .replace(/\[[^\]]+\]\([^\)]+\)/g, "$1")
+    .replace(/^#+\s+/gm, "")
+    .replace(/[>*_~\-]{1,3}/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function markdownToHtml(markdown = "") {
+  const blocks = markdown
+    .split(/\n{2,}/)
+    .map((block) => block.trim())
+    .filter(Boolean);
+
+  return blocks
+    .map((block) => {
+      const heading1 = block.match(/^#\s+(.+)/);
+      const heading2 = block.match(/^##\s+(.+)/);
+      const heading3 = block.match(/^###\s+(.+)/);
+
+      if (heading1) return `<h2>${escapeHtml(heading1[1])}</h2>`;
+      if (heading2) return `<h3>${escapeHtml(heading2[1])}</h3>`;
+      if (heading3) return `<h4>${escapeHtml(heading3[1])}</h4>`;
+
+      const listLines = block.split("\n").filter((line) => line.trim().length > 0);
+      if (listLines.length > 1 && listLines.every((line) => /^[-*]\s+/.test(line))) {
+        const items = listLines
+          .map((line) => `<li>${escapeHtml(line.replace(/^[-*]\s+/, ""))}</li>`)
+          .join("");
+        return `<ul>${items}</ul>`;
+      }
+
+      return `<p>${escapeHtml(block).replace(/\n/g, "<br />")}</p>`;
+    })
+    .join("\n");
+}
+
+function normalizeDescription(description = "", minLength = 110, maxLength = 155) {
+  const clean = stripMarkdown(description) || `Latest updates from ${SITE_NAME}.`;
+
+  if (clean.length < minLength) {
+    const suffix = ` Read the full analysis on ${SITE_NAME}.`;
+    return (clean + suffix).slice(0, maxLength);
+  }
+
+  if (clean.length > maxLength) {
+    return `${clean.slice(0, maxLength - 1).trim()}…`;
+  }
+
+  return clean;
+}
+
+function baseHead({
+  title,
+  description,
+  canonical,
+  image = DEFAULT_IMAGE,
+  type = "website",
+}) {
+  return `
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${escapeHtml(title)}</title>
+  <meta name="description" content="${escapeHtml(description)}" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <link rel="canonical" href="${canonical}" />
+
+  <meta property="og:type" content="${type}" />
+  <meta property="og:title" content="${escapeHtml(title)}" />
+  <meta property="og:description" content="${escapeHtml(description)}" />
+  <meta property="og:url" content="${canonical}" />
+  <meta property="og:image" content="${image}" />
+  <meta property="og:site_name" content="${SITE_NAME}" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="${escapeHtml(title)}" />
+  <meta name="twitter:description" content="${escapeHtml(description)}" />
+  <meta name="twitter:image" content="${image}" />
+
+  <meta name="google-site-verification" content="LinTLA24lUQNkp3-Jnmx63UIro3uY1tF8Y9fN-XMrmk" />
+  <meta name="msvalidate.01" content="A5E7F9B2C3D4E5F6G7H8I9J0K1L2M3N4" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  `;
+}
+
+function shellTemplate({ head, heading, body }) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <!-- Primary Meta Tags - SEO Optimized -->
-  <title>${escapedTitle} | ${SITE_NAME}</title>
-  <meta name="title" content="${escapedTitle} | ${SITE_NAME}" />
-  <meta name="description" content="${escapedDescription}" />
-  <meta name="author" content="NeuralPost AI" />
-  <meta name="robots" content="index, follow, max-image-preview:large" />
-  
-  <!-- Canonical URL - Clean physical path -->
-  <link rel="canonical" href="${articleUrl}" />
-  
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="article" />
-  <meta property="og:url" content="${articleUrl}" />
-  <meta property="og:title" content="${escapedTitle}" />
-  <meta property="og:description" content="${escapedDescription}" />
-  <meta property="og:image" content="${imageUrl}" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:site_name" content="${SITE_NAME}" />
-  <meta property="article:published_time" content="${article.created_at}" />
-  <meta property="article:modified_time" content="${article.updated_at}" />
-  <meta property="article:section" content="${escapeHtml(article.category)}" />
-  <meta property="article:author" content="NeuralPost AI" />
-  
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:url" content="${articleUrl}" />
-  <meta name="twitter:title" content="${escapedTitle}" />
-  <meta name="twitter:description" content="${escapedDescription}" />
-  <meta name="twitter:image" content="${imageUrl}" />
-  
-  <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-  
-  <!-- Google Search Console Verification -->
-  <meta name="google-site-verification" content="LinTLA24lUQNkp3-Jnmx63UIro3uY1tF8Y9fN-XMrmk" />
-  
-  <!-- JSON-LD Structured Data -->
-  <script type="application/ld+json">${articleSchema}</script>
-  <script type="application/ld+json">${breadcrumbSchema}</script>
-  
-  <!-- BrowserRouter-compatible SPA redirect -->
-  <!-- Crawlers see the static HTML; JS users get redirected to SPA -->
-  <script>
-    if (typeof window !== 'undefined' && window.location) {
-      sessionStorage.redirect = window.location.href;
-      setTimeout(function() {
-        window.location.replace(window.location.origin + '/');
-      }, 100);
-    }
-  </script>
-  <noscript>
-    <meta http-equiv="refresh" content="0;url=${SITE_URL}/" />
-  </noscript>
-  
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      background: #0a0a0a;
-      color: #fafafa;
-      line-height: 1.6;
-    }
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: #888;
-    }
-    .article-title {
-      font-size: 2rem;
-      font-weight: bold;
-      margin-bottom: 1rem;
-    }
-    .meta {
-      color: #888;
-      font-size: 0.9rem;
-      margin-bottom: 1.5rem;
-    }
-    .category {
-      background: #4A235A;
-      color: #D4AF37;
-      padding: 4px 12px;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-    img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-    }
-    .description {
-      font-size: 1.1rem;
-      color: #ccc;
-      margin-bottom: 2rem;
-    }
-  </style>
+${head}
+<style>
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0b1020;
+    color: #e5e7eb;
+    line-height: 1.7;
+  }
+  .wrap {
+    width: min(920px, 92vw);
+    margin: 0 auto;
+    padding: 2rem 0 4rem;
+  }
+  a { color: #93c5fd; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .tag {
+    display: inline-block;
+    background: #1f2937;
+    color: #fbbf24;
+    font-size: .8rem;
+    font-weight: 600;
+    padding: .35rem .7rem;
+    border-radius: 999px;
+    margin-bottom: 1rem;
+  }
+  h1 { font-size: clamp(1.8rem, 3.8vw, 2.7rem); line-height: 1.2; margin: 0 0 1rem; }
+  h2 { margin-top: 2rem; }
+  h3 { margin-top: 1.3rem; }
+  p, li { color: #d1d5db; }
+  .meta { color: #9ca3af; font-size: .95rem; margin-bottom: 1.4rem; }
+  .hero-image {
+    width: 100%;
+    max-height: 480px;
+    object-fit: cover;
+    border-radius: 14px;
+    margin: 1rem 0 1.6rem;
+  }
+  .home-link {
+    display: inline-flex;
+    margin-top: 2.2rem;
+    background: #111827;
+    border: 1px solid #374151;
+    padding: .7rem 1rem;
+    border-radius: .7rem;
+    font-weight: 600;
+  }
+</style>
 </head>
 <body>
-  <article>
-    <header>
-      <span class="category">${escapeHtml(article.category)}</span>
-      <h1 class="article-title">${escapedFullTitle}</h1>
-      <p class="meta">Published: ${new Date(article.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-    </header>
-    <img src="${imageUrl}" alt="${escapedTitle}" />
-    <p class="description">${escapedDescription}</p>
-    <p class="loading">Loading full article...</p>
-  </article>
+  <main class="wrap">
+    <h1>${heading}</h1>
+    ${body}
+    <a class="home-link" href="${SITE_URL}/">← Back to homepage</a>
+  </main>
 </body>
 </html>`;
 }
 
-/**
- * Generate sitemap.xml with all articles
- */
-function generateSitemap(articles) {
-  const now = new Date().toISOString().split('T')[0];
-  
-  let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+function generateArticleSchema(article, articleUrl) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "@id": `${articleUrl}#article`,
+    headline: article.title,
+    description: normalizeDescription(article.meta_description),
+    image: {
+      "@type": "ImageObject",
+      url: article.image_url || DEFAULT_IMAGE,
+      width: 1200,
+      height: 630,
+    },
+    datePublished: article.created_at,
+    dateModified: article.updated_at,
+    author: {
+      "@type": "Person",
+      name: "NeuralPost AI",
+      url: `${SITE_URL}/about/`,
+    },
+    publisher: {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: SITE_NAME,
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE_URL}/favicon.ico`,
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": articleUrl,
+    },
+    articleSection: article.category,
+    isAccessibleForFree: true,
+  };
+}
+
+function generateArticleHtml(article) {
+  const articleUrl = toAbsoluteUrl(`/article/${article.slug}`);
+  const title = `${article.title} | ${SITE_NAME}`;
+  const description = normalizeDescription(article.meta_description);
+  const imageUrl = article.image_url || DEFAULT_IMAGE;
+
+  const head = `${baseHead({
+    title,
+    description,
+    canonical: articleUrl,
+    image: imageUrl,
+    type: "article",
+  })}
+  <meta property="article:published_time" content="${article.created_at}" />
+  <meta property="article:modified_time" content="${article.updated_at}" />
+  <meta property="article:section" content="${escapeHtml(article.category)}" />
+  <script type="application/ld+json">${JSON.stringify(
+    generateArticleSchema(article, articleUrl),
+  )}</script>`;
+
+  const body = `
+    <div class="tag">${escapeHtml(article.category)}</div>
+    <p class="meta">Published: ${new Date(article.created_at).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })}</p>
+    <img class="hero-image" src="${imageUrl}" alt="${escapeHtml(article.title)}" loading="lazy" />
+    ${markdownToHtml(article.content || article.meta_description || "")}
+  `;
+
+  return shellTemplate({
+    head,
+    heading: escapeHtml(article.title),
+    body,
+  });
+}
+
+function generateCategoryHtml(category, categoryArticles) {
+  const url = toAbsoluteUrl(`/category/${category}`);
+  const description = `Latest ${category} news, analysis, and updates from ${SITE_NAME}.`;
+
+  const head = baseHead({
+    title: `${category} News | ${SITE_NAME}`,
+    description,
+    canonical: url,
+  });
+
+  const articleLinks = categoryArticles
+    .slice(0, 40)
+    .map(
+      (article) =>
+        `<li><a href="${toAbsoluteUrl(`/article/${article.slug}`)}">${escapeHtml(article.title)}</a></li>`,
+    )
+    .join("\n");
+
+  const body = `
+    <p class="meta">Fresh coverage in ${escapeHtml(category)} with continuously updated stories.</p>
+    <ul>${articleLinks || "<li>No articles yet.</li>"}</ul>
+  `;
+
+  return shellTemplate({
+    head,
+    heading: `${escapeHtml(category)} News`,
+    body,
+  });
+}
+
+function generateStaticPageHtml(page) {
+  const url = toAbsoluteUrl(page.route);
+  const head = baseHead({
+    title: page.title,
+    description: page.description,
+    canonical: url,
+  });
+
+  const body = `<p>${escapeHtml(page.content)}</p>`;
+
+  return shellTemplate({
+    head,
+    heading: escapeHtml(page.heading),
+    body,
+  });
+}
+
+function generateSitemapXml(articles) {
+  const now = new Date().toISOString().split("T")[0];
+
+  const staticUrls = [
+    { loc: toAbsoluteUrl("/"), changefreq: "hourly", priority: "1.0" },
+    ...categories.map((category) => ({
+      loc: toAbsoluteUrl(`/category/${category}`),
+      changefreq: "daily",
+      priority: "0.9",
+    })),
+    ...staticPages.map((page) => ({
+      loc: toAbsoluteUrl(page.route),
+      changefreq: "monthly",
+      priority: "0.6",
+    })),
+  ];
+
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-  
-  <!-- Homepage -->
-  <url>
-    <loc>${SITE_URL}/</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>hourly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  
-  <!-- Category Pages -->
-  <url>
-    <loc>${SITE_URL}/category/AI/</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  
-  <url>
-    <loc>${SITE_URL}/category/Tech/</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  
-  <url>
-    <loc>${SITE_URL}/category/Business/</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  
-  <url>
-    <loc>${SITE_URL}/category/Science/</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  
-  <!-- Static Pages -->
-  <url>
-    <loc>${SITE_URL}/about/</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  
-  <url>
-    <loc>${SITE_URL}/contact/</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  
-  <url>
-    <loc>${SITE_URL}/privacy/</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>${SITE_URL}/terms/</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>${SITE_URL}/disclaimer/</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
 `;
 
-  for (const article of articles) {
-    const articleDate = article.updated_at ? article.updated_at.split('T')[0] : now;
-    sitemap += `
-  <url>
-    <loc>${SITE_URL}/article/${article.slug}/</loc>
-    <lastmod>${articleDate}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    ${article.image_url ? `<image:image>
-      <image:loc>${article.image_url}</image:loc>
-      <image:title>${escapeHtml(article.title)}</image:title>
-    </image:image>` : ''}
+  for (const url of staticUrls) {
+    xml += `  <url>
+    <loc>${url.loc}</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>${url.changefreq}</changefreq>
+    <priority>${url.priority}</priority>
   </url>
 `;
   }
 
-  sitemap += `
-</urlset>`;
+  for (const article of articles) {
+    const articleUrl = toAbsoluteUrl(`/article/${article.slug}`);
+    const articleDate = (article.updated_at || article.created_at || new Date().toISOString()).split("T")[0];
 
-  return sitemap;
+    xml += `  <url>
+    <loc>${articleUrl}</loc>
+    <lastmod>${articleDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>`;
+
+    if (article.image_url) {
+      xml += `
+    <image:image>
+      <image:loc>${article.image_url}</image:loc>
+      <image:title>${escapeHtml(article.title)}</image:title>
+    </image:image>`;
+    }
+
+    xml += `
+  </url>
+`;
+  }
+
+  xml += `</urlset>`;
+  return xml;
 }
 
-/**
- * Main function to generate all static pages
- */
-async function main() {
-  console.log('🚀 Starting Static Site Generation...\n');
+function generateSitemapTxt(articles) {
+  const urls = [
+    toAbsoluteUrl("/"),
+    ...categories.map((category) => toAbsoluteUrl(`/category/${category}`)),
+    ...staticPages.map((page) => toAbsoluteUrl(page.route)),
+    ...articles.map((article) => toAbsoluteUrl(`/article/${article.slug}`)),
+  ];
 
-  console.log('📡 Fetching articles from database...');
+  return urls.join("\n");
+}
+
+function escapeCData(input = "") {
+  return String(input).replace(/\]\]>/g, "]]]]><![CDATA[>");
+}
+
+function generateRssXml(articles) {
+  const latest = articles.slice(0, 60);
+  const lastBuildDate = new Date().toUTCString();
+
+  const items = latest
+    .map((article) => {
+      const url = toAbsoluteUrl(`/article/${article.slug}`);
+      const pubDate = new Date(article.created_at || article.updated_at || Date.now()).toUTCString();
+      const description = normalizeDescription(article.meta_description);
+      return `<item>
+      <title>${escapeHtml(article.title)}</title>
+      <link>${url}</link>
+      <guid isPermaLink="true">${url}</guid>
+      <pubDate>${pubDate}</pubDate>
+      <category>${escapeHtml(article.category)}</category>
+      <description><![CDATA[${escapeCData(description)}]]></description>
+    </item>`;
+    })
+    .join("\n");
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>${SITE_NAME}</title>
+    <link>${SITE_URL}/</link>
+    <description>Latest AI, tech, business, and science news from ${SITE_NAME}</description>
+    <language>en-us</language>
+    <lastBuildDate>${lastBuildDate}</lastBuildDate>
+    ${items}
+  </channel>
+</rss>`;
+}
+
+function generateAtomXml(articles) {
+  const latest = articles.slice(0, 60);
+  const updated = new Date().toISOString();
+
+  const entries = latest
+    .map((article) => {
+      const url = toAbsoluteUrl(`/article/${article.slug}`);
+      const published = new Date(article.created_at || article.updated_at || Date.now()).toISOString();
+      const modified = new Date(article.updated_at || article.created_at || Date.now()).toISOString();
+      const description = normalizeDescription(article.meta_description);
+
+      return `<entry>
+    <title>${escapeHtml(article.title)}</title>
+    <link href="${url}" />
+    <id>${url}</id>
+    <published>${published}</published>
+    <updated>${modified}</updated>
+    <category term="${escapeHtml(article.category)}" />
+    <summary type="html"><![CDATA[${escapeCData(description)}]]></summary>
+  </entry>`;
+    })
+    .join("\n");
+
+  return `<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>${SITE_NAME}</title>
+  <subtitle>Latest AI, tech, business, and science coverage</subtitle>
+  <link href="${SITE_URL}/atom.xml" rel="self" />
+  <link href="${SITE_URL}/" />
+  <id>${SITE_URL}/</id>
+  <updated>${updated}</updated>
+  ${entries}
+</feed>`;
+}
+
+async function main() {
+  console.log("🚀 Starting static generation...\n");
+
   const { data: articles, error } = await supabase
-    .from('articles')
-    .select('*')
-    .order('created_at', { ascending: false });
+    .from("articles")
+    .select("id,title,slug,meta_description,content,category,image_url,created_at,updated_at")
+    .order("created_at", { ascending: false });
 
   if (error) {
-    console.error('❌ Error fetching articles:', error.message);
+    console.error("❌ Failed to fetch articles:", error.message);
     process.exit(1);
   }
 
-  console.log(`✅ Found ${articles.length} articles\n`);
+  const safeArticles = Array.isArray(articles) ? articles : [];
+  console.log(`✅ Loaded ${safeArticles.length} article(s)\n`);
 
-  const distDir = path.join(__dirname, '..', 'dist');
-  const articleDir = path.join(distDir, 'article');
-  
-  if (!fs.existsSync(distDir)) {
-    fs.mkdirSync(distDir, { recursive: true });
-  }
-  
-  if (!fs.existsSync(articleDir)) {
-    fs.mkdirSync(articleDir, { recursive: true });
-  }
+  const distDir = path.join(__dirname, "..", "dist");
+  ensureDir(distDir);
 
-  console.log('📝 Generating static article pages...');
-  for (const article of articles) {
-    const slugDir = path.join(articleDir, article.slug);
-    
-    if (!fs.existsSync(slugDir)) {
-      fs.mkdirSync(slugDir, { recursive: true });
-    }
-    
-    const htmlContent = generateArticleHtml(article);
-    const htmlPath = path.join(slugDir, 'index.html');
-    
-    fs.writeFileSync(htmlPath, htmlContent, 'utf8');
-    console.log(`  ✓ /article/${article.slug}/index.html`);
+  console.log("📝 Generating article pages...");
+  for (const article of safeArticles) {
+    writeRouteIndex(distDir, `/article/${article.slug}`, generateArticleHtml(article));
+    console.log(`  ✓ /article/${article.slug}/`);
   }
 
-  console.log('\n📍 Generating sitemap.xml...');
-  const sitemapContent = generateSitemap(articles);
-  const sitemapPath = path.join(distDir, 'sitemap.xml');
-  fs.writeFileSync(sitemapPath, sitemapContent, 'utf8');
-  console.log('  ✓ /sitemap.xml');
+  console.log("\n📝 Generating category pages...");
+  for (const category of categories) {
+    const categoryArticles = safeArticles.filter((article) => article.category === category);
+    writeRouteIndex(distDir, `/category/${category}`, generateCategoryHtml(category, categoryArticles));
+    console.log(`  ✓ /category/${category}/`);
+  }
 
-  // Generate sitemap.txt (plain text format - more reliable with search engines)
-  console.log('\n📍 Generating sitemap.txt...');
-  const staticUrls = [
-    `${SITE_URL}/`,
-    `${SITE_URL}/category/AI`,
-    `${SITE_URL}/category/Tech`,
-    `${SITE_URL}/category/Business`,
-    `${SITE_URL}/category/Science`,
-    `${SITE_URL}/about`,
-    `${SITE_URL}/contact`,
-    `${SITE_URL}/privacy`,
-    `${SITE_URL}/terms`,
-    `${SITE_URL}/disclaimer`,
-  ];
-  const articleUrls = articles.map(a => `${SITE_URL}/article/${a.slug}`);
-  const allUrls = [...staticUrls, ...articleUrls];
-  fs.writeFileSync(path.join(distDir, 'sitemap.txt'), allUrls.join('\n'), 'utf8');
-  console.log('  ✓ /sitemap.txt');
+  console.log("\n📝 Generating static pages...");
+  for (const page of staticPages) {
+    writeRouteIndex(distDir, page.route, generateStaticPageHtml(page));
+    console.log(`  ✓ ${normalizeRoute(page.route)}`);
+  }
 
-  console.log('\n🎉 Static Site Generation complete!');
-  console.log(`   Generated ${articles.length} article pages`);
-  console.log(`   Updated sitemap.xml with all URLs`);
+  console.log("\n📍 Writing sitemap.xml...");
+  fs.writeFileSync(path.join(distDir, "sitemap.xml"), generateSitemapXml(safeArticles), "utf8");
+  console.log("  ✓ /sitemap.xml");
+
+  console.log("\n📍 Writing sitemap.txt...");
+  fs.writeFileSync(path.join(distDir, "sitemap.txt"), generateSitemapTxt(safeArticles), "utf8");
+  console.log("  ✓ /sitemap.txt");
+
+  console.log("\n📍 Writing RSS + Atom feeds...");
+  fs.writeFileSync(path.join(distDir, "rss.xml"), generateRssXml(safeArticles), "utf8");
+  fs.writeFileSync(path.join(distDir, "atom.xml"), generateAtomXml(safeArticles), "utf8");
+  console.log("  ✓ /rss.xml");
+  console.log("  ✓ /atom.xml");
+
+  console.log("\n🎉 SSG completed successfully.");
 }
 
 main().catch((err) => {
-  console.error('❌ SSG failed:', err);
+  console.error("❌ SSG failed:", err);
   process.exit(1);
 });
