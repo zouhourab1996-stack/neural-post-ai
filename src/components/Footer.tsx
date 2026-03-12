@@ -3,20 +3,20 @@ import { Zap, Mail, Twitter, Facebook, Linkedin, Github, ExternalLink } from "lu
 
 const footerLinks = {
   company: [
-    { name: "About Us", path: "/about" },
-    { name: "Contact", path: "/contact" },
+    { name: "About Us", path: "/about/" },
+    { name: "Contact", path: "/contact/" },
     { name: "Careers", path: "#" },
   ],
   legal: [
-    { name: "Privacy Policy", path: "/privacy" },
-    { name: "Terms of Service", path: "/terms" },
-    { name: "Disclaimer", path: "/disclaimer" },
+    { name: "Privacy Policy", path: "/privacy/" },
+    { name: "Terms of Service", path: "/terms/" },
+    { name: "Disclaimer", path: "/disclaimer/" },
   ],
   categories: [
-    { name: "AI", path: "/category/AI" },
-    { name: "Technology", path: "/category/Tech" },
-    { name: "Business", path: "/category/Business" },
-    { name: "Science", path: "/category/Science" },
+    { name: "AI", path: "/category/AI/" },
+    { name: "Technology", path: "/category/Tech/" },
+    { name: "Business", path: "/category/Business/" },
+    { name: "Science", path: "/category/Science/" },
   ],
 };
 

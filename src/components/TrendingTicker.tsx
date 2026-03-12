@@ -85,7 +85,7 @@ export default function TrendingTicker() {
             {duplicatedKeywords.map((keyword, index) => (
               <Link
                 key={`${keyword.id}-${index}`}
-                to={`/category/${keyword.category}`}
+                to={`/category/${keyword.category}/`}
                 className={`flex-shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm font-medium transition-all hover:scale-105 hover:shadow-md ${getCategoryColor(keyword.category)}`}
               >
                 <span>{getVolumeIndicator(keyword.search_volume)}</span>
