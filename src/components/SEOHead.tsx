@@ -47,8 +47,9 @@ export default function SEOHead({
       }
     };
 
-    // Canonical URL - use clean path, no hash
-    const canonicalUrl = canonical || `${SITE_URL}${window.location.pathname}`;
+    // Canonical URL - normalized with trailing slash for non-root routes
+    const currentPath = window.location.pathname === "/" ? "/" : `${window.location.pathname.replace(/\/+$/, "")}/`;
+    const canonicalUrl = canonical || `${SITE_URL}${currentPath}`;
     let canonicalLink = document.querySelector('link[rel="canonical"]');
     if (canonicalLink) {
       canonicalLink.setAttribute("href", canonicalUrl);
