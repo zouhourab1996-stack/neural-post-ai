@@ -85,6 +85,27 @@ serve(async (req) => {
       .delete()
       .lt('discovered_at', sevenDaysAgo.toISOString().split('T')[0]);
 
+    // Trigger Google Indexing for newly created articles
+    try {
+      const newSlugs = results
+        .filter((r: any) => r.success && r.slug)
+        .map((r: any) => `https://prophetic.pw/article/${r.slug}/`);
+      
+      if (newSlugs.length > 0) {
+        console.log(`Submitting ${newSlugs.length} new URL(s) to Google Indexing...`);
+        await fetch(`${SUPABASE_URL}/functions/v1/google-indexing`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ urls: newSlugs, action: 'URL_UPDATED' }),
+        });
+      }
+    } catch (indexError) {
+      console.error('Google indexing trigger failed (non-critical):', indexError);
+    }
+
     console.log(`[${new Date().toISOString()}] Daily automation completed`);
 
     return new Response(JSON.stringify({ 
