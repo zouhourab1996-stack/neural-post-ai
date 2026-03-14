@@ -148,7 +148,7 @@ export default function Footer() {
               © {new Date().getFullYear()} NeuralPost. All rights reserved.
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              News powered by NewsAPI • Images by Pexels • Analysis by AI
+              Delivering quality news coverage daily.
             </p>
           </div>
           <div className="flex items-center gap-4">
