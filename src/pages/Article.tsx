@@ -359,9 +359,9 @@ export default function Article() {
               </button>
             </div>
 
-            {/* Ad Slot - After Content */}
-            <div className="ad-slot h-32 w-full my-8 rounded-xl">
-              Advertisement Space - Article Bottom
+            {/* AdSense - Article Bottom */}
+            <div className="w-full my-8 rounded-xl overflow-hidden">
+              <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
             </div>
 
             {/* Article Footer */}
