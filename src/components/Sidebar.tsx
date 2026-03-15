@@ -125,9 +125,9 @@ export default function Sidebar({ trendingArticles }: SidebarProps) {
         </form>
       </section>
 
-      {/* Another Ad Slot */}
-      <div className="ad-slot h-64 w-full rounded-xl sticky top-24" aria-label="Advertisement">
-        Advertisement Space - 300x250
+      {/* AdSense - Sidebar Sticky */}
+      <div className="w-full rounded-xl sticky top-24 overflow-hidden" aria-label="Advertisement">
+        <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="rectangle" data-full-width-responsive="true"></ins>
       </div>
     </aside>
   );
