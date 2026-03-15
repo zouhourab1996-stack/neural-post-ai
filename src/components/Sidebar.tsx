@@ -54,9 +54,9 @@ export default function Sidebar({ trendingArticles }: SidebarProps) {
 
   return (
     <aside className="space-y-8" aria-label="Sidebar">
-      {/* Ad Slot - Sidebar */}
-      <div className="ad-slot h-64 w-full rounded-xl" aria-label="Advertisement">
-        Advertisement Space - 300x250
+      {/* AdSense - Sidebar */}
+      <div className="w-full rounded-xl overflow-hidden" aria-label="Advertisement">
+        <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="rectangle" data-full-width-responsive="true"></ins>
       </div>
 
       {/* Trending Articles */}
