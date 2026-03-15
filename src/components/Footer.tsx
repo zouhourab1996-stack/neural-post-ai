@@ -39,10 +39,10 @@ const socialLinks = [
 export default function Footer() {
   return (
     <footer className="bg-card border-t border-border mt-16">
-      {/* Ad Slot - Footer Banner */}
+      {/* AdSense - Footer Banner */}
       <div className="container-main py-4">
-        <div className="ad-slot h-24 w-full max-w-4xl mx-auto">
-          Advertisement Space - 728x90
+        <div className="w-full max-w-4xl mx-auto">
+          <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
         </div>
       </div>
 

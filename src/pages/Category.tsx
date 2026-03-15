@@ -133,9 +133,9 @@ export default function Category() {
                 ))}
               </div>
 
-              {/* Ad Slot - In-feed */}
-              <div className="ad-slot h-32 w-full mb-8 rounded-xl">
-                Advertisement Space - In-Feed Ad
+              {/* AdSense - In-Feed */}
+              <div className="w-full mb-8 rounded-xl overflow-hidden">
+                <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-full-width-responsive="true"></ins>
               </div>
 
               {/* Pagination */}

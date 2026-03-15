@@ -38,9 +38,9 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
-      {/* Ad Slot - Top Banner */}
-      <div className="ad-slot h-16 w-full max-w-4xl mx-auto my-2 hidden md:flex">
-        Advertisement Space - 728x90
+      {/* AdSense - Top Banner */}
+      <div className="w-full max-w-4xl mx-auto my-2 hidden md:flex justify-center">
+        <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
       </div>
 
       <div className="container-main">
