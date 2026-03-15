@@ -42,11 +42,14 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          DEEPSEEK_API_KEY: ENV_SECRET_DEEP_SEEK
+          BING_INDEXNOW_API_KEY: ENV_SECRET_BING_INDEXNOW
 
       - name: Create CNAME for custom domain
         run: echo "prophetic.pw" > ./dist/CNAME
 
       - name: Ensure Bing IndexNow key file exists
+        run: echo "ENV_SECRET_BING_INDEXNOW" > ./dist/ENV_SECRET_BING_INDEXNOW.txt
 
       - name: Copy manifest and static sitemaps
         run: |
