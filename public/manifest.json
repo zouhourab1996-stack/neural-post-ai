@@ -1,0 +1,38 @@
+{
+  "name": "NeuralPost - أخبار الذكاء الاصطناعي",
+  "short_name": "NeuralPost",
+  "description": "تغطية شاملة لأحدث أخبار الذكاء الاصطناعي والتقنية والأعمال والعلوم",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f3f0",
+  "theme_color": "#4A235A",
+  "lang": "ar",
+  "dir": "rtl",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "categories": ["news", "technology"],
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "الذكاء الاصطناعي",
+      "short_name": "AI",
+      "description": "أخبار الذكاء الاصطناعي",
+      "url": "/category/AI/",
+      "icons": [{ "src": "/favicon.ico", "sizes": "any" }]
+    },
+    {
+      "name": "التقنية",
+      "short_name": "Tech",
+      "description": "أخبار التقنية",
+      "url": "/category/Tech/",
+      "icons": [{ "src": "/favicon.ico", "sizes": "any" }]
+    }
+  ]
+}
