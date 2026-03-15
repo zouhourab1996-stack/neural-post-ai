@@ -53,9 +53,9 @@ function ArticleContentWithAds({ content }: { content: string }) {
       <ReactMarkdown>{beforeAd}</ReactMarkdown>
       
       {sections.length > 2 && (
-        <aside className="ad-slot h-28 w-full my-8 rounded-xl" aria-label="Advertisement">
-          Advertisement Space - In-Article Rectangle
-        </aside>
+        <div className="w-full my-8 overflow-hidden" aria-label="Advertisement">
+          <ins className="adsbygoogle" style={{ display: 'block', textAlign: 'center' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="fluid" data-ad-layout="in-article"></ins>
+        </div>
       )}
       
       {afterAd && <ReactMarkdown>{afterAd}</ReactMarkdown>}
