@@ -392,6 +392,10 @@ serve(async (req) => {
 
       console.log(`Article published: ${savedArticle.title}`);
 
+      // Notify Bing IndexNow
+      const articleUrl = `https://prophetic.pw/article/${savedArticle.slug}/`;
+      await notifyBingIndexNow(articleUrl);
+
       return new Response(JSON.stringify({ 
         success: true, 
         article: savedArticle,
