@@ -1,5 +1,4 @@
-# NeuralPost Robots.txt
-# https://prophetic.pw
+# NeuralPost Robots.txt - https://prophetic.pw
 
 User-agent: Googlebot
 Allow: /
@@ -34,19 +33,15 @@ Allow: /
 User-agent: YandexBot
 Allow: /
 
-User-agent: SeznamBot
-Allow: /
-
 User-agent: *
 Allow: /
 Crawl-delay: 2
 
-# Sitemap locations
+# Sitemaps
 Sitemap: https://prophetic.pw/sitemap.xml
-Sitemap: https://prophetic.pw/sitemap.txt
+Sitemap: https://prophetic.pw/sitemap-static.xml
+Sitemap: https://prophetic.pw/sitemap-articles.xml
 
-# Disallow admin and private paths
 Disallow: /api/
 Disallow: /admin/
-Disallow: /*.json$
 Disallow: /404

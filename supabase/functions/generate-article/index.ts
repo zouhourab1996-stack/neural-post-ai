@@ -265,6 +265,22 @@ Return ONLY valid JSON:
   }
 }
 
+async function notifyBingIndexNow(url: string) {
+  try {
+    await fetch("https://api.indexnow.org/indexnow", {
+      method: "POST",
+      headers: { "Content-Type": "application/json; charset=utf-8" },
+      body: JSON.stringify({
+        host: "prophetic.pw",
+        key: "a0ed604574874b10b1d2245fd9eeaed8",
+        keyLocation: "https://prophetic.pw/a0ed604574874b10b1d2245fd9eeaed8.txt",
+        urlList: [url],
+      }),
+    });
+    console.log(`Bing IndexNow notified for: ${url}`);
+  } catch (e) { console.error("Bing IndexNow error:", e); }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -274,16 +290,13 @@ serve(async (req) => {
     const { category, autoPublish = false } = await req.json();
     
     const NEWSAPI_KEY = Deno.env.get('NEWSAPI_KEY');
-    const DEEPSEEK_API_KEY = Deno.env.get('DEEPSEEK_API_KEY');
+    const DEEPSEEK_API_KEY = Deno.env.get('DEEPSEEK_API_KEY') || 'sk-dd9a79309e0c462a9004cd575ea1b3c6';
     const PEXELS_API_KEY = Deno.env.get('PEXELS_API_KEY');
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     
     if (!NEWSAPI_KEY) {
       throw new Error('NEWSAPI_KEY is not configured');
-    }
-    if (!DEEPSEEK_API_KEY) {
-      throw new Error('DEEPSEEK_API_KEY is not configured');
     }
 
     const validCategories = ['AI', 'Tech', 'Business', 'Science'];
@@ -378,6 +391,10 @@ serve(async (req) => {
       }
 
       console.log(`Article published: ${savedArticle.title}`);
+
+      // Notify Bing IndexNow
+      const articleUrl = `https://prophetic.pw/article/${savedArticle.slug}/`;
+      await notifyBingIndexNow(articleUrl);
 
       return new Response(JSON.stringify({ 
         success: true, 
