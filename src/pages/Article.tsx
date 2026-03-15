@@ -316,9 +316,9 @@ export default function Article() {
 
           {/* Article Content */}
           <div className="lg:col-span-7">
-            {/* Ad Slot - Before Content */}
-            <div className="ad-slot h-24 w-full mb-8 rounded-xl">
-              Advertisement Space - Article Top
+            {/* AdSense - Article Top */}
+            <div className="w-full mb-8 rounded-xl overflow-hidden">
+              <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
             </div>
 
             <motion.div
