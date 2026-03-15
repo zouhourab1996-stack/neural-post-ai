@@ -374,9 +374,9 @@ export default function Article() {
 
           {/* Sidebar */}
           <aside className="lg:col-span-4 space-y-8">
-            {/* Ad Slot */}
-            <div className="ad-slot h-64 w-full rounded-xl">
-              Advertisement Space - 300x250
+            {/* AdSense - Sidebar */}
+            <div className="w-full rounded-xl overflow-hidden">
+              <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="rectangle" data-full-width-responsive="true"></ins>
             </div>
 
             {/* Related Articles */}
