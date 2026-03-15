@@ -265,6 +265,22 @@ Return ONLY valid JSON:
   }
 }
 
+async function notifyBingIndexNow(url: string) {
+  try {
+    await fetch("https://api.indexnow.org/indexnow", {
+      method: "POST",
+      headers: { "Content-Type": "application/json; charset=utf-8" },
+      body: JSON.stringify({
+        host: "prophetic.pw",
+        key: "a0ed604574874b10b1d2245fd9eeaed8",
+        keyLocation: "https://prophetic.pw/a0ed604574874b10b1d2245fd9eeaed8.txt",
+        urlList: [url],
+      }),
+    });
+    console.log(`Bing IndexNow notified for: ${url}`);
+  } catch (e) { console.error("Bing IndexNow error:", e); }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
