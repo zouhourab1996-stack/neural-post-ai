@@ -53,9 +53,9 @@ function ArticleContentWithAds({ content }: { content: string }) {
       <ReactMarkdown>{beforeAd}</ReactMarkdown>
       
       {sections.length > 2 && (
-        <aside className="ad-slot h-28 w-full my-8 rounded-xl" aria-label="Advertisement">
-          Advertisement Space - In-Article Rectangle
-        </aside>
+        <div className="w-full my-8 overflow-hidden" aria-label="Advertisement">
+          <ins className="adsbygoogle" style={{ display: 'block', textAlign: 'center' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="fluid" data-ad-layout="in-article"></ins>
+        </div>
       )}
       
       {afterAd && <ReactMarkdown>{afterAd}</ReactMarkdown>}
@@ -316,9 +316,9 @@ export default function Article() {
 
           {/* Article Content */}
           <div className="lg:col-span-7">
-            {/* Ad Slot - Before Content */}
-            <div className="ad-slot h-24 w-full mb-8 rounded-xl">
-              Advertisement Space - Article Top
+            {/* AdSense - Article Top */}
+            <div className="w-full mb-8 rounded-xl overflow-hidden">
+              <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
             </div>
 
             <motion.div
@@ -359,9 +359,9 @@ export default function Article() {
               </button>
             </div>
 
-            {/* Ad Slot - After Content */}
-            <div className="ad-slot h-32 w-full my-8 rounded-xl">
-              Advertisement Space - Article Bottom
+            {/* AdSense - Article Bottom */}
+            <div className="w-full my-8 rounded-xl overflow-hidden">
+              <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
             </div>
 
             {/* Article Footer */}
@@ -374,9 +374,9 @@ export default function Article() {
 
           {/* Sidebar */}
           <aside className="lg:col-span-4 space-y-8">
-            {/* Ad Slot */}
-            <div className="ad-slot h-64 w-full rounded-xl">
-              Advertisement Space - 300x250
+            {/* AdSense - Sidebar */}
+            <div className="w-full rounded-xl overflow-hidden">
+              <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="rectangle" data-full-width-responsive="true"></ins>
             </div>
 
             {/* Related Articles */}
@@ -396,9 +396,9 @@ export default function Article() {
               </div>
             )}
 
-            {/* Sticky Ad */}
-            <div className="ad-slot h-64 w-full rounded-xl sticky top-24">
-              Advertisement Space - 300x250
+            {/* AdSense - Sticky Sidebar */}
+            <div className="w-full rounded-xl sticky top-24 overflow-hidden">
+              <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="rectangle" data-full-width-responsive="true"></ins>
             </div>
           </aside>
         </div>
