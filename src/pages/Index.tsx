@@ -146,10 +146,10 @@ export default function Index() {
                 ))}
               </div>
 
-              {/* In-feed Ad Slot */}
-              <aside className="ad-slot h-32 w-full mb-8 rounded-xl" aria-label="Advertisement">
-                Advertisement Space - In-Feed Ad
-              </aside>
+              {/* AdSense - In-Feed */}
+              <div className="w-full mb-8 rounded-xl overflow-hidden" aria-label="Advertisement">
+                <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-full-width-responsive="true"></ins>
+              </div>
 
               <div className="flex justify-center">
                 <Button variant="outline" size="lg" className="rounded-full">

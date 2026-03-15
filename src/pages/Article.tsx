@@ -396,9 +396,9 @@ export default function Article() {
               </div>
             )}
 
-            {/* Sticky Ad */}
-            <div className="ad-slot h-64 w-full rounded-xl sticky top-24">
-              Advertisement Space - 300x250
+            {/* AdSense - Sticky Sidebar */}
+            <div className="w-full rounded-xl sticky top-24 overflow-hidden">
+              <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="rectangle" data-full-width-responsive="true"></ins>
             </div>
           </aside>
         </div>
