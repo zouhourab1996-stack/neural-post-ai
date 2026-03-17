@@ -459,6 +459,52 @@ function generateSitemapXml(articles) {
   return xml;
 }
 
+function generateArticlesSitemapXml(articles) {
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+`;
+  for (const article of articles) {
+    const articleUrl = toAbsoluteUrl(`/article/${article.slug}`);
+    const articleDate = (article.updated_at || article.created_at || new Date().toISOString()).split("T")[0];
+    xml += `  <url>
+    <loc>${articleUrl}</loc>
+    <lastmod>${articleDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>`;
+    if (article.image_url) {
+      xml += `
+    <image:image>
+      <image:loc>${article.image_url}</image:loc>
+      <image:title>${escapeHtml(article.title)}</image:title>
+    </image:image>`;
+    }
+    xml += `
+  </url>
+`;
+  }
+  xml += `</urlset>`;
+  return xml;
+}
+
+function generateStaticSitemapXml() {
+  const now = new Date().toISOString().split("T")[0];
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>${SITE_URL}/</loc><lastmod>${now}</lastmod><changefreq>hourly</changefreq><priority>1.0</priority></url>
+`;
+  for (const cat of categories) {
+    xml += `  <url><loc>${SITE_URL}/category/${cat}/</loc><lastmod>${now}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>
+`;
+  }
+  for (const page of staticPages) {
+    xml += `  <url><loc>${toAbsoluteUrl(page.route)}</loc><lastmod>${now}</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+`;
+  }
+  xml += `</urlset>`;
+  return xml;
+}
+
 function generateSitemapTxt(articles) {
   const urls = [
     toAbsoluteUrl("/"),
@@ -580,13 +626,37 @@ async function main() {
     console.log(`  ✓ ${normalizeRoute(page.route)}`);
   }
 
-  console.log("\n📍 Writing sitemap.xml...");
-  fs.writeFileSync(path.join(distDir, "sitemap.xml"), generateSitemapXml(safeArticles), "utf8");
+  // Generate sitemap-articles.xml (just articles)
+  console.log("\n📍 Writing sitemap-articles.xml...");
+  fs.writeFileSync(path.join(distDir, "sitemap-articles.xml"), generateArticlesSitemapXml(safeArticles), "utf8");
+  console.log("  ✓ /sitemap-articles.xml");
+
+  // Generate sitemap index (points to static + articles sitemaps)
+  console.log("\n📍 Writing sitemap.xml (index)...");
+  const now = new Date().toISOString().split("T")[0];
+  const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>${SITE_URL}/sitemap-static.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${SITE_URL}/sitemap-articles.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
+</sitemapindex>`;
+  fs.writeFileSync(path.join(distDir, "sitemap.xml"), sitemapIndex, "utf8");
   console.log("  ✓ /sitemap.xml");
 
+  // Also write a flat sitemap for broader compatibility
   console.log("\n📍 Writing sitemap.txt...");
   fs.writeFileSync(path.join(distDir, "sitemap.txt"), generateSitemapTxt(safeArticles), "utf8");
   console.log("  ✓ /sitemap.txt");
+
+  // Write sitemap-static.xml
+  console.log("\n📍 Writing sitemap-static.xml...");
+  fs.writeFileSync(path.join(distDir, "sitemap-static.xml"), generateStaticSitemapXml(), "utf8");
+  console.log("  ✓ /sitemap-static.xml");
 
   console.log("\n📍 Writing RSS + Atom feeds...");
   fs.writeFileSync(path.join(distDir, "rss.xml"), generateRssXml(safeArticles), "utf8");
