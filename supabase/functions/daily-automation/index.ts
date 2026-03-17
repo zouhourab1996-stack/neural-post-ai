@@ -50,8 +50,8 @@ serve(async (req) => {
     results.push({ category: category1, ...result1 });
     console.log(`Article 1 result: ${result1.success ? 'Success' : 'Failed'}`);
 
-    // Wait a bit between requests to avoid rate limiting
-    await new Promise(resolve => setTimeout(resolve, 5000));
+    // Wait between requests to avoid rate limiting and timeouts
+    await new Promise(resolve => setTimeout(resolve, 15000));
 
     // Generate second article
     console.log(`Generating article for category: ${category2}`);
