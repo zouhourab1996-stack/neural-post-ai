@@ -42,8 +42,8 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
-          DEEPSEEK_API_KEY: sk-dd9a79309e0c462a9004cd575ea1b3c6
-          BING_INDEXNOW_API_KEY: a0ed604574874b10b1d2245fd9eeaed8
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          BING_INDEXNOW_API_KEY: ${{ secrets.BING_INDEXNOW_API_KEY }}
 
       - name: Create CNAME for custom domain
         run: echo "prophetic.pw" > ./dist/CNAME
