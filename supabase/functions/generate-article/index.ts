@@ -240,8 +240,10 @@ Return ONLY valid JSON:
         { role: 'user', content: articlePrompt }
       ],
       temperature: 0.75,
-      max_tokens: 4000,
+      max_tokens: 8000,
+      stream: false,
     }),
+    signal: AbortSignal.timeout(120000),
   });
 
   if (!response.ok) {
