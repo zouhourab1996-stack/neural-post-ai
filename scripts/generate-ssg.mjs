@@ -459,6 +459,52 @@ function generateSitemapXml(articles) {
   return xml;
 }
 
+function generateArticlesSitemapXml(articles) {
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+`;
+  for (const article of articles) {
+    const articleUrl = toAbsoluteUrl(`/article/${article.slug}`);
+    const articleDate = (article.updated_at || article.created_at || new Date().toISOString()).split("T")[0];
+    xml += `  <url>
+    <loc>${articleUrl}</loc>
+    <lastmod>${articleDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>`;
+    if (article.image_url) {
+      xml += `
+    <image:image>
+      <image:loc>${article.image_url}</image:loc>
+      <image:title>${escapeHtml(article.title)}</image:title>
+    </image:image>`;
+    }
+    xml += `
+  </url>
+`;
+  }
+  xml += `</urlset>`;
+  return xml;
+}
+
+function generateStaticSitemapXml() {
+  const now = new Date().toISOString().split("T")[0];
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>${SITE_URL}/</loc><lastmod>${now}</lastmod><changefreq>hourly</changefreq><priority>1.0</priority></url>
+`;
+  for (const cat of categories) {
+    xml += `  <url><loc>${SITE_URL}/category/${cat}/</loc><lastmod>${now}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>
+`;
+  }
+  for (const page of staticPages) {
+    xml += `  <url><loc>${toAbsoluteUrl(page.route)}</loc><lastmod>${now}</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+`;
+  }
+  xml += `</urlset>`;
+  return xml;
+}
+
 function generateSitemapTxt(articles) {
   const urls = [
     toAbsoluteUrl("/"),
