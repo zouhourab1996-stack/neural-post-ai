@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { TrendingUp, Flame, ArrowRight } from "lucide-react";
+import { Flame, ArrowRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import ArticleCard from "@/components/ArticleCard";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,7 +19,6 @@ interface SidebarProps {
   trendingArticles: Article[];
 }
 
-// Category colors using design tokens
 const categoryConfig = [
   { name: "AI", color: "bg-blue-500" },
   { name: "Tech", color: "bg-green-500" },
@@ -28,37 +27,24 @@ const categoryConfig = [
 ];
 
 export default function Sidebar({ trendingArticles }: SidebarProps) {
-  // Fetch real category counts
   const { data: categoryCounts } = useQuery({
     queryKey: ["category-counts"],
     queryFn: async () => {
       const counts: Record<string, number> = {};
-      
       for (const cat of categoryConfig) {
         const { count, error } = await supabase
           .from("articles")
           .select("*", { count: "exact", head: true })
           .eq("category", cat.name);
-        
-        if (!error && count !== null) {
-          counts[cat.name] = count;
-        } else {
-          counts[cat.name] = 0;
-        }
+        counts[cat.name] = (!error && count !== null) ? count : 0;
       }
-      
       return counts;
     },
-    staleTime: 60000, // Cache for 1 minute
+    staleTime: 120000,
   });
 
   return (
     <aside className="space-y-8" aria-label="Sidebar">
-      {/* AdSense - Sidebar */}
-      <div className="w-full rounded-xl overflow-hidden" aria-label="Advertisement">
-        <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="rectangle" data-full-width-responsive="true"></ins>
-      </div>
-
       {/* Trending Articles */}
       <section className="bg-card rounded-xl border border-border p-5" aria-labelledby="trending-sidebar-heading">
         <div className="flex items-center gap-2 mb-4">
@@ -124,11 +110,6 @@ export default function Sidebar({ trendingArticles }: SidebarProps) {
           </button>
         </form>
       </section>
-
-      {/* AdSense - Sidebar Sticky */}
-      <div className="w-full rounded-xl sticky top-24 overflow-hidden" aria-label="Advertisement">
-        <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="rectangle" data-full-width-responsive="true"></ins>
-      </div>
     </aside>
   );
 }
