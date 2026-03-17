@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import { Clock, TrendingUp, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
@@ -24,20 +23,13 @@ interface ArticleCardProps {
 
 export default function ArticleCard({ article, variant = "default", index = 0 }: ArticleCardProps) {
   const timeAgo = formatDistanceToNow(new Date(article.created_at), { addSuffix: true });
-
-  // Generate descriptive alt text for SEO
-  const getAltText = () => {
-    return `${article.title} - ${article.category} news article on NeuralPost`;
-  };
-
+  const altText = `${article.title} - ${article.category} news`;
   const fallbackImage = `https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80`;
+  const imgSrc = article.image_url || fallbackImage;
 
   if (variant === "featured") {
     return (
-      <motion.article
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: index * 0.1 }}
+      <article
         className="group relative overflow-hidden rounded-2xl bg-card border border-border shadow-lg"
         itemScope
         itemType="https://schema.org/NewsArticle"
@@ -45,10 +37,13 @@ export default function ArticleCard({ article, variant = "default", index = 0 }:
         <Link to={`/article/${article.slug}/`} className="block" itemProp="url">
           <div className="aspect-[16/10] overflow-hidden">
             <img
-              src={article.image_url || fallbackImage}
-              alt={getAltText()}
-              loading="lazy"
+              src={imgSrc}
+              alt={altText}
+              width={800}
+              height={500}
+              loading={index === 0 ? "eager" : "lazy"}
               decoding="async"
+              fetchPriority={index === 0 ? "high" : "auto"}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               itemProp="image"
             />
@@ -78,25 +73,20 @@ export default function ArticleCard({ article, variant = "default", index = 0 }:
             </div>
           </div>
         </Link>
-      </motion.article>
+      </article>
     );
   }
 
   if (variant === "compact") {
     return (
-      <motion.article
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.3, delay: index * 0.05 }}
-        className="group"
-        itemScope
-        itemType="https://schema.org/NewsArticle"
-      >
+      <article className="group" itemScope itemType="https://schema.org/NewsArticle">
         <Link to={`/article/${article.slug}/`} className="flex items-start gap-4 p-3 rounded-lg hover:bg-muted transition-colors" itemProp="url">
           <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden">
             <img
-              src={article.image_url || `https://images.unsplash.com/photo-1677442136019-21780ecad995?w=200&q=80`}
-              alt={getAltText()}
+              src={imgSrc}
+              alt={altText}
+              width={80}
+              height={80}
               loading="lazy"
               decoding="async"
               className="w-full h-full object-cover"
@@ -115,15 +105,12 @@ export default function ArticleCard({ article, variant = "default", index = 0 }:
             </time>
           </div>
         </Link>
-      </motion.article>
+      </article>
     );
   }
 
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.1 }}
+    <article
       className="group bg-card rounded-xl border border-border overflow-hidden card-hover"
       itemScope
       itemType="https://schema.org/NewsArticle"
@@ -131,8 +118,10 @@ export default function ArticleCard({ article, variant = "default", index = 0 }:
       <Link to={`/article/${article.slug}/`} className="block" itemProp="url">
         <div className="aspect-video overflow-hidden">
           <img
-            src={article.image_url || fallbackImage}
-            alt={getAltText()}
+            src={imgSrc}
+            alt={altText}
+            width={800}
+            height={450}
             loading="lazy"
             decoding="async"
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -166,6 +155,6 @@ export default function ArticleCard({ article, variant = "default", index = 0 }:
           </div>
         </div>
       </Link>
-    </motion.article>
+    </article>
   );
 }

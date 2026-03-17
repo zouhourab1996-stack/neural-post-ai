@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
 import { Sparkles, ArrowRight, Loader2, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ArticleCard from "@/components/ArticleCard";
@@ -23,7 +22,6 @@ interface Article {
   updated_at: string;
 }
 
-// Get formatted current date for freshness signals
 const getCurrentDate = () => {
   return new Date().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -48,11 +46,8 @@ export default function Index() {
     },
   });
 
-  // Update document title for SEO
   useEffect(() => {
     document.title = "NeuralPost - AI-Powered Tech News & Analysis | " + getCurrentDate();
-    
-    // Update meta description
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.setAttribute('content', 
@@ -67,14 +62,8 @@ export default function Index() {
 
   return (
     <main className="container-main py-8" role="main">
-      {/* Hero Section with Freshness Signal */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="text-center mb-12"
-        aria-labelledby="hero-heading"
-      >
+      {/* Hero Section */}
+      <section className="text-center mb-12" aria-labelledby="hero-heading">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
           <Sparkles className="w-4 h-4" aria-hidden="true" />
           AI-Powered News Coverage
@@ -87,12 +76,11 @@ export default function Index() {
           Stay ahead with cutting-edge coverage of artificial intelligence, technology, 
           business innovations, and scientific breakthroughs.
         </p>
-        {/* Date freshness signal for SEO */}
         <div className="inline-flex items-center gap-2 text-sm text-muted-foreground">
           <Calendar className="w-4 h-4" aria-hidden="true" />
           <time dateTime={new Date().toISOString()}>{getCurrentDate()}</time>
         </div>
-      </motion.section>
+      </section>
 
       {/* Featured Articles */}
       {featuredArticles.length > 0 && (
@@ -107,12 +95,7 @@ export default function Index() {
           </div>
           <div className="grid md:grid-cols-2 gap-6">
             {featuredArticles.slice(0, 2).map((article, index) => (
-              <ArticleCard
-                key={article.id}
-                article={article}
-                variant="featured"
-                index={index}
-              />
+              <ArticleCard key={article.id} article={article} variant="featured" index={index} />
             ))}
           </div>
         </section>
@@ -120,7 +103,6 @@ export default function Index() {
 
       {/* Main Content Grid */}
       <div className="grid lg:grid-cols-3 gap-8">
-        {/* Latest News */}
         <section className="lg:col-span-2" aria-labelledby="latest-heading">
           <div className="flex items-center justify-between mb-6">
             <h2 id="latest-heading" className="font-serif text-2xl font-bold">Latest News</h2>
@@ -134,41 +116,23 @@ export default function Index() {
           ) : error ? (
             <div className="text-center py-20" role="alert">
               <p className="text-muted-foreground mb-4">No articles found yet.</p>
-              <p className="text-sm text-muted-foreground">
-                Articles will appear here once generated.
-              </p>
+              <p className="text-sm text-muted-foreground">Articles will appear here once generated.</p>
             </div>
           ) : latestArticles.length > 0 ? (
-            <>
-              <div className="grid md:grid-cols-2 gap-6 mb-8">
-                {latestArticles.map((article, index) => (
-                  <ArticleCard key={article.id} article={article} index={index} />
-                ))}
-              </div>
-
-              {/* AdSense - In-Feed */}
-              <div className="w-full mb-8 rounded-xl overflow-hidden" aria-label="Advertisement">
-                <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-full-width-responsive="true"></ins>
-              </div>
-
-              <div className="flex justify-center">
-                <Button variant="outline" size="lg" className="rounded-full">
-                  Load More Articles <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" />
-                </Button>
-              </div>
-            </>
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              {latestArticles.map((article, index) => (
+                <ArticleCard key={article.id} article={article} index={index} />
+              ))}
+            </div>
           ) : (
             <div className="text-center py-20 bg-card rounded-xl border border-border">
               <Sparkles className="w-12 h-12 text-primary mx-auto mb-4" aria-hidden="true" />
               <h3 className="font-serif text-xl font-semibold mb-2">No Articles Yet</h3>
-              <p className="text-muted-foreground mb-4">
-                Articles will be generated automatically using AI.
-              </p>
+              <p className="text-muted-foreground mb-4">Articles will be generated automatically using AI.</p>
             </div>
           )}
         </section>
 
-        {/* Sidebar */}
         <Sidebar trendingArticles={trendingArticles} />
       </div>
     </main>

@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
-import { Zap, Mail, Twitter, Facebook, Linkedin, Github, ExternalLink } from "lucide-react";
+import { Zap, Mail, ExternalLink } from "lucide-react";
 
 const footerLinks = {
   company: [
     { name: "About Us", path: "/about/" },
     { name: "Contact", path: "/contact/" },
-    { name: "Careers", path: "#" },
   ],
   legal: [
     { name: "Privacy Policy", path: "/privacy/" },
@@ -29,30 +28,16 @@ const newsSources = [
   { name: "MIT Tech Review", url: "https://www.technologyreview.com" },
 ];
 
-const socialLinks = [
-  { icon: Twitter, href: "#", label: "Twitter" },
-  { icon: Facebook, href: "#", label: "Facebook" },
-  { icon: Linkedin, href: "#", label: "LinkedIn" },
-  { icon: Github, href: "#", label: "GitHub" },
-];
-
 export default function Footer() {
   return (
-    <footer className="bg-card border-t border-border mt-16">
-      {/* AdSense - Footer Banner */}
-      <div className="container-main py-4">
-        <div className="w-full max-w-4xl mx-auto">
-          <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
-        </div>
-      </div>
-
+    <footer className="bg-card border-t border-border mt-16" role="contentinfo">
       <div className="container-main py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <Link to="/" className="flex items-center gap-2 mb-4">
+            <Link to="/" className="flex items-center gap-2 mb-4" aria-label="NeuralPost Home">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <Zap className="w-6 h-6 text-primary-foreground" />
+                <Zap className="w-6 h-6 text-primary-foreground" aria-hidden="true" />
               </div>
               <span className="font-serif text-2xl font-bold tracking-tight">
                 Neural<span className="text-primary">Post</span>
@@ -62,7 +47,7 @@ export default function Footer() {
               Your trusted source for AI-powered news covering technology, science, business, and artificial intelligence.
             </p>
             <div className="flex items-center gap-2 text-muted-foreground">
-              <Mail className="w-4 h-4" />
+              <Mail className="w-4 h-4" aria-hidden="true" />
               <a href="mailto:touatihadi0@gmail.com" className="hover:text-primary transition-colors">
                 touatihadi0@gmail.com
               </a>
@@ -70,59 +55,43 @@ export default function Footer() {
           </div>
 
           {/* Company Links */}
-          <div>
+          <nav aria-label="Company links">
             <h4 className="font-semibold text-foreground mb-4">Company</h4>
             <ul className="space-y-2">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
-                  <Link
-                    to={link.path}
-                    className="text-muted-foreground hover:text-primary transition-colors"
-                  >
+                  <Link to={link.path} className="text-muted-foreground hover:text-primary transition-colors">
                     {link.name}
                   </Link>
                 </li>
               ))}
-            </ul>
-          </div>
-
-          {/* Legal Links */}
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">Legal</h4>
-            <ul className="space-y-2">
               {footerLinks.legal.map((link) => (
                 <li key={link.name}>
-                  <Link
-                    to={link.path}
-                    className="text-muted-foreground hover:text-primary transition-colors"
-                  >
+                  <Link to={link.path} className="text-muted-foreground hover:text-primary transition-colors">
                     {link.name}
                   </Link>
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Categories */}
-          <div>
+          <nav aria-label="Categories">
             <h4 className="font-semibold text-foreground mb-4">Categories</h4>
             <ul className="space-y-2">
               {footerLinks.categories.map((link) => (
                 <li key={link.name}>
-                  <Link
-                    to={link.path}
-                    className="text-muted-foreground hover:text-primary transition-colors"
-                  >
+                  <Link to={link.path} className="text-muted-foreground hover:text-primary transition-colors">
                     {link.name}
                   </Link>
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
-          {/* News Sources - For AdSense Credibility */}
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">News Sources</h4>
+          {/* News Sources */}
+          <nav aria-label="News sources">
+            <h4 className="font-semibold text-foreground mb-4">Sources</h4>
             <ul className="space-y-2">
               {newsSources.map((source) => (
                 <li key={source.name}>
@@ -133,36 +102,19 @@ export default function Footer() {
                     className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-1 group"
                   >
                     {source.name}
-                    <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
                   </a>
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="text-center md:text-left">
-            <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} NeuralPost. All rights reserved.
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              Delivering quality news coverage daily.
-            </p>
-          </div>
-          <div className="flex items-center gap-4">
-            {socialLinks.map((social) => (
-              <a
-                key={social.label}
-                href={social.href}
-                aria-label={social.label}
-                className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
-              >
-                <social.icon className="w-5 h-5" />
-              </a>
-            ))}
-          </div>
+        <div className="mt-12 pt-8 border-t border-border text-center">
+          <p className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} NeuralPost. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
