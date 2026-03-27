@@ -1,24 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Your comprehensive SEO-friendly description here">
-    <meta name="keywords" content="keyword1, keyword2, keyword3">
-    <meta name="twitter:description" content="A brief description of your content suited for Twitter sharing">
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebPage",
-        "name": "Page Title",
-        "description": "Page description here",
-        "url": "https://yourwebsite.com/page"
-    }
+    <title>مثال على تطبيق React مع تحسين SEO</title>
+    <meta name="description" content="تطبيق React الكامل مع تحسين SEO وعرض باللغة العربية.">
+    <meta property="og:title" content="مثال على تطبيق React">
+    <meta property="og:description" content="تطبيق React الكامل مع تحسين SEO وعرض باللغة العربية.">
+    <meta property="og:image" content="image_url_here">
+    <meta property="og:url" content="url_here">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="مثال على تطبيق React">
+    <meta name="twitter:description" content="تطبيق React الكامل مع تحسين SEO وعرض باللغة العربية.">
+    <meta name="twitter:image" content="image_url_here">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
     </script>
-    <title>Your Website Title</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "مثال على تطبيق React",
+            "url": "url_here",
+            "image": "image_url_here",
+            "description": "تطبيق React الكامل مع تحسين SEO وعرض باللغة العربية."
+        }
+    </script>
 </head>
 <body>
-    <h1>Welcome to Your Website</h1>
-    <p>Your content goes here.</p>
+    <div id="root"></div>
+    <script src="/path/to/your/react/app.js"></script>
 </body>
 </html>
