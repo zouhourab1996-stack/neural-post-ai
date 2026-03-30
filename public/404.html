@@ -1,21 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 Not Found</title>
-    <script>
-        // Redirect to the SPA with session storage
-        const articleRoute = sessionStorage.getItem('articleRoute');
-        if (articleRoute) {
-            window.location.href = `/${articleRoute}`;
-        } else {
-            window.location.href = '/'; // Fallback to home if no route is found
-        }
-    </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redirecting... - NeuralPost</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://prophetic.pw/" />
+  
+  <!-- GitHub Pages SPA Redirect Script -->
+  <script>
+    (function() {
+      // Store the full path for the SPA to reconstruct
+      const fullPath = window.location.pathname + window.location.search + window.location.hash;
+      sessionStorage.redirect = fullPath;
+      
+      // Redirect to root index
+      window.location.replace(window.location.origin + '/');
+    })();
+  </script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #1B4F72 0%, #4A235A 50%, #1B4F72 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #e2e8f0;
+    }
+    .container {
+      text-align: center;
+      padding: 2rem;
+      max-width: 500px;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(212, 175, 55, 0.3);
+      border-top-color: #D4AF37;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1.5rem;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    h1 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: #f1f5f9;
+    }
+    p {
+      color: #94a3b8;
+      font-size: 0.875rem;
+    }
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      color: #D4AF37;
+    }
+  </style>
 </head>
 <body>
-    <h1>404 Not Found</h1>
-    <p>The page you are looking for does not exist.</p>
+  <noscript>
+    <meta http-equiv="refresh" content="0;url=/" />
+  </noscript>
+  <div class="container">
+    <div class="logo">⚡ NeuralPost</div>
+    <div class="spinner"></div>
+    <h1>Redirecting...</h1>
+    <p>Taking you to the right page</p>
+  </div>
 </body>
 </html>
