@@ -1,11 +1,10 @@
 User-agent: *
 Allow: /
 
-# Block only unnecessary paths
 Disallow: /api/
-Disallow: /admin/
 Disallow: /404
 
-# Sitemaps
 Sitemap: https://prophetic.pw/sitemap.xml
+Sitemap: https://prophetic.pw/sitemap-static.xml
+Sitemap: https://prophetic.pw/sitemap-articles.xml
 Sitemap: https://prophetic.pw/sitemap.txt
