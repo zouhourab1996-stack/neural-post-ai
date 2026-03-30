@@ -1,4 +1,6 @@
 User-agent: *
-Disallow: /private/
-Allow: /public/
-Sitemap: https://www.example.com/sitemap.xml
+Allow: /
+
+Sitemap: https://prophetic.pw/sitemap.xml
+Sitemap: https://prophetic.pw/sitemap-static.xml
+Sitemap: https://prophetic.pw/sitemap-articles.xml
