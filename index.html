@@ -71,6 +71,18 @@
       </div>
     </noscript>
     <div id="root"></div>
+    <script>
+      // GitHub Pages SPA: restore path from 404.html redirect
+      (function(){
+        var r = sessionStorage.getItem('redirect');
+        if (r) {
+          sessionStorage.removeItem('redirect');
+          if (r !== window.location.pathname) {
+            window.history.replaceState(null, '', r);
+          }
+        }
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
     <script>
       window.addEventListener('load', function() {
