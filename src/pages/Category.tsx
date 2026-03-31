@@ -7,6 +7,7 @@ import ArticleCard from "@/components/ArticleCard";
 import Sidebar from "@/components/Sidebar";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
+import SEOHead from "@/components/SEOHead";
 
 interface Article {
   id: string;
@@ -67,6 +68,9 @@ export default function Category() {
 
   const validCategories = ["AI", "Tech", "Business", "Science"];
   const isValidCategory = category && validCategories.includes(category);
+  const categorySeoDescription = isValidCategory
+    ? `${categoryDescriptions[category] || `Latest ${category} news and updates.`} Read breaking ${category} stories, trend analysis, and long-form reporting from NeuralPost.`
+    : "Latest news and analysis from NeuralPost.";
 
   if (!isValidCategory) {
     return (
@@ -86,7 +90,14 @@ export default function Category() {
   }
 
   return (
-    <div className="container-main py-8">
+    <>
+      <SEOHead
+        title={`${category} News & Analysis`}
+        description={categorySeoDescription}
+        canonical={`https://prophetic.pw/category/${category}/`}
+      />
+
+      <div className="container-main py-8">
       {/* Category Header */}
       <motion.header
         initial={{ opacity: 0, y: 20 }}
@@ -165,6 +176,7 @@ export default function Category() {
         {/* Sidebar */}
         <Sidebar trendingArticles={trendingArticles || []} />
       </div>
-    </div>
+      </div>
+    </>
   );
 }

@@ -22,6 +22,52 @@ function getISODate(): string {
   return new Date().toISOString().split('T')[0];
 }
 
+const fallbackImages: Record<string, string> = {
+  AI: 'https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  Tech: 'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  Business: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  Science: 'https://images.pexels.com/photos/256262/pexels-photo-256262.jpeg?auto=compress&cs=tinysrgb&w=1200',
+};
+
+function normalizeHeadlineKey(value: string): string {
+  return value.toLowerCase().replace(/\s+/g, ' ').trim().slice(0, 100);
+}
+
+async function selectFreshHeadline(
+  headlines: { title: string; source: string; url: string; description: string }[],
+  category: string,
+  supabaseUrl?: string | null,
+  serviceRoleKey?: string | null,
+) {
+  if (!supabaseUrl || !serviceRoleKey) {
+    return headlines[0];
+  }
+
+  try {
+    const adminClient = createClient(supabaseUrl, serviceRoleKey);
+    const recentDate = new Date();
+    recentDate.setDate(recentDate.getDate() - 2);
+
+    const { data, error } = await adminClient
+      .from('trending_keywords')
+      .select('keyword')
+      .eq('category', category)
+      .gte('discovered_at', recentDate.toISOString().split('T')[0])
+      .limit(100);
+
+    if (error) {
+      console.error('Failed to load recent keyword history:', error);
+      return headlines[0];
+    }
+
+    const usedHeadlines = new Set((data || []).map((item: any) => normalizeHeadlineKey(item.keyword || '')));
+    return headlines.find((headline) => !usedHeadlines.has(normalizeHeadlineKey(headline.title))) || headlines[0];
+  } catch (error) {
+    console.error('Headline freshness selection failed:', error);
+    return headlines[0];
+  }
+}
+
 // Fetch trending headlines from NewsAPI
 async function fetchNewsAPIHeadlines(category: string, apiKey: string): Promise<{
   headlines: { title: string; source: string; url: string; description: string }[];
@@ -180,12 +226,12 @@ BREAKING NEWS HEADLINE: "${headline}"
 Source: ${source}
 Brief: ${description}
 
-TASK: Write a comprehensive, in-depth analytical article about this breaking news.
+TASK: Write a comprehensive, in-depth analytical article about this breaking news in fluent, natural English.
 
 MANDATORY SEO REQUIREMENTS:
 1. Primary Keyword: "${primaryKeyword}"
 2. Secondary Keywords to naturally include: ${keywordList}
-3. The article MUST be at least 1,500 words (this is critical!)
+3. The article MUST be at least 1,800 words (this is critical!)
 4. Include the primary keyword in:
    - The H1 title (first 60 characters)
    - The first paragraph (within first 100 words)
@@ -205,7 +251,7 @@ WRITING STYLE:
 - Break up text with bullet points, quotes, and subheadings
 - Make it engaging and readable for a general audience
 
-STRUCTURE (Minimum 1,500 words):
+STRUCTURE (Minimum 1,800 words):
 1. **Headline (H1)**: SEO-optimized, includes primary keyword, under 60 chars
 2. **Hook/Lead**: Attention-grabbing first paragraph with keyword
 3. **Context Section (H2)**: Background and why this matters now
@@ -235,7 +281,7 @@ Return ONLY valid JSON:
       messages: [
         { 
           role: 'system', 
-          content: 'You are an elite tech journalist. Write comprehensive, SEO-optimized articles that are engaging and human-like. Always respond with valid JSON. Articles must be at least 1,500 words.' 
+          content: 'You are an elite tech journalist. Write comprehensive, SEO-optimized articles that are engaging and human-like. Always respond with valid JSON. Articles must be at least 1,800 words and written in natural English.' 
         },
         { role: 'user', content: articlePrompt }
       ],
@@ -292,13 +338,17 @@ serve(async (req) => {
     const { category, autoPublish = false } = await req.json();
     
     const NEWSAPI_KEY = Deno.env.get('NEWSAPI_KEY');
-    const DEEPSEEK_API_KEY = Deno.env.get('DEEPSEEK_API_KEY') || 'sk-dd9a79309e0c462a9004cd575ea1b3c6';
+      const DEEPSEEK_API_KEY = Deno.env.get('DEEPSEEK_API_KEY');
     const PEXELS_API_KEY = Deno.env.get('PEXELS_API_KEY');
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     
     if (!NEWSAPI_KEY) {
       throw new Error('NEWSAPI_KEY is not configured');
+    }
+
+    if (!DEEPSEEK_API_KEY) {
+      throw new Error('DEEPSEEK_API_KEY is not configured');
     }
 
     const validCategories = ['AI', 'Tech', 'Business', 'Science'];
@@ -314,7 +364,12 @@ serve(async (req) => {
     }
 
     // Pick the top headline for article generation
-    const selectedHeadline = headlines[0];
+    const selectedHeadline = await selectFreshHeadline(
+      headlines,
+      selectedCategory,
+      SUPABASE_URL,
+      SUPABASE_SERVICE_ROLE_KEY,
+    );
     console.log(`Selected headline: ${selectedHeadline.title} (${selectedHeadline.source})`);
 
     // Phase 2: Discover SEO Keywords for the headline
@@ -330,6 +385,11 @@ serve(async (req) => {
       selectedCategory, 
       DEEPSEEK_API_KEY
     );
+
+    const wordCount = String(article.content || '').trim().split(/\s+/).filter(Boolean).length;
+    if (wordCount < 1300) {
+      throw new Error(`Generated article too short: ${wordCount} words`);
+    }
     
     // Phase 4: Fetch image from Pexels
     let imageUrl = null;
@@ -338,11 +398,27 @@ serve(async (req) => {
       console.log(`Fetched image for query "${article.image_query}": ${imageUrl ? 'Success' : 'Failed'}`);
     }
 
+    if (!imageUrl) {
+      imageUrl = fallbackImages[selectedCategory] || fallbackImages.AI;
+    }
+
+    const normalizedSlug = String(article.slug || article.title || selectedHeadline.title)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .replace(/-{2,}/g, '-');
+
+    const datedSlug = normalizedSlug.endsWith(getISODate())
+      ? normalizedSlug
+      : `${normalizedSlug}-${getISODate()}`;
+
     // Prepare the final article object
     const finalArticle = {
-      title: article.title,
-      slug: article.slug + '-' + getISODate(),
-      meta_description: article.meta_description,
+      title: String(article.title || selectedHeadline.title).trim(),
+      slug: datedSlug,
+      meta_description: String(article.meta_description || selectedHeadline.description || selectedHeadline.title)
+        .trim()
+        .slice(0, 160),
       content: article.content,
       category: selectedCategory,
       image_url: imageUrl,

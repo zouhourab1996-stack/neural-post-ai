@@ -134,12 +134,12 @@ export default function Article() {
       const articleSchema = generateArticleSchema({
         title: article.title,
         description: article.meta_description,
-        image: article.image_url || "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1600&q=80",
+        image: article.image_url || "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1200",
         slug: article.slug,
         publishedTime: article.created_at,
         modifiedTime: article.updated_at,
         category: article.category,
-        author: "NeuralPost AI"
+        author: "NeuralPost Editorial Team"
       });
 
       // Inject Breadcrumb JSON-LD schema
@@ -242,6 +242,11 @@ export default function Article() {
           <img
             src={article.image_url || `https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1600&q=80`}
             alt={article.title}
+            width={1600}
+            height={900}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />

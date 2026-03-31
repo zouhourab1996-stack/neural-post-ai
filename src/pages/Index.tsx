@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Sparkles, ArrowRight, Loader2, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,7 @@ import ArticleCard from "@/components/ArticleCard";
 import Sidebar from "@/components/Sidebar";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
+import SEOHead from "@/components/SEOHead";
 
 interface Article {
   id: string;
@@ -32,6 +32,8 @@ const getCurrentDate = () => {
 };
 
 export default function Index() {
+  const today = getCurrentDate();
+
   const { data: articles, isLoading, error } = useQuery({
     queryKey: ["articles"],
     queryFn: async () => {
@@ -59,9 +61,17 @@ export default function Index() {
   const featuredArticles = articles?.filter((a) => a.is_featured) || [];
   const trendingArticles = articles?.filter((a) => a.is_trending) || [];
   const latestArticles = articles?.slice(0, 12) || [];
+  const homepageDescription = `Breaking AI, technology, business, and science news for ${today}. Read in-depth reporting, human-style analysis, and daily trend coverage from NeuralPost.`;
 
   return (
-    <main className="container-main py-8" role="main">
+    <>
+      <SEOHead
+        title="AI, Tech, Business & Science News"
+        description={homepageDescription}
+        canonical="https://prophetic.pw/"
+      />
+
+      <main className="container-main py-8" role="main">
       {/* Hero Section */}
       <section className="text-center mb-12" aria-labelledby="hero-heading">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
@@ -78,7 +88,7 @@ export default function Index() {
         </p>
         <div className="inline-flex items-center gap-2 text-sm text-muted-foreground">
           <Calendar className="w-4 h-4" aria-hidden="true" />
-          <time dateTime={new Date().toISOString()}>{getCurrentDate()}</time>
+          <time dateTime={new Date().toISOString()}>{today}</time>
         </div>
       </section>
 
@@ -135,6 +145,7 @@ export default function Index() {
 
         <Sidebar trendingArticles={trendingArticles} />
       </div>
-    </main>
+      </main>
+    </>
   );
 }
