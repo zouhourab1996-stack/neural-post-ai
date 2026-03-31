@@ -1,10 +1,7 @@
 User-agent: *
 Allow: /
 
-Disallow: /api/
-Disallow: /404
-
+Host: prophetic.pw
 Sitemap: https://prophetic.pw/sitemap.xml
 Sitemap: https://prophetic.pw/sitemap-static.xml
 Sitemap: https://prophetic.pw/sitemap-articles.xml
-Sitemap: https://prophetic.pw/sitemap.txt

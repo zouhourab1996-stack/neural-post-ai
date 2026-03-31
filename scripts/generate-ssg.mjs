@@ -194,6 +194,8 @@ function baseHead({
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeHtml(description)}" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="author" content="NeuralPost Editorial Team" />
+  <meta name="language" content="en" />
   <link rel="canonical" href="${canonical}" />
 
   <meta property="og:type" content="${type}" />
@@ -202,11 +204,13 @@ function baseHead({
   <meta property="og:url" content="${canonical}" />
   <meta property="og:image" content="${image}" />
   <meta property="og:site_name" content="${SITE_NAME}" />
+  <meta property="og:locale" content="en_US" />
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${escapeHtml(title)}" />
   <meta name="twitter:description" content="${escapeHtml(description)}" />
   <meta name="twitter:image" content="${image}" />
+  <link rel="alternate" type="application/rss+xml" title="${SITE_NAME} RSS Feed" href="${SITE_URL}/rss.xml" />
 
   <meta name="google-site-verification" content="LinTLA24lUQNkp3-Jnmx63UIro3uY1tF8Y9fN-XMrmk" />
   <meta name="msvalidate.01" content="A5E7F9B2C3D4E5F6G7H8I9J0K1L2M3N4" />
@@ -215,6 +219,18 @@ function baseHead({
 }
 
 function shellTemplate({ head, heading, body }) {
+  const navLinks = [
+    { href: `${SITE_URL}/`, label: "Home" },
+    ...categories.map((category) => ({
+      href: toAbsoluteUrl(`/category/${category}`),
+      label: category,
+    })),
+    { href: `${SITE_URL}/about/`, label: "About" },
+    { href: `${SITE_URL}/contact/`, label: "Contact" },
+  ]
+    .map((item) => `<a href="${item.href}">${item.label}</a>`)
+    .join("\n");
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -230,10 +246,61 @@ ${head}
   .wrap {
     width: min(920px, 92vw);
     margin: 0 auto;
+  }
+  .page-wrap {
     padding: 2rem 0 4rem;
+  }
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(16px);
+    background: rgba(11, 16, 32, 0.9);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+  }
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 0;
+  }
+  .brand {
+    color: #f8fafc;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .brand span {
+    color: #fbbf24;
+  }
+  .nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .6rem;
+  }
+  .nav a {
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 999px;
+    padding: .45rem .8rem;
+    font-size: .92rem;
+    color: #cbd5e1;
+    background: rgba(15, 23, 42, 0.72);
   }
   a { color: #93c5fd; text-decoration: none; }
   a:hover { text-decoration: underline; }
+  .breadcrumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .45rem;
+    color: #94a3b8;
+    font-size: .92rem;
+    margin-bottom: 1rem;
+  }
+  .breadcrumbs span:last-child {
+    color: #e2e8f0;
+  }
   .tag {
     display: inline-block;
     background: #1f2937;
@@ -265,10 +332,39 @@ ${head}
     border-radius: .7rem;
     font-weight: 600;
   }
+  .related-links {
+    margin-top: 2.4rem;
+    padding: 1.25rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    background: rgba(15, 23, 42, 0.66);
+  }
+  .related-links h2 {
+    margin-top: 0;
+    margin-bottom: .8rem;
+  }
+  .related-links ul {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+  @media (max-width: 720px) {
+    .site-header__inner {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
 </style>
 </head>
 <body>
-  <main class="wrap">
+  <header class="site-header">
+    <div class="wrap site-header__inner">
+      <a class="brand" href="${SITE_URL}/">Neural<span>Post</span></a>
+      <nav class="nav" aria-label="Main navigation">
+        ${navLinks}
+      </nav>
+    </div>
+  </header>
+  <main class="wrap page-wrap">
     <h1>${heading}</h1>
     ${body}
     <a class="home-link" href="${SITE_URL}/">← Back to homepage</a>
@@ -294,7 +390,7 @@ function generateArticleSchema(article, articleUrl) {
     dateModified: article.updated_at,
     author: {
       "@type": "Person",
-      name: "NeuralPost AI",
+      name: "NeuralPost Editorial Team",
       url: `${SITE_URL}/about/`,
     },
     publisher: {
@@ -315,11 +411,37 @@ function generateArticleSchema(article, articleUrl) {
   };
 }
 
-function generateArticleHtml(article) {
+function generateBreadcrumbSchema(items) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  };
+}
+
+function generateArticleHtml(article, relatedArticles = []) {
   const articleUrl = toAbsoluteUrl(`/article/${article.slug}`);
+  const categoryUrl = toAbsoluteUrl(`/category/${article.category}`);
   const title = `${article.title} | ${SITE_NAME}`;
   const description = normalizeDescription(article.meta_description);
   const imageUrl = article.image_url || DEFAULT_IMAGE;
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Home", url: `${SITE_URL}/` },
+    { name: article.category, url: categoryUrl },
+    { name: article.title, url: articleUrl },
+  ]);
+  const relatedLinks = relatedArticles
+    .slice(0, 4)
+    .map(
+      (relatedArticle) =>
+        `<li><a href="${toAbsoluteUrl(`/article/${relatedArticle.slug}`)}">${escapeHtml(relatedArticle.title)}</a></li>`,
+    )
+    .join("");
 
   const head = `${baseHead({
     title,
@@ -331,19 +453,33 @@ function generateArticleHtml(article) {
   <meta property="article:published_time" content="${article.created_at}" />
   <meta property="article:modified_time" content="${article.updated_at}" />
   <meta property="article:section" content="${escapeHtml(article.category)}" />
+  <meta property="article:author" content="NeuralPost Editorial Team" />
   <script type="application/ld+json">${JSON.stringify(
     generateArticleSchema(article, articleUrl),
-  )}</script>`;
+  )}</script>
+  <script type="application/ld+json">${JSON.stringify(breadcrumbSchema)}</script>`;
 
   const body = `
-    <div class="tag">${escapeHtml(article.category)}</div>
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="${SITE_URL}/">Home</a>
+      <span>/</span>
+      <a href="${categoryUrl}">${escapeHtml(article.category)}</a>
+      <span>/</span>
+      <span>${escapeHtml(article.title)}</span>
+    </nav>
+    <a class="tag" href="${categoryUrl}">${escapeHtml(article.category)}</a>
     <p class="meta">Published: ${new Date(article.created_at).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
+    })} • Updated: ${new Date(article.updated_at || article.created_at).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     })}</p>
-    <img class="hero-image" src="${imageUrl}" alt="${escapeHtml(article.title)}" loading="lazy" />
+    <img class="hero-image" src="${imageUrl}" alt="${escapeHtml(article.title)}" loading="eager" width="1200" height="675" />
     ${markdownToHtml(article.content || article.meta_description || "")}
+    ${relatedLinks ? `<section class="related-links"><h2>More ${escapeHtml(article.category)} coverage</h2><ul>${relatedLinks}</ul></section>` : ""}
   `;
 
   return shellTemplate({
@@ -609,7 +745,10 @@ async function main() {
 
   console.log("📝 Generating article pages...");
   for (const article of safeArticles) {
-    writeRouteIndex(distDir, `/article/${article.slug}`, generateArticleHtml(article));
+    const relatedArticles = safeArticles.filter(
+      (candidate) => candidate.slug !== article.slug && candidate.category === article.category,
+    );
+    writeRouteIndex(distDir, `/article/${article.slug}`, generateArticleHtml(article, relatedArticles));
     console.log(`  ✓ /article/${article.slug}/`);
   }
 
