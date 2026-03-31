@@ -25,7 +25,7 @@ export default function SEOHead({
   type = "website",
   publishedTime,
   modifiedTime,
-  author = "NeuralPost",
+  author = "NeuralPost Editorial Team",
   section,
   tags = [],
 }: SEOHeadProps) {
@@ -63,6 +63,9 @@ export default function SEOHead({
     // Basic meta tags
     setMeta("description", description);
     setMeta("author", author);
+    setMeta("robots", "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1");
+    setMeta("googlebot", "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1");
+    setMeta("bingbot", "index, follow");
 
     // Open Graph
     setMeta("og:title", title, true);
@@ -71,6 +74,7 @@ export default function SEOHead({
     setMeta("og:image", image, true);
     setMeta("og:type", type, true);
     setMeta("og:site_name", SITE_NAME, true);
+    setMeta("og:locale", "en_US", true);
 
     // Twitter Card
     setMeta("twitter:title", title);
@@ -134,7 +138,7 @@ export function generateArticleSchema(article: {
     "dateModified": article.modifiedTime,
     "author": {
       "@type": "Person",
-      "name": article.author || "NeuralPost AI",
+      "name": article.author || "NeuralPost Editorial Team",
       "url": `${SITE_URL}/about`
     },
     "publisher": {
