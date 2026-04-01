@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Sparkles, ArrowRight, Loader2, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
