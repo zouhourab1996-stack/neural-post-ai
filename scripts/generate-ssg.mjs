@@ -125,6 +125,10 @@ function escapeHtml(text = "") {
     .replace(/'/g, "&#039;");
 }
 
+function escapeXml(text = "") {
+  return escapeHtml(text);
+}
+
 function stripMarkdown(markdown = "") {
   return String(markdown)
     .replace(/```[\s\S]*?```/g, " ")
@@ -179,6 +183,14 @@ function normalizeDescription(description = "", minLength = 110, maxLength = 155
   }
 
   return clean;
+}
+
+function formatPageTitle(title = "", maxLength = 60) {
+  const suffix = ` | ${SITE_NAME}`;
+  const clean = stripMarkdown(title).replace(/\s+/g, " ").trim() || SITE_NAME;
+  const allowed = Math.max(20, maxLength - suffix.length);
+  const trimmed = clean.length > allowed ? `${clean.slice(0, allowed - 1).trim()}…` : clean;
+  return `${trimmed}${suffix}`;
 }
 
 function baseHead({
@@ -427,7 +439,7 @@ function generateBreadcrumbSchema(items) {
 function generateArticleHtml(article, relatedArticles = []) {
   const articleUrl = toAbsoluteUrl(`/article/${article.slug}`);
   const categoryUrl = toAbsoluteUrl(`/category/${article.category}`);
-  const title = `${article.title} | ${SITE_NAME}`;
+  const title = formatPageTitle(article.title);
   const description = normalizeDescription(article.meta_description);
   const imageUrl = article.image_url || DEFAULT_IMAGE;
   const breadcrumbSchema = generateBreadcrumbSchema([
@@ -560,7 +572,7 @@ function generateSitemapXml(articles) {
 
   for (const url of staticUrls) {
     xml += `  <url>
-    <loc>${url.loc}</loc>
+    <loc>${escapeXml(url.loc)}</loc>
     <lastmod>${now}</lastmod>
     <changefreq>${url.changefreq}</changefreq>
     <priority>${url.priority}</priority>
@@ -573,7 +585,7 @@ function generateSitemapXml(articles) {
     const articleDate = (article.updated_at || article.created_at || new Date().toISOString()).split("T")[0];
 
     xml += `  <url>
-    <loc>${articleUrl}</loc>
+    <loc>${escapeXml(articleUrl)}</loc>
     <lastmod>${articleDate}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>`;
@@ -581,8 +593,8 @@ function generateSitemapXml(articles) {
     if (article.image_url) {
       xml += `
     <image:image>
-      <image:loc>${article.image_url}</image:loc>
-      <image:title>${escapeHtml(article.title)}</image:title>
+      <image:loc>${escapeXml(article.image_url)}</image:loc>
+      <image:title>${escapeXml(article.title)}</image:title>
     </image:image>`;
     }
 
@@ -604,15 +616,15 @@ function generateArticlesSitemapXml(articles) {
     const articleUrl = toAbsoluteUrl(`/article/${article.slug}`);
     const articleDate = (article.updated_at || article.created_at || new Date().toISOString()).split("T")[0];
     xml += `  <url>
-    <loc>${articleUrl}</loc>
+    <loc>${escapeXml(articleUrl)}</loc>
     <lastmod>${articleDate}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>`;
     if (article.image_url) {
       xml += `
     <image:image>
-      <image:loc>${article.image_url}</image:loc>
-      <image:title>${escapeHtml(article.title)}</image:title>
+      <image:loc>${escapeXml(article.image_url)}</image:loc>
+      <image:title>${escapeXml(article.title)}</image:title>
     </image:image>`;
     }
     xml += `
@@ -667,8 +679,8 @@ function generateRssXml(articles) {
       const description = normalizeDescription(article.meta_description);
       return `<item>
       <title>${escapeHtml(article.title)}</title>
-      <link>${url}</link>
-      <guid isPermaLink="true">${url}</guid>
+      <link>${escapeXml(url)}</link>
+      <guid isPermaLink="true">${escapeXml(url)}</guid>
       <pubDate>${pubDate}</pubDate>
       <category>${escapeHtml(article.category)}</category>
       <description><![CDATA[${escapeCData(description)}]]></description>
@@ -702,8 +714,8 @@ function generateAtomXml(articles) {
 
       return `<entry>
     <title>${escapeHtml(article.title)}</title>
-    <link href="${url}" />
-    <id>${url}</id>
+    <link href="${escapeXml(url)}" />
+    <id>${escapeXml(url)}</id>
     <published>${published}</published>
     <updated>${modified}</updated>
     <category term="${escapeHtml(article.category)}" />
