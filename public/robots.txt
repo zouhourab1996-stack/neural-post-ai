@@ -1,9 +1,7 @@
 User-agent: *
 Allow: /
 
+Host: prophetic.pw
 Sitemap: https://prophetic.pw/sitemap.xml
-Sitemap: https://prophetic.pw/sitemap.xml?indexnow
-
-# Use IndexNow to notify search engines about content changes
-# Bing, Yandex, and other search engines support this.
-IndexNow: https://prophetic.pw/sitemap.xml
+Sitemap: https://prophetic.pw/sitemap-static.xml
+Sitemap: https://prophetic.pw/sitemap-articles.xml
