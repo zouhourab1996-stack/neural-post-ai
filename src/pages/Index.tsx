@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Sparkles, ArrowRight, Loader2, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -48,16 +47,6 @@ export default function Index() {
       return data as Article[];
     },
   });
-
-  useEffect(() => {
-    document.title = "NeuralPost - AI-Powered Tech News & Analysis | " + getCurrentDate();
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 
-        `Latest AI, technology, and business news for ${getCurrentDate()}. Expert analysis and breaking tech stories powered by artificial intelligence.`
-      );
-    }
-  }, []);
 
   const featuredArticles = articles?.filter((a) => a.is_featured) || [];
   const trendingArticles = articles?.filter((a) => a.is_trending) || [];
