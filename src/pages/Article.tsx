@@ -37,6 +37,14 @@ interface Article {
   updated_at: string;
 }
 
+const buildDocumentTitle = (title: string) => {
+  const suffix = " | NeuralPost";
+  const clean = title.replace(/\s+/g, " ").trim();
+  const allowed = Math.max(20, 60 - suffix.length);
+  const trimmed = clean.length > allowed ? `${clean.slice(0, allowed - 1).trim()}…` : clean;
+  return `${trimmed}${suffix}`;
+};
+
 // Component to insert ads within article content
 function ArticleContentWithAds({ content }: { content: string }) {
   // Split content by double newlines (paragraphs in markdown)
@@ -101,7 +109,7 @@ export default function Article() {
   // Update meta tags and inject JSON-LD schema for SEO
   useEffect(() => {
     if (article) {
-      document.title = `${article.title} | NeuralPost`;
+      document.title = buildDocumentTitle(article.title);
 
       const canonicalUrl = `${window.location.origin}/article/${article.slug}/`;
       
