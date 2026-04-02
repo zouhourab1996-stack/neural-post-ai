@@ -124,6 +124,35 @@ export default function Index() {
         </section>
       )}
 
+      {/* Top Topics */}
+      <section className="mb-12" aria-labelledby="topics-heading">
+        <div className="flex items-center justify-between mb-6">
+          <h2 id="topics-heading" className="font-serif text-2xl font-bold">Top Topics</h2>
+          <Link to="/topics/">
+            <Button variant="ghost" className="text-primary">
+              Explore topics <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
+            </Button>
+          </Link>
+        </div>
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="bg-card rounded-xl border border-border p-6">
+            <h3 className="font-serif text-lg font-semibold mb-3">AI & Automation</h3>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><Link to="/category/AI/" className="hover:text-primary">AI News & Analysis</Link></li>
+              <li><Link to="/ai-policy/" className="hover:text-primary">AI Policy & Transparency</Link></li>
+            </ul>
+          </div>
+          <div className="bg-card rounded-xl border border-border p-6">
+            <h3 className="font-serif text-lg font-semibold mb-3">Tech, Business, Science</h3>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><Link to="/category/Tech/" className="hover:text-primary">Tech Coverage</Link></li>
+              <li><Link to="/category/Business/" className="hover:text-primary">Business Trends</Link></li>
+              <li><Link to="/category/Science/" className="hover:text-primary">Science Discoveries</Link></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
       {/* Main Content Grid */}
       <div className="grid lg:grid-cols-3 gap-8">
         <section className="lg:col-span-2" aria-labelledby="latest-heading">
