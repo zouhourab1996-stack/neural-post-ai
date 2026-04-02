@@ -55,6 +55,7 @@ export default function Index() {
     .filter((a) => (a.views || 0) > 0)
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 6);
+  const lastUpdated = articles?.[0]?.created_at || new Date().toISOString();
   const homepageDescription = `Breaking AI, technology, business, and science news for ${today}. Read in-depth reporting, human-style analysis, and daily trend coverage from NeuralPost.`;
 
   return (
@@ -84,6 +85,10 @@ export default function Index() {
           <Calendar className="w-4 h-4" aria-hidden="true" />
           <time dateTime={new Date().toISOString()}>{today}</time>
         </div>
+        <p className="text-sm text-muted-foreground mt-2">
+          Publishing schedule: 2 articles daily • Last update{" "}
+          <time dateTime={lastUpdated}>{new Date(lastUpdated).toLocaleDateString("en-US")}</time>
+        </p>
       </section>
 
       {/* Featured Articles */}
@@ -185,7 +190,7 @@ export default function Index() {
           )}
         </section>
 
-        <Sidebar trendingArticles={trendingArticles} />
+        <Sidebar trendingArticles={trendingArticles} lastUpdated={lastUpdated} />
       </div>
       </main>
     </>

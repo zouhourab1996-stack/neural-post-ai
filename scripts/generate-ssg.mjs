@@ -107,6 +107,13 @@ const staticPages = [
     content: "",
   },
   {
+    route: "/guides",
+    title: "Top Guides - NeuralPost",
+    description: "Evergreen guides and practical playbooks for AI, tech, business, and science readers.",
+    heading: "Top Guides",
+    content: "",
+  },
+  {
     route: "/sitemap",
     title: "Sitemap - NeuralPost",
     description: "Browse all categories and recent NeuralPost articles.",
@@ -281,6 +288,7 @@ function shellTemplate({ head, heading, body }) {
     { href: `${SITE_URL}/contact/`, label: "Contact" },
     { href: `${SITE_URL}/sitemap/`, label: "Sitemap" },
     { href: `${SITE_URL}/topics/`, label: "Top Topics" },
+    { href: `${SITE_URL}/guides/`, label: "Top Guides" },
   ]
     .map((item) => `<a href="${item.href}">${item.label}</a>`)
     .join("\n");
@@ -450,6 +458,7 @@ ${head}
         <a href="${SITE_URL}/ai-policy/">AI Policy</a>
         <a href="${SITE_URL}/sitemap/">Sitemap</a>
         <a href="${SITE_URL}/topics/">Top Topics</a>
+        <a href="${SITE_URL}/guides/">Top Guides</a>
         <a href="${SITE_URL}/rss.xml">RSS</a>
       </div>
       <div>© ${new Date().getFullYear()} ${SITE_NAME}. All rights reserved.</div>
@@ -731,6 +740,100 @@ function generateTopicsHtml(articles) {
   });
 }
 
+function generateGuidesHtml(articles) {
+  const url = toAbsoluteUrl("/guides");
+  const head = baseHead({
+    title: `Top Guides | ${SITE_NAME}`,
+    description: "Evergreen guides and practical playbooks to help you navigate AI, tech, business, and science.",
+    canonical: url,
+  });
+
+  const updatedDate = new Date().toISOString().split("T")[0];
+
+  const sections = [
+    {
+      title: "AI in 2026: A Practical Reader's Guide",
+      points: [
+        "What AI can and cannot do in everyday workflows",
+        "How to evaluate AI tools without hype",
+        "Safety, bias, and transparency basics",
+        "A simple checklist for adopting AI responsibly",
+      ],
+      links: [
+        { label: "AI News & Analysis", href: toAbsoluteUrl("/category/AI") },
+        { label: "AI Policy & Transparency", href: toAbsoluteUrl("/ai-policy") },
+      ],
+    },
+    {
+      title: "Tech Strategy: Build, Buy, or Wait",
+      points: [
+        "When to build in-house vs. use a platform",
+        "How to estimate true total cost of ownership",
+        "Vendor risk and exit planning",
+        "Tech stacks that scale with lean teams",
+      ],
+      links: [
+        { label: "Tech Coverage", href: toAbsoluteUrl("/category/Tech") },
+        { label: "Business Trends", href: toAbsoluteUrl("/category/Business") },
+      ],
+    },
+    {
+      title: "Science Literacy for Non-Scientists",
+      points: [
+        "How to read a study quickly and correctly",
+        "What makes results trustworthy",
+        "Red flags: overclaiming and weak evidence",
+        "How to follow breakthroughs without misinformation",
+      ],
+      links: [
+        { label: "Science Coverage", href: toAbsoluteUrl("/category/Science") },
+        { label: "Latest Articles", href: toAbsoluteUrl("/sitemap") },
+      ],
+    },
+  ];
+
+  const sectionHtml = sections
+    .map(
+      (section) => `
+      <section>
+        <h2>${escapeHtml(section.title)}</h2>
+        <ul>
+          ${section.points.map((point) => `<li>${escapeHtml(point)}</li>`).join("\n")}
+        </ul>
+        <p>
+          ${section.links
+            .map((link) => `<a href="${link.href}">${escapeHtml(link.label)}</a>`)
+            .join(" | ")}
+        </p>
+      </section>
+    `,
+    )
+    .join("\n");
+
+  const latestArticles = [...articles]
+    .sort((a, b) => new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime())
+    .slice(0, 80)
+    .map(
+      (article) =>
+        `<li><a href="${toAbsoluteUrl(`/article/${article.slug}`)}">${escapeHtml(article.title)}</a></li>`,
+    )
+    .join("\n");
+
+  const body = `
+    <p class="meta">Last updated: ${updatedDate} • Publishing schedule: 2 articles daily.</p>
+    <p>These evergreen guides explain the core ideas, frameworks, and decisions readers face as AI, technology, business, and science evolve. Use them as reference points, then explore the latest coverage.</p>
+    ${sectionHtml}
+    <h2>Latest Articles</h2>
+    <ul>${latestArticles || "<li>No articles yet.</li>"}</ul>
+  `;
+
+  return shellTemplate({
+    head,
+    heading: "Top Guides",
+    body,
+  });
+}
+
 function renderSitemapUrl({ loc, lastmod, changefreq, priority }) {
   return `  <url>
     <loc>${escapeXml(loc)}</loc>
@@ -956,6 +1059,10 @@ async function main() {
   console.log("\n📝 Generating Top Topics page...");
   writeRouteIndex(distDir, "/topics", generateTopicsHtml(safeArticles));
   console.log("  ✓ /topics/");
+
+  console.log("\n📝 Generating Top Guides page...");
+  writeRouteIndex(distDir, "/guides", generateGuidesHtml(safeArticles));
+  console.log("  ✓ /guides/");
 
   // Generate sitemap-articles.xml (just articles)
   console.log("\n📍 Writing sitemap-articles.xml...");

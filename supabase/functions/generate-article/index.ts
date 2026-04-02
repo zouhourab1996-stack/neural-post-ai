@@ -238,7 +238,7 @@ async function fetchPexelsImage(query: string, apiKey: string): Promise<string |
     const data = await response.json();
     if (data.photos && data.photos.length > 0) {
       const randomIndex = Math.floor(Math.random() * Math.min(5, data.photos.length));
-      return data.photos[randomIndex].src.large2x || data.photos[randomIndex].src.large;
+      return data.photos[randomIndex].src.large || data.photos[randomIndex].src.medium || data.photos[randomIndex].src.original;
     }
     return null;
   } catch (error) {
