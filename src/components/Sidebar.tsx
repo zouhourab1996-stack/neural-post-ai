@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { Flame, ArrowRight, Trophy } from "lucide-react";
+import { Flame, ArrowRight, Trophy, CalendarClock } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import ArticleCard from "@/components/ArticleCard";
 import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
 
 interface Article {
   id: string;
@@ -18,6 +19,7 @@ interface Article {
 
 interface SidebarProps {
   trendingArticles: Article[];
+  lastUpdated?: string;
 }
 
 const categoryConfig = [
@@ -27,7 +29,8 @@ const categoryConfig = [
   { name: "Science", color: "bg-orange-500" },
 ];
 
-export default function Sidebar({ trendingArticles }: SidebarProps) {
+export default function Sidebar({ trendingArticles, lastUpdated }: SidebarProps) {
+  const lastUpdatedDate = lastUpdated || trendingArticles?.[0]?.created_at;
   const { data: categoryCounts } = useQuery({
     queryKey: ["category-counts"],
     queryFn: async () => {
@@ -60,6 +63,20 @@ export default function Sidebar({ trendingArticles }: SidebarProps) {
 
   return (
     <aside className="space-y-8" aria-label="Sidebar">
+      {/* Publishing Schedule */}
+      <section className="bg-card rounded-xl border border-border p-5" aria-labelledby="schedule-heading">
+        <div className="flex items-center gap-2 mb-3">
+          <CalendarClock className="w-5 h-5 text-primary" aria-hidden="true" />
+          <h3 id="schedule-heading" className="font-serif text-lg font-semibold">Publishing Schedule</h3>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          We publish two new articles daily (morning and evening).
+        </p>
+        <p className="text-xs text-muted-foreground mt-2">
+          Last update:{" "}
+          {lastUpdatedDate ? format(new Date(lastUpdatedDate), "MMM dd, yyyy") : "Updating..."}
+        </p>
+      </section>
       {/* Trending Articles */}
       <section className="bg-card rounded-xl border border-border p-5" aria-labelledby="trending-sidebar-heading">
         <div className="flex items-center gap-2 mb-4">
