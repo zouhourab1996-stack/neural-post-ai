@@ -548,109 +548,84 @@ function generateStaticPageHtml(page) {
   });
 }
 
+function renderSitemapUrl({ loc, lastmod, changefreq, priority }) {
+  return `  <url>
+    <loc>${escapeXml(loc)}</loc>
+    <lastmod>${escapeXml(lastmod)}</lastmod>
+    <changefreq>${escapeXml(changefreq)}</changefreq>
+    <priority>${escapeXml(priority)}</priority>
+  </url>`;
+}
+
 function generateSitemapXml(articles) {
   const now = new Date().toISOString().split("T")[0];
 
   const staticUrls = [
-    { loc: toAbsoluteUrl("/"), changefreq: "hourly", priority: "1.0" },
+    { loc: toAbsoluteUrl("/"), lastmod: now, changefreq: "hourly", priority: "1.0" },
     ...categories.map((category) => ({
       loc: toAbsoluteUrl(`/category/${category}`),
+      lastmod: now,
       changefreq: "daily",
       priority: "0.9",
     })),
     ...staticPages.map((page) => ({
       loc: toAbsoluteUrl(page.route),
+      lastmod: now,
+      changefreq: "monthly",
+      priority: "0.6",
+    })),
+    ...articles.map((article) => ({
+      loc: toAbsoluteUrl(`/article/${article.slug}`),
+      lastmod: (article.updated_at || article.created_at || new Date().toISOString()).split("T")[0],
+      changefreq: "weekly",
+      priority: "0.8",
+    })),
+  ];
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${staticUrls.map(renderSitemapUrl).join("\n")}
+</urlset>`;
+}
+
+function generateArticlesSitemapXml(articles) {
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${articles
+  .map((article) =>
+    renderSitemapUrl({
+      loc: toAbsoluteUrl(`/article/${article.slug}`),
+      lastmod: (article.updated_at || article.created_at || new Date().toISOString()).split("T")[0],
+      changefreq: "weekly",
+      priority: "0.8",
+    }),
+  )
+  .join("\n")}
+</urlset>`;
+}
+
+function generateStaticSitemapXml() {
+  const now = new Date().toISOString().split("T")[0];
+  const urls = [
+    { loc: `${SITE_URL}/`, lastmod: now, changefreq: "hourly", priority: "1.0" },
+    ...categories.map((category) => ({
+      loc: toAbsoluteUrl(`/category/${category}`),
+      lastmod: now,
+      changefreq: "daily",
+      priority: "0.9",
+    })),
+    ...staticPages.map((page) => ({
+      loc: toAbsoluteUrl(page.route),
+      lastmod: now,
       changefreq: "monthly",
       priority: "0.6",
     })),
   ];
 
-  let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-`;
-
-  for (const url of staticUrls) {
-    xml += `  <url>
-    <loc>${escapeXml(url.loc)}</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>${url.changefreq}</changefreq>
-    <priority>${url.priority}</priority>
-  </url>
-`;
-  }
-
-  for (const article of articles) {
-    const articleUrl = toAbsoluteUrl(`/article/${article.slug}`);
-    const articleDate = (article.updated_at || article.created_at || new Date().toISOString()).split("T")[0];
-
-    xml += `  <url>
-    <loc>${escapeXml(articleUrl)}</loc>
-    <lastmod>${articleDate}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>`;
-
-    if (article.image_url) {
-      xml += `
-    <image:image>
-      <image:loc>${escapeXml(article.image_url)}</image:loc>
-      <image:title>${escapeXml(article.title)}</image:title>
-    </image:image>`;
-    }
-
-    xml += `
-  </url>
-`;
-  }
-
-  xml += `</urlset>`;
-  return xml;
-}
-
-function generateArticlesSitemapXml(articles) {
-  let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-`;
-  for (const article of articles) {
-    const articleUrl = toAbsoluteUrl(`/article/${article.slug}`);
-    const articleDate = (article.updated_at || article.created_at || new Date().toISOString()).split("T")[0];
-    xml += `  <url>
-    <loc>${escapeXml(articleUrl)}</loc>
-    <lastmod>${articleDate}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>`;
-    if (article.image_url) {
-      xml += `
-    <image:image>
-      <image:loc>${escapeXml(article.image_url)}</image:loc>
-      <image:title>${escapeXml(article.title)}</image:title>
-    </image:image>`;
-    }
-    xml += `
-  </url>
-`;
-  }
-  xml += `</urlset>`;
-  return xml;
-}
-
-function generateStaticSitemapXml() {
-  const now = new Date().toISOString().split("T")[0];
-  let xml = `<?xml version="1.0" encoding="UTF-8"?>
+  return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>${SITE_URL}/</loc><lastmod>${now}</lastmod><changefreq>hourly</changefreq><priority>1.0</priority></url>
-`;
-  for (const cat of categories) {
-    xml += `  <url><loc>${SITE_URL}/category/${cat}/</loc><lastmod>${now}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>
-`;
-  }
-  for (const page of staticPages) {
-    xml += `  <url><loc>${toAbsoluteUrl(page.route)}</loc><lastmod>${now}</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-`;
-  }
-  xml += `</urlset>`;
-  return xml;
+${urls.map(renderSitemapUrl).join("\n")}
+</urlset>`;
 }
 
 function generateSitemapIndexXml(now) {
