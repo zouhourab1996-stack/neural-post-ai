@@ -141,6 +141,16 @@ function stripMarkdown(markdown = "") {
     .trim();
 }
 
+function getArticleBody(article) {
+  const raw = article?.content || article?.meta_description || "";
+  return stripMarkdown(raw);
+}
+
+function toIsoDate(value) {
+  const date = value ? new Date(value) : new Date();
+  return Number.isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
+}
+
 function markdownToHtml(markdown = "") {
   const blocks = markdown
     .split(/\n{2,}/)
@@ -386,6 +396,8 @@ ${head}
 }
 
 function generateArticleSchema(article, articleUrl) {
+  const articleBody = getArticleBody(article);
+  const wordCount = articleBody ? articleBody.split(/\s+/).length : undefined;
   return {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
@@ -398,8 +410,10 @@ function generateArticleSchema(article, articleUrl) {
       width: 1200,
       height: 630,
     },
-    datePublished: article.created_at,
-    dateModified: article.updated_at,
+    datePublished: toIsoDate(article.created_at || article.updated_at),
+    dateModified: toIsoDate(article.updated_at || article.created_at),
+    articleBody: articleBody ? articleBody.slice(0, 5000) : undefined,
+    wordCount: wordCount || undefined,
     author: {
       "@type": "Person",
       name: "NeuralPost Editorial Team",
