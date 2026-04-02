@@ -653,6 +653,20 @@ function generateStaticSitemapXml() {
   return xml;
 }
 
+function generateSitemapIndexXml(now) {
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>${SITE_URL}/sitemap-static.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${SITE_URL}/sitemap-articles.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
+</sitemapindex>`;
+}
+
 function generateSitemapTxt(articles) {
   const urls = [
     toAbsoluteUrl("/"),
@@ -782,22 +796,16 @@ async function main() {
   fs.writeFileSync(path.join(distDir, "sitemap-articles.xml"), generateArticlesSitemapXml(safeArticles), "utf8");
   console.log("  ✓ /sitemap-articles.xml");
 
-  // Generate sitemap index (points to static + articles sitemaps)
-  console.log("\n📍 Writing sitemap.xml (index)...");
+  // Generate primary sitemap.xml as a flat URL set for maximum compatibility
+  console.log("\n📍 Writing sitemap.xml...");
   const now = new Date().toISOString().split("T")[0];
-  const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <sitemap>
-    <loc>${SITE_URL}/sitemap-static.xml</loc>
-    <lastmod>${now}</lastmod>
-  </sitemap>
-  <sitemap>
-    <loc>${SITE_URL}/sitemap-articles.xml</loc>
-    <lastmod>${now}</lastmod>
-  </sitemap>
-</sitemapindex>`;
-  fs.writeFileSync(path.join(distDir, "sitemap.xml"), sitemapIndex, "utf8");
+  fs.writeFileSync(path.join(distDir, "sitemap.xml"), generateSitemapXml(safeArticles), "utf8");
   console.log("  ✓ /sitemap.xml");
+
+  // Keep a sitemap index available for validators/tools that prefer split maps
+  console.log("\n📍 Writing sitemap-index.xml...");
+  fs.writeFileSync(path.join(distDir, "sitemap-index.xml"), generateSitemapIndexXml(now), "utf8");
+  console.log("  ✓ /sitemap-index.xml");
 
   // Also write a flat sitemap for broader compatibility
   console.log("\n📍 Writing sitemap.txt...");
