@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Flame, ArrowRight } from "lucide-react";
+import { Flame, ArrowRight, Trophy } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import ArticleCard from "@/components/ArticleCard";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +12,7 @@ interface Article {
   category: string;
   image_url?: string;
   is_trending?: boolean;
+  views?: number | null;
   created_at: string;
 }
 
@@ -43,6 +44,20 @@ export default function Sidebar({ trendingArticles }: SidebarProps) {
     staleTime: 120000,
   });
 
+  const { data: topArticles } = useQuery({
+    queryKey: ["top-articles"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("articles")
+        .select("id,title,slug,meta_description,category,image_url,views,created_at")
+        .order("views", { ascending: false })
+        .limit(5);
+      if (error) throw error;
+      return data as Article[];
+    },
+    staleTime: 120000,
+  });
+
   return (
     <aside className="space-y-8" aria-label="Sidebar">
       {/* Trending Articles */}
@@ -59,6 +74,25 @@ export default function Sidebar({ trendingArticles }: SidebarProps) {
           ) : (
             <p className="text-sm text-muted-foreground py-4 text-center">
               Trending articles will appear here
+            </p>
+          )}
+        </div>
+      </section>
+
+      {/* Top Articles */}
+      <section className="bg-card rounded-xl border border-border p-5" aria-labelledby="top-sidebar-heading">
+        <div className="flex items-center gap-2 mb-4">
+          <Trophy className="w-5 h-5 text-primary" aria-hidden="true" />
+          <h3 id="top-sidebar-heading" className="font-serif text-lg font-semibold">Top Articles</h3>
+        </div>
+        <div className="space-y-1">
+          {topArticles && topArticles.length > 0 ? (
+            topArticles.map((article, index) => (
+              <ArticleCard key={article.id} article={article} variant="compact" index={index} />
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground py-4 text-center">
+              Top articles will appear here
             </p>
           )}
         </div>

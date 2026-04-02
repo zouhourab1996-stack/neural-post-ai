@@ -41,7 +41,7 @@ export default function Index() {
         .from("articles")
         .select("*")
         .order("created_at", { ascending: false })
-        .limit(20);
+        .limit(60);
       
       if (error) throw error;
       return data as Article[];
@@ -51,6 +51,10 @@ export default function Index() {
   const featuredArticles = articles?.filter((a) => a.is_featured) || [];
   const trendingArticles = articles?.filter((a) => a.is_trending) || [];
   const latestArticles = articles?.slice(0, 12) || [];
+  const topArticles = (articles || [])
+    .filter((a) => (a.views || 0) > 0)
+    .sort((a, b) => (b.views || 0) - (a.views || 0))
+    .slice(0, 6);
   const homepageDescription = `Breaking AI, technology, business, and science news for ${today}. Read in-depth reporting, human-style analysis, and daily trend coverage from NeuralPost.`;
 
   return (
@@ -95,6 +99,25 @@ export default function Index() {
           </div>
           <div className="grid md:grid-cols-2 gap-6">
             {featuredArticles.slice(0, 2).map((article, index) => (
+              <ArticleCard key={article.id} article={article} variant="featured" index={index} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Top Articles */}
+      {topArticles.length > 0 && (
+        <section className="mb-12" aria-labelledby="top-heading">
+          <div className="flex items-center justify-between mb-6">
+            <h2 id="top-heading" className="font-serif text-2xl font-bold">Top Articles</h2>
+            <Link to="/sitemap/">
+              <Button variant="ghost" className="text-primary">
+                Browse all <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
+              </Button>
+            </Link>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            {topArticles.map((article, index) => (
               <ArticleCard key={article.id} article={article} variant="featured" index={index} />
             ))}
           </div>

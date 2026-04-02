@@ -69,6 +69,13 @@ function appendSourcesAndRelated(
     sections.push('## Sources', `- [${label}](${source.url})`);
   }
 
+  sections.push(
+    '## About NeuralPost',
+    '- Learn more about our editorial mission: [About NeuralPost](https://prophetic.pw/about/)',
+    '- Transparency and standards: [Editorial Policy](https://prophetic.pw/editorial/)',
+    '- Contact the team: [Contact](https://prophetic.pw/contact/)',
+  );
+
   if (sections.length === 0) {
     return content;
   }
