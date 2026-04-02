@@ -84,6 +84,22 @@ const staticPages = [
       "NeuralPost content is published for informational purposes and should not be treated as legal, medical, or investment advice.",
   },
   {
+    route: "/editorial",
+    title: "Editorial Policy - NeuralPost",
+    description: "Read the editorial standards and AI disclosure for NeuralPost.",
+    heading: "Editorial Policy",
+    content:
+      "NeuralPost publishes AI-assisted coverage with human oversight. We aim for accuracy, transparency, and clear sourcing. When sources are available, we cite them. Corrections can be requested via our contact page.",
+  },
+  {
+    route: "/ai-policy",
+    title: "AI Content Policy - NeuralPost",
+    description: "How NeuralPost uses AI systems to assist editorial coverage.",
+    heading: "AI Content Policy",
+    content:
+      "NeuralPost uses AI systems to draft and summarize coverage. We apply automated quality checks and publish only when content meets minimum length, structure, and clarity requirements.",
+  },
+  {
     route: "/sitemap",
     title: "Sitemap - NeuralPost",
     description: "Browse all categories and recent NeuralPost articles.",
@@ -422,6 +438,8 @@ ${head}
         <a href="${SITE_URL}/privacy/">Privacy</a>
         <a href="${SITE_URL}/terms/">Terms</a>
         <a href="${SITE_URL}/disclaimer/">Disclaimer</a>
+        <a href="${SITE_URL}/editorial/">Editorial Policy</a>
+        <a href="${SITE_URL}/ai-policy/">AI Policy</a>
         <a href="${SITE_URL}/sitemap/">Sitemap</a>
         <a href="${SITE_URL}/rss.xml">RSS</a>
       </div>
