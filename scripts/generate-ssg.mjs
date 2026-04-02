@@ -100,6 +100,13 @@ const staticPages = [
       "NeuralPost uses AI systems to draft and summarize coverage. We apply automated quality checks and publish only when content meets minimum length, structure, and clarity requirements.",
   },
   {
+    route: "/topics",
+    title: "Top Topics - NeuralPost",
+    description: "Evergreen guides and topical hubs across AI, tech, business, and science.",
+    heading: "Top Topics",
+    content: "",
+  },
+  {
     route: "/sitemap",
     title: "Sitemap - NeuralPost",
     description: "Browse all categories and recent NeuralPost articles.",
@@ -273,6 +280,7 @@ function shellTemplate({ head, heading, body }) {
     { href: `${SITE_URL}/about/`, label: "About" },
     { href: `${SITE_URL}/contact/`, label: "Contact" },
     { href: `${SITE_URL}/sitemap/`, label: "Sitemap" },
+    { href: `${SITE_URL}/topics/`, label: "Top Topics" },
   ]
     .map((item) => `<a href="${item.href}">${item.label}</a>`)
     .join("\n");
@@ -441,6 +449,7 @@ ${head}
         <a href="${SITE_URL}/editorial/">Editorial Policy</a>
         <a href="${SITE_URL}/ai-policy/">AI Policy</a>
         <a href="${SITE_URL}/sitemap/">Sitemap</a>
+        <a href="${SITE_URL}/topics/">Top Topics</a>
         <a href="${SITE_URL}/rss.xml">RSS</a>
       </div>
       <div>© ${new Date().getFullYear()} ${SITE_NAME}. All rights reserved.</div>
@@ -652,6 +661,72 @@ function generateSitemapHtml(articles) {
   return shellTemplate({
     head,
     heading: "Sitemap",
+    body,
+  });
+}
+
+function generateTopicsHtml(articles) {
+  const url = toAbsoluteUrl("/topics");
+  const head = baseHead({
+    title: `Top Topics | ${SITE_NAME}`,
+    description: "Evergreen topic hubs and practical guides across AI, tech, business, and science.",
+    canonical: url,
+  });
+
+  const topicGroups = [
+    {
+      title: "AI & Automation",
+      links: [
+        { label: "AI News", href: toAbsoluteUrl("/category/AI") },
+        { label: "Responsible AI", href: toAbsoluteUrl("/ai-policy") },
+      ],
+    },
+    {
+      title: "Tech & Innovation",
+      links: [
+        { label: "Tech News", href: toAbsoluteUrl("/category/Tech") },
+        { label: "Startup Strategy", href: toAbsoluteUrl("/category/Business") },
+      ],
+    },
+    {
+      title: "Science & Discovery",
+      links: [
+        { label: "Science News", href: toAbsoluteUrl("/category/Science") },
+        { label: "Latest Research Highlights", href: toAbsoluteUrl("/sitemap") },
+      ],
+    },
+  ];
+
+  const latestArticles = [...articles]
+    .sort((a, b) => new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime())
+    .slice(0, 120)
+    .map(
+      (article) =>
+        `<li><a href="${toAbsoluteUrl(`/article/${article.slug}`)}">${escapeHtml(article.title)}</a></li>`,
+    )
+    .join("\n");
+
+  const topicHtml = topicGroups
+    .map(
+      (group) => `
+      <h2>${escapeHtml(group.title)}</h2>
+      <ul>
+        ${group.links.map((link) => `<li><a href="${link.href}">${escapeHtml(link.label)}</a></li>`).join("\n")}
+      </ul>
+    `,
+    )
+    .join("\n");
+
+  const body = `
+    <p class="meta">Evergreen hubs and curated entry points to our most important coverage.</p>
+    ${topicHtml}
+    <h2>Latest Articles</h2>
+    <ul>${latestArticles || "<li>No articles yet.</li>"}</ul>
+  `;
+
+  return shellTemplate({
+    head,
+    heading: "Top Topics",
     body,
   });
 }
@@ -877,6 +952,10 @@ async function main() {
   console.log("\n📝 Generating HTML sitemap page...");
   writeRouteIndex(distDir, "/sitemap", generateSitemapHtml(safeArticles));
   console.log("  ✓ /sitemap/");
+
+  console.log("\n📝 Generating Top Topics page...");
+  writeRouteIndex(distDir, "/topics", generateTopicsHtml(safeArticles));
+  console.log("  ✓ /topics/");
 
   // Generate sitemap-articles.xml (just articles)
   console.log("\n📍 Writing sitemap-articles.xml...");

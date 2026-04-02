@@ -33,6 +33,29 @@ function normalizeHeadlineKey(value: string): string {
   return value.toLowerCase().replace(/\s+/g, ' ').trim().slice(0, 100);
 }
 
+function enhanceTitleForCTR(title: string): string {
+  const clean = String(title || '').replace(/\s+/g, ' ').trim();
+  if (!clean) return title;
+
+  const hasYear = /\b20(2[5-9]|3[0-9])\b/.test(clean);
+  const withYear = hasYear ? clean : `${clean} (2026)`;
+
+  if (withYear.length <= 70) {
+    return withYear;
+  }
+
+  return withYear.slice(0, 67).replace(/\s+\S*$/, '') + '...';
+}
+
+function ensureUniqueSlug(slug: string, used: Set<string>) {
+  let finalSlug = slug;
+  while (used.has(finalSlug)) {
+    finalSlug = `${slug}-${Math.random().toString(36).slice(2, 6)}`;
+  }
+  used.add(finalSlug);
+  return finalSlug;
+}
+
 function countWords(text: string): number {
   return String(text || '')
     .trim()
@@ -330,6 +353,9 @@ WRITING STYLE:
 - Make it engaging and readable for a general audience
 - Do NOT invent quotes, sources, or specific statistics
 - If you mention numbers, keep them clearly framed as estimates or trends
+- Add a brief "At a Glance" bullet list near the top (3-5 bullets)
+- Add a "Key Terms Explained" mini-section (3-5 concise definitions)
+- Add a "Practical Takeaways" section aimed at general readers
 
 STRUCTURE (Minimum 1,800 words):
 1. **Headline (H1)**: SEO-optimized, includes primary keyword, under 60 chars
@@ -539,8 +565,10 @@ serve(async (req) => {
     }
 
     // Prepare the final article object
+    const finalTitle = enhanceTitleForCTR(String(article.title || selectedHeadline.title).trim());
+
     const finalArticle = {
-      title: String(article.title || selectedHeadline.title).trim(),
+      title: finalTitle,
       slug: finalSlug,
       meta_description: metaDescription,
       content: finalContent,
