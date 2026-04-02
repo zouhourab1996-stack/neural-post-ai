@@ -83,6 +83,13 @@ const staticPages = [
     content:
       "NeuralPost content is published for informational purposes and should not be treated as legal, medical, or investment advice.",
   },
+  {
+    route: "/sitemap",
+    title: "Sitemap - NeuralPost",
+    description: "Browse all categories and recent NeuralPost articles.",
+    heading: "Sitemap",
+    content: "",
+  },
 ];
 
 function normalizeRoute(route) {
@@ -249,6 +256,7 @@ function shellTemplate({ head, heading, body }) {
     })),
     { href: `${SITE_URL}/about/`, label: "About" },
     { href: `${SITE_URL}/contact/`, label: "Contact" },
+    { href: `${SITE_URL}/sitemap/`, label: "Sitemap" },
   ]
     .map((item) => `<a href="${item.href}">${item.label}</a>`)
     .join("\n");
@@ -369,6 +377,21 @@ ${head}
     margin: 0;
     padding-left: 1.25rem;
   }
+  .site-footer {
+    border-top: 1px solid rgba(148, 163, 184, 0.16);
+    padding: 2rem 0 3rem;
+    color: #9ca3af;
+    font-size: .95rem;
+  }
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem 1.4rem;
+    margin: 0 0 1rem;
+  }
+  .footer-links a {
+    color: #cbd5f5;
+  }
   @media (max-width: 720px) {
     .site-header__inner {
       align-items: flex-start;
@@ -391,6 +414,20 @@ ${head}
     ${body}
     <a class="home-link" href="${SITE_URL}/">← Back to homepage</a>
   </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-links">
+        <a href="${SITE_URL}/about/">About</a>
+        <a href="${SITE_URL}/contact/">Contact</a>
+        <a href="${SITE_URL}/privacy/">Privacy</a>
+        <a href="${SITE_URL}/terms/">Terms</a>
+        <a href="${SITE_URL}/disclaimer/">Disclaimer</a>
+        <a href="${SITE_URL}/sitemap/">Sitemap</a>
+        <a href="${SITE_URL}/rss.xml">RSS</a>
+      </div>
+      <div>© ${new Date().getFullYear()} ${SITE_NAME}. All rights reserved.</div>
+    </div>
+  </footer>
 </body>
 </html>`;
 }
@@ -558,6 +595,45 @@ function generateStaticPageHtml(page) {
   return shellTemplate({
     head,
     heading: escapeHtml(page.heading),
+    body,
+  });
+}
+
+function generateSitemapHtml(articles) {
+  const url = toAbsoluteUrl("/sitemap");
+  const head = baseHead({
+    title: `Sitemap | ${SITE_NAME}`,
+    description: "Browse categories and the latest articles from NeuralPost.",
+    canonical: url,
+  });
+
+  const categoryLinks = categories
+    .map(
+      (category) =>
+        `<li><a href="${toAbsoluteUrl(`/category/${category}`)}">${escapeHtml(category)}</a></li>`,
+    )
+    .join("\n");
+
+  const latestArticles = [...articles]
+    .sort((a, b) => new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime())
+    .slice(0, 200)
+    .map(
+      (article) =>
+        `<li><a href="${toAbsoluteUrl(`/article/${article.slug}`)}">${escapeHtml(article.title)}</a></li>`,
+    )
+    .join("\n");
+
+  const body = `
+    <p class="meta">Use this page to quickly find categories and recent coverage.</p>
+    <h2>Categories</h2>
+    <ul>${categoryLinks}</ul>
+    <h2>Latest Articles</h2>
+    <ul>${latestArticles || "<li>No articles yet.</li>"}</ul>
+  `;
+
+  return shellTemplate({
+    head,
+    heading: "Sitemap",
     body,
   });
 }
@@ -779,6 +855,10 @@ async function main() {
     writeRouteIndex(distDir, page.route, generateStaticPageHtml(page));
     console.log(`  ✓ ${normalizeRoute(page.route)}`);
   }
+
+  console.log("\n📝 Generating HTML sitemap page...");
+  writeRouteIndex(distDir, "/sitemap", generateSitemapHtml(safeArticles));
+  console.log("  ✓ /sitemap/");
 
   // Generate sitemap-articles.xml (just articles)
   console.log("\n📍 Writing sitemap-articles.xml...");
