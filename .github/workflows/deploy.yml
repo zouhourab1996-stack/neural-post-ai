@@ -54,7 +54,6 @@ jobs:
       - name: Copy static assets to dist
         run: |
           cp public/manifest.json ./dist/manifest.json || true
-          cp public/sitemap-static.xml ./dist/sitemap-static.xml || true
           cp public/robots.txt ./dist/robots.txt || true
           cp public/ads.txt ./dist/ads.txt || true
 
