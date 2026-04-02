@@ -33,6 +33,77 @@ function normalizeHeadlineKey(value: string): string {
   return value.toLowerCase().replace(/\s+/g, ' ').trim().slice(0, 100);
 }
 
+function countWords(text: string): number {
+  return String(text || '')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .length;
+}
+
+function buildMetaDescription(content: string, fallback: string): string {
+  const clean = String(content || '')
+    .replace(/\s+/g, ' ')
+    .replace(/[#>*_`]/g, '')
+    .trim();
+  const base = clean || fallback || '';
+  return base.slice(0, 160);
+}
+
+function appendSourcesAndRelated(
+  content: string,
+  source?: { title?: string; url?: string; source?: string },
+  relatedLinks: { title: string; url: string }[] = [],
+): string {
+  const sections: string[] = [];
+
+  if (relatedLinks.length > 0) {
+    sections.push(
+      '## Related Coverage',
+      relatedLinks.map((link) => `- [${link.title}](${link.url})`).join('\n'),
+    );
+  }
+
+  if (source?.url) {
+    const label = source.source ? `${source.source}: ${source.title || 'Source'}` : (source.title || 'Source');
+    sections.push('## Sources', `- [${label}](${source.url})`);
+  }
+
+  if (sections.length === 0) {
+    return content;
+  }
+
+  return `${content.trim()}\n\n${sections.join('\n')}\n`;
+}
+
+async function fetchRelatedLinks(
+  supabaseUrl: string,
+  serviceRoleKey: string,
+  category: string,
+  excludeSlug: string,
+) {
+  const client = createClient(supabaseUrl, serviceRoleKey);
+  const { data, error } = await client
+    .from('articles')
+    .select('title,slug')
+    .eq('category', category)
+    .neq('slug', excludeSlug)
+    .order('created_at', { ascending: false })
+    .limit(6);
+
+  if (error) {
+    console.error('Failed to load related links:', error);
+    return [];
+  }
+
+  return (data || [])
+    .filter((item: any) => item?.title && item?.slug)
+    .map((item: any) => ({
+      title: String(item.title).trim(),
+      url: `https://prophetic.pw/article/${item.slug}/`,
+    }));
+}
+
 async function selectFreshHeadline(
   headlines: { title: string; source: string; url: string; description: string }[],
   category: string,
@@ -250,6 +321,8 @@ WRITING STYLE:
 - Include thought-provoking analysis, not just news regurgitation
 - Break up text with bullet points, quotes, and subheadings
 - Make it engaging and readable for a general audience
+- Do NOT invent quotes, sources, or specific statistics
+- If you mention numbers, keep them clearly framed as estimates or trends
 
 STRUCTURE (Minimum 1,800 words):
 1. **Headline (H1)**: SEO-optimized, includes primary keyword, under 60 chars
@@ -377,7 +450,7 @@ serve(async (req) => {
     console.log(`Extracted keywords: ${keywords.map(k => k.keyword).join(', ')}`);
 
     // Phase 3: Generate Article using DeepSeek
-    const article = await generateArticle(
+    let article = await generateArticle(
       selectedHeadline.title, 
       selectedHeadline.description,
       selectedHeadline.source,
@@ -386,9 +459,21 @@ serve(async (req) => {
       DEEPSEEK_API_KEY
     );
 
-    const wordCount = String(article.content || '').trim().split(/\s+/).filter(Boolean).length;
-    if (wordCount < 1300) {
-      throw new Error(`Generated article too short: ${wordCount} words`);
+    let wordCount = countWords(article.content);
+    if (wordCount < 1500) {
+      console.warn(`Article too short (${wordCount}). Retrying once with expanded guidance.`);
+      article = await generateArticle(
+        selectedHeadline.title, 
+        selectedHeadline.description,
+        selectedHeadline.source,
+        keywords, 
+        selectedCategory, 
+        DEEPSEEK_API_KEY
+      );
+      wordCount = countWords(article.content);
+      if (wordCount < 1500) {
+        throw new Error(`Generated article too short: ${wordCount} words`);
+      }
     }
     
     // Phase 4: Fetch image from Pexels
@@ -412,14 +497,46 @@ serve(async (req) => {
       ? normalizedSlug
       : `${normalizedSlug}-${getISODate()}`;
 
+    let finalSlug = datedSlug;
+    if (autoPublish && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
+      const adminClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+      const { data: existing } = await adminClient
+        .from('articles')
+        .select('slug')
+        .eq('slug', finalSlug)
+        .maybeSingle();
+      if (existing?.slug) {
+        finalSlug = `${finalSlug}-${Math.random().toString(36).slice(2, 6)}`;
+      }
+    }
+
+    const metaDescription = buildMetaDescription(
+      article.meta_description || article.content,
+      selectedHeadline.description || selectedHeadline.title,
+    );
+
+    let finalContent = String(article.content || '').trim();
+
+    if (autoPublish && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
+      const relatedLinks = await fetchRelatedLinks(
+        SUPABASE_URL,
+        SUPABASE_SERVICE_ROLE_KEY,
+        selectedCategory,
+        finalSlug,
+      );
+      finalContent = appendSourcesAndRelated(finalContent, {
+        title: selectedHeadline.title,
+        url: selectedHeadline.url,
+        source: selectedHeadline.source,
+      }, relatedLinks);
+    }
+
     // Prepare the final article object
     const finalArticle = {
       title: String(article.title || selectedHeadline.title).trim(),
-      slug: datedSlug,
-      meta_description: String(article.meta_description || selectedHeadline.description || selectedHeadline.title)
-        .trim()
-        .slice(0, 160),
-      content: article.content,
+      slug: finalSlug,
+      meta_description: metaDescription,
+      content: finalContent,
       category: selectedCategory,
       image_url: imageUrl,
       is_featured: Math.random() > 0.5,
