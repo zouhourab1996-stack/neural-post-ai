@@ -56,7 +56,7 @@ export default function Index() {
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 6);
   const lastUpdated = articles?.[0]?.created_at || new Date().toISOString();
-  const homepageDescription = `Breaking AI, technology, business, and science news for ${today}. Read in-depth reporting, human-style analysis, and daily trend coverage from NeuralPost.`;
+  const homepageDescription = `Breaking AI, tech, business, and science news for ${today}. Clear analysis, daily updates, and practical takeaways from NeuralPost.`;
 
   return (
     <>
@@ -73,10 +73,10 @@ export default function Index() {
           <Sparkles className="w-4 h-4" aria-hidden="true" />
           AI-Powered News Coverage
         </div>
-        <h1 id="hero-heading" className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+        <h2 id="hero-heading" className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
           The Future of News,{" "}
           <span className="gradient-text">Powered by AI</span>
-        </h1>
+        </h2>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-4">
           Stay ahead with cutting-edge coverage of artificial intelligence, technology, 
           business innovations, and scientific breakthroughs.
