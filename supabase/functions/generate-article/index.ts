@@ -334,10 +334,12 @@ MANDATORY SEO REQUIREMENTS:
 2. Secondary Keywords to naturally include: ${keywordList}
 3. The article MUST be at least 1,800 words (this is critical!)
 4. Include the primary keyword in:
-   - The H1 title (first 60 characters)
+   - The H1 title (55-65 characters)
    - The first paragraph (within first 100 words)
    - At least 2 H2 subheadings
-   - Naturally throughout the body (density: 1-2%)
+   - Naturally throughout the body (no keyword stuffing)
+5. Use a clear search intent: explain what happened, why it matters, and what comes next.
+6. Meta description must be 150-160 characters, include the primary keyword, and end with a soft CTA.
 
 FRESHNESS SIGNAL (CRITICAL):
 - The article must explicitly mention that this covers developments from ${currentDate}
@@ -356,6 +358,8 @@ WRITING STYLE:
 - Add a brief "At a Glance" bullet list near the top (3-5 bullets)
 - Add a "Key Terms Explained" mini-section (3-5 concise definitions)
 - Add a "Practical Takeaways" section aimed at general readers
+- Add a short FAQ section with 3 questions (and brief answers)
+- Avoid repeating the same phrases; keep paragraphs varied
 
 STRUCTURE (Minimum 1,800 words):
 1. **Headline (H1)**: SEO-optimized, includes primary keyword, under 60 chars
@@ -365,7 +369,8 @@ STRUCTURE (Minimum 1,800 words):
 5. **Analysis Section (H2)**: Expert analysis and implications
 6. **Industry Impact (H2)**: How this affects the broader ${category} landscape
 7. **What's Next (H2)**: Future predictions and timeline
-8. **Key Takeaways**: Bullet-point summary
+8. **FAQ (H2)**: 3 short Q&A
+9. **Key Takeaways**: Bullet-point summary
 
 Return ONLY valid JSON:
 {
