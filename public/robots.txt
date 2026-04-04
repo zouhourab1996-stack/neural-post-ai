@@ -1,6 +1,21 @@
+# Prophetic.pw robots.txt
 User-agent: *
 Allow: /
 Disallow: /api/
-
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /*?preview=*
+Disallow: /*?draft=*
 Sitemap: https://prophetic.pw/sitemap.xml
-Sitemap: https://prophetic.pw/sitemap.txt
+Sitemap: https://prophetic.pw/sitemap-news.xml
+User-agent: AhrefsBot
+Crawl-delay: 10
+User-agent: SemrushBot
+Crawl-delay: 10
+User-agent: MJ12bot
+Disallow: /
+User-agent: Googlebot
+Allow: /
+User-agent: Bingbot
+Allow: /
+Host: https://prophetic.pw
