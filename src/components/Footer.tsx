@@ -35,7 +35,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <Link to="/" className="flex items-center gap-2 mb-4" aria-label="NeuralPost Home">
+            <Link to="/" className="flex items-center gap-2 mb-4" aria-label="Prophetic Home">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
                 <Zap className="w-6 h-6 text-primary-foreground" aria-hidden="true" />
               </div>
@@ -113,7 +113,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-border text-center">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} NeuralPost. All rights reserved.
+            © {new Date().getFullYear()} Prophetic. All rights reserved.
           </p>
         </div>
       </div>
