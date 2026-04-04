@@ -14,7 +14,7 @@ const NotFound = () => {
       robotsMeta.setAttribute("content", "noindex, nofollow");
     }
 
-    document.title = "Page Not Found - NeuralPost";
+    document.title = "Page Not Found - Prophetic";
 
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);
 
@@ -51,7 +51,7 @@ const NotFound = () => {
         
         <p className="text-muted-foreground mb-8 leading-relaxed">
           The page you're looking for doesn't exist or has been moved. 
-          Let's get you back to the latest AI and tech news.
+          Let's get you back to the latest AI and future predictions.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
