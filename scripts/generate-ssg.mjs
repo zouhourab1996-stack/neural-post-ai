@@ -1096,6 +1096,19 @@ async function main() {
   console.log("  ✓ /rss.xml");
   console.log("  ✓ /atom.xml");
 
+  // Write canonical robots.txt into dist (overrides any copy from public/)
+  console.log("\n📍 Writing robots.txt...");
+  const robotsTxt = `User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: ${SITE_URL}/sitemap.xml
+
+Host: prophetic.pw
+`;
+  fs.writeFileSync(path.join(distDir, "robots.txt"), robotsTxt, "utf8");
+  console.log("  ✓ /robots.txt");
+
   console.log("\n🎉 SSG completed successfully.");
 }
 

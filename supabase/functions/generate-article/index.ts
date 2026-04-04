@@ -111,23 +111,44 @@ async function fetchRelatedLinks(
   serviceRoleKey: string,
   category: string,
   excludeSlug: string,
+  keywords: string[] = [],
 ) {
   const client = createClient(supabaseUrl, serviceRoleKey);
-  const { data, error } = await client
+
+  // Fetch same-category articles
+  const { data: sameCat } = await client
     .from('articles')
     .select('title,slug')
     .eq('category', category)
     .neq('slug', excludeSlug)
     .order('created_at', { ascending: false })
-    .limit(6);
+    .limit(4);
 
-  if (error) {
-    console.error('Failed to load related links:', error);
-    return [];
+  // Fetch cross-category articles matching keywords (for topical relevance)
+  let crossCat: any[] = [];
+  if (keywords.length > 0) {
+    const searchTerm = keywords.slice(0, 2).join(' | ');
+    const { data } = await client
+      .from('articles')
+      .select('title,slug')
+      .neq('category', category)
+      .neq('slug', excludeSlug)
+      .or(`title.ilike.%${keywords[0]}%,meta_description.ilike.%${keywords[0]}%`)
+      .order('created_at', { ascending: false })
+      .limit(2);
+    crossCat = data || [];
   }
 
-  return (data || [])
-    .filter((item: any) => item?.title && item?.slug)
+  const combined = [...(sameCat || []), ...crossCat];
+  const seen = new Set<string>();
+
+  return combined
+    .filter((item: any) => {
+      if (!item?.title || !item?.slug || seen.has(item.slug)) return false;
+      seen.add(item.slug);
+      return true;
+    })
+    .slice(0, 6)
     .map((item: any) => ({
       title: String(item.title).trim(),
       url: `https://prophetic.pw/article/${item.slug}/`,
@@ -556,11 +577,13 @@ serve(async (req) => {
     let finalContent = String(article.content || '').trim();
 
     if (autoPublish && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
+      const keywordStrings = keywords.map((k: any) => k.keyword);
       const relatedLinks = await fetchRelatedLinks(
         SUPABASE_URL,
         SUPABASE_SERVICE_ROLE_KEY,
         selectedCategory,
         finalSlug,
+        keywordStrings,
       );
       finalContent = appendSourcesAndRelated(finalContent, {
         title: selectedHeadline.title,
