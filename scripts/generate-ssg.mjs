@@ -834,38 +834,18 @@ function generateGuidesHtml(articles) {
   });
 }
 
-function renderSitemapUrl({ loc, lastmod, changefreq, priority }) {
+function renderSitemapUrl(loc) {
   return `  <url>
     <loc>${escapeXml(loc)}</loc>
-    <lastmod>${escapeXml(lastmod)}</lastmod>
-    <changefreq>${escapeXml(changefreq)}</changefreq>
-    <priority>${escapeXml(priority)}</priority>
   </url>`;
 }
 
 function generateSitemapXml(articles) {
-  const now = new Date().toISOString().split("T")[0];
-
   const staticUrls = [
-    { loc: toAbsoluteUrl("/"), lastmod: now, changefreq: "hourly", priority: "1.0" },
-    ...categories.map((category) => ({
-      loc: toAbsoluteUrl(`/category/${category}`),
-      lastmod: now,
-      changefreq: "daily",
-      priority: "0.9",
-    })),
-    ...staticPages.map((page) => ({
-      loc: toAbsoluteUrl(page.route),
-      lastmod: now,
-      changefreq: "monthly",
-      priority: "0.6",
-    })),
-    ...articles.map((article) => ({
-      loc: toAbsoluteUrl(`/article/${article.slug}`),
-      lastmod: (article.updated_at || article.created_at || new Date().toISOString()).split("T")[0],
-      changefreq: "weekly",
-      priority: "0.8",
-    })),
+    toAbsoluteUrl("/"),
+    ...categories.map((category) => toAbsoluteUrl(`/category/${category}`)),
+    ...staticPages.map((page) => toAbsoluteUrl(page.route)),
+    ...articles.map((article) => toAbsoluteUrl(`/article/${article.slug}`)),
   ];
 
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -877,35 +857,15 @@ ${staticUrls.map(renderSitemapUrl).join("\n")}
 function generateArticlesSitemapXml(articles) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${articles
-  .map((article) =>
-    renderSitemapUrl({
-      loc: toAbsoluteUrl(`/article/${article.slug}`),
-      lastmod: (article.updated_at || article.created_at || new Date().toISOString()).split("T")[0],
-      changefreq: "weekly",
-      priority: "0.8",
-    }),
-  )
-  .join("\n")}
+${articles.map((article) => renderSitemapUrl(toAbsoluteUrl(`/article/${article.slug}`))).join("\n")}
 </urlset>`;
 }
 
 function generateStaticSitemapXml() {
-  const now = new Date().toISOString().split("T")[0];
   const urls = [
-    { loc: `${SITE_URL}/`, lastmod: now, changefreq: "hourly", priority: "1.0" },
-    ...categories.map((category) => ({
-      loc: toAbsoluteUrl(`/category/${category}`),
-      lastmod: now,
-      changefreq: "daily",
-      priority: "0.9",
-    })),
-    ...staticPages.map((page) => ({
-      loc: toAbsoluteUrl(page.route),
-      lastmod: now,
-      changefreq: "monthly",
-      priority: "0.6",
-    })),
+    `${SITE_URL}/`,
+    ...categories.map((category) => toAbsoluteUrl(`/category/${category}`)),
+    ...staticPages.map((page) => toAbsoluteUrl(page.route)),
   ];
 
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -919,11 +879,9 @@ function generateSitemapIndexXml(now) {
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
     <loc>${SITE_URL}/sitemap-static.xml</loc>
-    <lastmod>${now}</lastmod>
   </sitemap>
   <sitemap>
     <loc>${SITE_URL}/sitemap-articles.xml</loc>
-    <lastmod>${now}</lastmod>
   </sitemap>
 </sitemapindex>`;
 }
@@ -1103,8 +1061,7 @@ Allow: /
 Disallow: /api/
 
 Sitemap: ${SITE_URL}/sitemap.xml
-
-Host: prophetic.pw
+Sitemap: ${SITE_URL}/sitemap.txt
 `;
   fs.writeFileSync(path.join(distDir, "robots.txt"), robotsTxt, "utf8");
   console.log("  ✓ /robots.txt");
