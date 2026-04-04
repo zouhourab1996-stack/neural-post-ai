@@ -26,7 +26,7 @@ interface Article {
 
 const categoryDescriptions: Record<string, string> = {
   AI: "Explore the latest developments in artificial intelligence, machine learning, and neural networks.",
-  Tech: "Stay updated with cutting-edge technology news, gadgets, and digital innovations.",
+  Tech: "Stay updated with cutting-edge future intelligence, gadgets, and digital innovations.",
   Business: "Insights into the business world, startups, markets, and entrepreneurship.",
   Science: "Discover breakthrough research, scientific discoveries, and innovations shaping our future.",
 };
@@ -69,8 +69,8 @@ export default function Category() {
   const validCategories = ["AI", "Tech", "Business", "Science"];
   const isValidCategory = category && validCategories.includes(category);
   const categorySeoDescription = isValidCategory
-    ? `${categoryDescriptions[category] || `Latest ${category} news and updates.`} Read breaking ${category} stories, trend analysis, and long-form reporting from NeuralPost.`
-    : "Latest news and analysis from NeuralPost.";
+    ? `${categoryDescriptions[category] || `Latest ${category} news and updates.`} Read breaking ${category} stories, trend analysis, and long-form reporting from Prophetic.`
+    : "Latest news and analysis from Prophetic.";
 
   if (!isValidCategory) {
     return (
