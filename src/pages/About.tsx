@@ -12,7 +12,7 @@ export default function About() {
         className="text-center mb-16"
       >
         <h1 className="font-serif text-4xl md:text-5xl font-bold mb-6">
-          About <span className="gradient-text">NeuralPost</span>
+          About <span className="gradient-text">Prophetic</span>
         </h1>
         <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
           We're pioneering the future of journalism by leveraging cutting-edge AI technology 
@@ -31,7 +31,7 @@ export default function About() {
         <div>
           <h2 className="font-serif text-3xl font-bold mb-4">Our Mission</h2>
           <p className="text-muted-foreground mb-4">
-            At NeuralPost, we believe that everyone deserves access to high-quality, 
+            At Prophetic, we believe that everyone deserves access to high-quality, 
             unbiased news coverage. Our mission is to democratize information by using 
             advanced AI systems to analyze, synthesize, and present complex topics in 
             an accessible and engaging format.
