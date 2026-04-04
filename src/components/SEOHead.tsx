@@ -14,7 +14,7 @@ interface SEOHeadProps {
 }
 
 const SITE_URL = "https://prophetic.pw";
-const SITE_NAME = "NeuralPost";
+const SITE_NAME = "Prophetic";
 const DEFAULT_IMAGE = "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1200";
 
 export default function SEOHead({
@@ -25,7 +25,7 @@ export default function SEOHead({
   type = "website",
   publishedTime,
   modifiedTime,
-  author = "NeuralPost Editorial Team",
+  author = "Prophetic Editorial Team",
   section,
   tags = [],
 }: SEOHeadProps) {
@@ -103,7 +103,7 @@ export default function SEOHead({
 
     // Cleanup function - reset to defaults on unmount
     return () => {
-      document.title = `${SITE_NAME} - AI-Powered Tech News & Analysis`;
+      document.title = `${SITE_NAME} - AI Predictions & Future Intelligence`;
     };
   }, [title, description, canonical, image, type, publishedTime, modifiedTime, author, section, tags]);
 
@@ -138,7 +138,7 @@ export function generateArticleSchema(article: {
     "dateModified": article.modifiedTime,
     "author": {
       "@type": "Person",
-      "name": article.author || "NeuralPost Editorial Team",
+      "name": article.author || "Prophetic Editorial Team",
       "url": `${SITE_URL}/about`
     },
     "publisher": {
