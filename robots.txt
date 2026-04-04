@@ -3,5 +3,4 @@ Allow: /
 Disallow: /api/
 
 Sitemap: https://prophetic.pw/sitemap.xml
-
-Host: prophetic.pw
+Sitemap: https://prophetic.pw/sitemap.txt
