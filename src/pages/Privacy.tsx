@@ -18,7 +18,7 @@ export default function Privacy() {
           <section className="mb-8">
             <h2 className="font-serif text-2xl font-bold mb-4">1. Introduction</h2>
             <p className="text-muted-foreground mb-4">
-              Welcome to NeuralPost ("we," "our," or "us"). We are committed to protecting your privacy 
+              Welcome to Prophetic ("we," "our," or "us"). We are committed to protecting your privacy 
               and ensuring the security of your personal information. This Privacy Policy explains how 
               we collect, use, disclose, and safeguard your information when you visit our website.
             </p>
