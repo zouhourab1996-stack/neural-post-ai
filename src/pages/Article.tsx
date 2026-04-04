@@ -38,7 +38,7 @@ interface Article {
 }
 
 const buildDocumentTitle = (title: string) => {
-  const suffix = " | NeuralPost";
+  const suffix = " | Prophetic";
   const clean = title.replace(/\s+/g, " ").trim();
   const allowed = Math.max(20, 60 - suffix.length);
   const trimmed = clean.length > allowed ? `${clean.slice(0, allowed - 1).trim()}…` : clean;
@@ -147,7 +147,7 @@ export default function Article() {
         publishedTime: article.created_at,
         modifiedTime: article.updated_at,
         category: article.category,
-        author: "NeuralPost Editorial Team"
+        author: "Prophetic Editorial Team"
       });
 
       // Inject Breadcrumb JSON-LD schema
