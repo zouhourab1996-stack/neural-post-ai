@@ -4,12 +4,12 @@ import { AlertTriangle, Bot, Link2, Scale, FileText } from "lucide-react";
 
 export default function Disclaimer() {
   useEffect(() => {
-    document.title = "Disclaimer | NeuralPost";
+    document.title = "Disclaimer | Prophetic";
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.setAttribute(
         "content",
-        "Read NeuralPost's disclaimer regarding AI-generated content, affiliate links, and general information purposes."
+        "Read Prophetic's disclaimer regarding AI-generated content, affiliate links, and general information purposes."
       );
     }
   }, []);
@@ -18,7 +18,7 @@ export default function Disclaimer() {
     {
       icon: FileText,
       title: "General Information",
-      content: `The information provided on NeuralPost ("the Website") is for general informational and educational purposes only. All content on this site is published in good faith and is intended to provide readers with timely news, analysis, and insights on technology, artificial intelligence, business, and science topics.
+      content: `The information provided on Prophetic ("the Website") is for general informational and educational purposes only. All content on this site is published in good faith and is intended to provide readers with timely news, analysis, and insights on technology, artificial intelligence, business, and science topics.
 
 While we strive to keep the information accurate and up-to-date, we make no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability, or availability of the information, products, services, or related graphics contained on the Website.
 
@@ -27,7 +27,7 @@ Any reliance you place on such information is strictly at your own risk. We stro
     {
       icon: Bot,
       title: "AI-Generated Content Disclosure",
-      content: `NeuralPost utilizes artificial intelligence (AI) technology to assist in content creation, research, and analysis. This includes:
+      content: `Prophetic utilizes artificial intelligence (AI) technology to assist in content creation, research, and analysis. This includes:
 
 • **Automated Article Generation**: Some articles on this website are generated with the assistance of AI language models (including DeepSeek and similar technologies) that analyze news sources, trends, and data to produce informative content.
 
@@ -40,7 +40,7 @@ Any reliance you place on such information is strictly at your own risk. We stro
     {
       icon: Link2,
       title: "Affiliate Links & Advertising",
-      content: `NeuralPost may contain affiliate links to products, services, or other websites. If you click on an affiliate link and make a purchase, we may receive a commission at no additional cost to you. This helps support the operation and maintenance of this website.
+      content: `Prophetic may contain affiliate links to products, services, or other websites. If you click on an affiliate link and make a purchase, we may receive a commission at no additional cost to you. This helps support the operation and maintenance of this website.
 
 **Advertising Disclosure**: This website displays advertisements through Google AdSense and potentially other advertising networks. These ads are served by third parties and may use cookies to personalize content based on your browsing history.
 
@@ -49,7 +49,7 @@ We are committed to transparency and will clearly disclose when content is spons
     {
       icon: Scale,
       title: "Not Professional Advice",
-      content: `The content on NeuralPost does not constitute:
+      content: `The content on Prophetic does not constitute:
 
 • **Financial Advice**: Information about markets, cryptocurrencies, stocks, or investments is for informational purposes only and should not be considered financial advice. Consult a licensed financial advisor before making investment decisions.
 
@@ -62,9 +62,9 @@ We are committed to transparency and will clearly disclose when content is spons
     {
       icon: AlertTriangle,
       title: "External Links Disclaimer",
-      content: `NeuralPost may contain links to external websites that are not operated or controlled by us. We have no control over, and assume no responsibility for, the content, privacy policies, or practices of any third-party sites or services.
+      content: `Prophetic may contain links to external websites that are not operated or controlled by us. We have no control over, and assume no responsibility for, the content, privacy policies, or practices of any third-party sites or services.
 
-These links are provided for convenience and reference only. The inclusion of any link does not imply endorsement, approval, or control of the linked site by NeuralPost. We strongly advise you to read the terms and conditions and privacy policy of any third-party website that you visit.`
+These links are provided for convenience and reference only. The inclusion of any link does not imply endorsement, approval, or control of the linked site by Prophetic. We strongly advise you to read the terms and conditions and privacy policy of any third-party website that you visit.`
     }
   ];
 
@@ -151,7 +151,7 @@ These links are provided for convenience and reference only. The inclusion of an
         {/* Acceptance Notice */}
         <div className="mt-8 text-center text-sm text-muted-foreground">
           <p>
-            By using NeuralPost, you acknowledge that you have read, understood, and agree to be bound by this disclaimer.
+            By using Prophetic, you acknowledge that you have read, understood, and agree to be bound by this disclaimer.
           </p>
         </div>
       </motion.div>
