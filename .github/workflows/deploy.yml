@@ -27,7 +27,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: Install dependencies and build
         run: |
@@ -51,14 +51,15 @@ jobs:
       - name: Ensure Bing IndexNow key file exists
         run: echo "a0ed604574874b10b1d2245fd9eeaed8" > ./dist/a0ed604574874b10b1d2245fd9eeaed8.txt
 
-      - name: Copy static assets to dist
+      - name: Copy essential static assets to dist
         run: |
           cp public/manifest.json ./dist/manifest.json || true
-          cp public/robots.txt ./dist/robots.txt || true
           cp public/ads.txt ./dist/ads.txt || true
+          cp public/googlec2dbc31ac222183d.html ./dist/googlec2dbc31ac222183d.html || true
+          cp robots.txt ./dist/robots.txt
 
       - name: Setup GitHub Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v5
 
       - name: Upload artifact to Pages
         uses: actions/upload-pages-artifact@v3
