@@ -40,7 +40,7 @@ export default function Header() {
       <div className="container-main">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group" aria-label="NeuralPost Home">
+          <Link to="/" className="flex items-center gap-2 group" aria-label="Prophetic Home">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center group-hover:scale-105 transition-transform">
               <Zap className="w-6 h-6 text-primary-foreground" aria-hidden="true" />
             </div>
