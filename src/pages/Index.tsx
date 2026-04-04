@@ -56,7 +56,7 @@ export default function Index() {
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 6);
   const lastUpdated = articles?.[0]?.created_at || new Date().toISOString();
-  const homepageDescription = `Breaking AI, tech, business, and science news for ${today}. Clear analysis, daily updates, and practical takeaways from NeuralPost.`;
+  const homepageDescription = `Breaking AI, tech, business, and science news for ${today}. Clear analysis, daily updates, and practical takeaways from Prophetic.`;
 
   return (
     <>
