@@ -50,7 +50,7 @@ function RedirectHandler() {
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="dark" storageKey="neuralpost-theme">
+      <ThemeProvider defaultTheme="dark" storageKey="prophetic-theme">
         <BrowserRouter>
           <RedirectHandler />
           <Suspense fallback={<Loading />}>
