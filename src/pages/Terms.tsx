@@ -18,7 +18,7 @@ export default function Terms() {
           <section className="mb-8">
             <h2 className="font-serif text-2xl font-bold mb-4">1. Agreement to Terms</h2>
             <p className="text-muted-foreground">
-              By accessing and using NeuralPost ("the Website"), you agree to be bound by these Terms of 
+              By accessing and using Prophetic ("the Website"), you agree to be bound by these Terms of 
               Service and all applicable laws and regulations. If you do not agree with any of these terms, 
               you are prohibited from using or accessing this site.
             </p>
@@ -27,7 +27,7 @@ export default function Terms() {
           <section className="mb-8">
             <h2 className="font-serif text-2xl font-bold mb-4">2. Use License</h2>
             <p className="text-muted-foreground mb-4">
-              Permission is granted to temporarily view the materials on NeuralPost for personal, 
+              Permission is granted to temporarily view the materials on Prophetic for personal, 
               non-commercial transitory viewing only. This is the grant of a license, not a transfer 
               of title, and under this license you may not:
             </p>
@@ -43,12 +43,12 @@ export default function Terms() {
           <section className="mb-8">
             <h2 className="font-serif text-2xl font-bold mb-4">3. Content and Intellectual Property</h2>
             <p className="text-muted-foreground mb-4">
-              All content on NeuralPost, including but not limited to text, graphics, logos, images, 
-              and software, is the property of NeuralPost or its content suppliers and is protected 
+              All content on Prophetic, including but not limited to text, graphics, logos, images, 
+              and software, is the property of Prophetic or its content suppliers and is protected 
               by international copyright laws.
             </p>
             <p className="text-muted-foreground">
-              The compilation of all content on this site is the exclusive property of NeuralPost 
+              The compilation of all content on this site is the exclusive property of Prophetic 
               and is protected by international copyright laws.
             </p>
           </section>
@@ -56,7 +56,7 @@ export default function Terms() {
           <section className="mb-8">
             <h2 className="font-serif text-2xl font-bold mb-4">4. AI-Generated Content Disclaimer</h2>
             <p className="text-muted-foreground mb-4">
-              NeuralPost utilizes artificial intelligence technology to generate and curate news content. 
+              Prophetic utilizes artificial intelligence technology to generate and curate news content. 
               While we strive for accuracy and quality, you acknowledge and agree that:
             </p>
             <ul className="list-disc list-inside text-muted-foreground space-y-2">
@@ -84,9 +84,9 @@ export default function Terms() {
             <h2 className="font-serif text-2xl font-bold mb-4">6. Third-Party Links</h2>
             <p className="text-muted-foreground">
               The Website may contain links to third-party websites or services that are not owned 
-              or controlled by NeuralPost. We have no control over and assume no responsibility for 
+              or controlled by Prophetic. We have no control over and assume no responsibility for 
               the content, privacy policies, or practices of any third-party websites or services. 
-              You acknowledge and agree that NeuralPost shall not be responsible or liable for any 
+              You acknowledge and agree that Prophetic shall not be responsible or liable for any 
               damage or loss caused by the use of any such content or services.
             </p>
           </section>
@@ -104,7 +104,7 @@ export default function Terms() {
           <section className="mb-8">
             <h2 className="font-serif text-2xl font-bold mb-4">8. Disclaimer</h2>
             <p className="text-muted-foreground">
-              THE MATERIALS ON NEURALPOST ARE PROVIDED ON AN "AS IS" BASIS. NEURALPOST MAKES NO 
+              THE MATERIALS ON PROPHETIC ARE PROVIDED ON AN "AS IS" BASIS. PROPHETIC MAKES NO 
               WARRANTIES, EXPRESSED OR IMPLIED, AND HEREBY DISCLAIMS AND NEGATES ALL OTHER WARRANTIES 
               INCLUDING, WITHOUT LIMITATION, IMPLIED WARRANTIES OR CONDITIONS OF MERCHANTABILITY, 
               FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT OF INTELLECTUAL PROPERTY OR 
@@ -115,10 +115,10 @@ export default function Terms() {
           <section className="mb-8">
             <h2 className="font-serif text-2xl font-bold mb-4">9. Limitations</h2>
             <p className="text-muted-foreground">
-              In no event shall NeuralPost or its suppliers be liable for any damages (including, 
+              In no event shall Prophetic or its suppliers be liable for any damages (including, 
               without limitation, damages for loss of data or profit, or due to business interruption) 
-              arising out of the use or inability to use the materials on NeuralPost, even if NeuralPost 
-              or a NeuralPost authorized representative has been notified orally or in writing of the 
+              arising out of the use or inability to use the materials on Prophetic, even if Prophetic 
+              or a Prophetic authorized representative has been notified orally or in writing of the 
               possibility of such damage.
             </p>
           </section>
@@ -126,7 +126,7 @@ export default function Terms() {
           <section className="mb-8">
             <h2 className="font-serif text-2xl font-bold mb-4">10. Revisions</h2>
             <p className="text-muted-foreground">
-              NeuralPost may revise these Terms of Service at any time without notice. By using this 
+              Prophetic may revise these Terms of Service at any time without notice. By using this 
               Website, you are agreeing to be bound by the then current version of these Terms of Service. 
               We encourage you to periodically review this page for the latest information.
             </p>
