@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SITE_URL = "https://prophetic.pw";
-const SITE_NAME = "NeuralPost";
+const SITE_NAME = "Prophetic";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
