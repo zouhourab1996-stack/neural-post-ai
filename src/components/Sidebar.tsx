@@ -143,7 +143,7 @@ export default function Sidebar({ trendingArticles, lastUpdated }: SidebarProps)
       <section className="bg-gradient-to-br from-primary to-accent rounded-xl p-6 text-primary-foreground" aria-labelledby="newsletter-heading">
         <h3 id="newsletter-heading" className="font-serif text-xl font-semibold mb-2">Stay Updated</h3>
         <p className="text-sm text-primary-foreground/80 mb-4">
-          Get the latest AI and tech news delivered to your inbox.
+          Get the latest AI and future predictions delivered to your inbox.
         </p>
         <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
           <label htmlFor="newsletter-email" className="sr-only">Email address</label>
