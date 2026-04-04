@@ -577,11 +577,13 @@ serve(async (req) => {
     let finalContent = String(article.content || '').trim();
 
     if (autoPublish && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
+      const keywordStrings = keywords.map((k: any) => k.keyword);
       const relatedLinks = await fetchRelatedLinks(
         SUPABASE_URL,
         SUPABASE_SERVICE_ROLE_KEY,
         selectedCategory,
         finalSlug,
+        keywordStrings,
       );
       finalContent = appendSourcesAndRelated(finalContent, {
         title: selectedHeadline.title,
