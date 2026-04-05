@@ -300,9 +300,9 @@ ${head}
 <style>
   body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #0b1020;
-    color: #e5e7eb;
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #050514;
+    color: #e0e0ff;
     line-height: 1.7;
   }
   .wrap {
