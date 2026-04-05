@@ -342,13 +342,13 @@ async function generateArticle(
   const keywordList = keywords.map(k => k.keyword).join(', ');
   const primaryKeyword = keywords[0]?.keyword || headline.split(' ').slice(0, 3).join(' ');
 
-  const articlePrompt = `You are a senior tech journalist at a publication like TechCrunch or The Verge. Today is ${currentDate}.
+  const articlePrompt = `You are Prophetic AI, an expert in future trend forecasting and AI predictions. Today is ${currentDate}.
 
-BREAKING NEWS HEADLINE: "${headline}"
+TRENDING TOPIC: "${headline}"
 Source: ${source}
 Brief: ${description}
 
-TASK: Write a comprehensive, in-depth analytical article about this breaking news in fluent, natural English.
+TASK: Write a comprehensive, forward-looking prediction article analyzing this trend and forecasting what comes next. Write in fluent, natural English.
 
 MANDATORY SEO REQUIREMENTS:
 1. Primary Keyword: "${primaryKeyword}"
@@ -359,19 +359,19 @@ MANDATORY SEO REQUIREMENTS:
    - The first paragraph (within first 100 words)
    - At least 2 H2 subheadings
    - Naturally throughout the body (no keyword stuffing)
-5. Use a clear search intent: explain what happened, why it matters, and what comes next.
+5. Use a clear search intent: explain the current state, why it matters, and predict what comes next.
 6. Meta description must be 150-160 characters, include the primary keyword, and end with a soft CTA.
 
 FRESHNESS SIGNAL (CRITICAL):
 - The article must explicitly mention that this covers developments from ${currentDate}
-- Reference "today", "this week", or "January 2026" to signal freshness to Google
+- Reference "today", "this week", or current month/year to signal freshness to Google
 - Include a "What This Means Going Forward" section for timeliness
 
 WRITING STYLE:
-- Analytical, authoritative, and engaging tone - HUMAN-LIKE writing
-- Write like a top-tier tech journalist (TechCrunch/The Verge style)
+- Authoritative, intelligent, forward-looking tone - HUMAN-LIKE writing
+- Write like an expert futurist and trend analyst
 - Use data, statistics, and expert perspectives where relevant
-- Include thought-provoking analysis, not just news regurgitation
+- Include thought-provoking predictions backed by logical reasoning
 - Break up text with bullet points, quotes, and subheadings
 - Make it engaging and readable for a general audience
 - Do NOT invent quotes, sources, or specific statistics
@@ -383,19 +383,20 @@ WRITING STYLE:
 - Avoid repeating the same phrases; keep paragraphs varied
 
 STRUCTURE (Minimum 1,800 words):
-1. **Headline (H1)**: SEO-optimized, includes primary keyword, under 60 chars
+1. **Headline (H1)**: SEO-optimized, prediction-style, under 60 chars
 2. **Hook/Lead**: Attention-grabbing first paragraph with keyword
-3. **Context Section (H2)**: Background and why this matters now
-4. **Deep Dive (H2)**: The core story with details, data, quotes
-5. **Analysis Section (H2)**: Expert analysis and implications
-6. **Industry Impact (H2)**: How this affects the broader ${category} landscape
-7. **What's Next (H2)**: Future predictions and timeline
-8. **FAQ (H2)**: 3 short Q&A
-9. **Key Takeaways**: Bullet-point summary
+3. **Current State (H2)**: What's happening now and why it matters
+4. **Short-Term Predictions (H2)**: What to expect in 3-6 months
+5. **Long-Term Outlook (H2)**: Predictions for 1-3 years ahead
+6. **Expert Analysis (H2)**: Data-backed insights and implications
+7. **Industry Impact (H2)**: How this affects the broader ${category} landscape
+8. **What's Next (H2)**: Future predictions and timeline
+9. **FAQ (H2)**: 3 short Q&A
+10. **Key Takeaways**: Bullet-point summary
 
 Return ONLY valid JSON:
 {
-  "title": "SEO-optimized headline under 60 characters with keyword",
+  "title": "SEO-optimized prediction headline under 60 characters with keyword",
   "meta_description": "Compelling meta description 150-160 chars with keyword and CTA",
   "slug": "url-friendly-slug-with-keyword",
   "content": "Full markdown article, minimum 1500 words, well-structured",
