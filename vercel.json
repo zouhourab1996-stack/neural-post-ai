@@ -1,4 +1,6 @@
 {
+  "version": 2,
+  "public": true,
   "headers": [
     {
       "source": "/sitemap.xml",
@@ -14,7 +16,11 @@
       "destination": "/sitemap.xml"
     },
     {
-      "source": "/((?!api|assets|favicon|sitemap.xml|robots.txt|_next).*)",
+      "source": "/robots.txt",
+      "destination": "/robots.txt"
+    },
+    {
+      "source": "/((?!api|assets|favicon|sitemap.xml|robots.txt|_next|static).*)",
       "destination": "/index.html"
     }
   ]
