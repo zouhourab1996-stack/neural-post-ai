@@ -639,7 +639,7 @@ function generateSitemapHtml(articles) {
   const url = toAbsoluteUrl("/sitemap");
   const head = baseHead({
     title: `Sitemap | ${SITE_NAME}`,
-    description: "Browse categories and the latest articles from NeuralPost.",
+    description: "Browse categories and the latest predictions from Prophetic.",
     canonical: url,
   });
 
