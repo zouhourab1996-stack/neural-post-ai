@@ -1,9 +1,8 @@
 import { useState, lazy, Suspense } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Search, Menu, X, Sun, Moon, Zap } from "lucide-react";
+import { Search, Menu, X, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useTheme } from "@/components/ThemeProvider";
 
 const TrendingTicker = lazy(() => import("@/components/TrendingTicker"));
 
@@ -18,13 +17,8 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const { theme, setTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,16 +30,16 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
+    <header className="sticky top-0 z-50 backdrop-blur-xl border-b border-border bg-background/80">
       <div className="container-main">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group" aria-label="Prophetic Home">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center group-hover:scale-105 transition-transform">
-              <Zap className="w-6 h-6 text-primary-foreground" aria-hidden="true" />
+          <Link to="/" className="flex items-center gap-3 group" aria-label="Prophetic Home">
+            <div className="w-10 h-10 rounded-xl btn-glow flex items-center justify-center group-hover:scale-105 transition-transform">
+              <Eye className="w-6 h-6 text-primary-foreground" aria-hidden="true" />
             </div>
-            <span className="font-serif text-2xl font-bold tracking-tight">
-              Neural<span className="text-primary">Post</span>
+            <span className="font-serif text-2xl font-bold tracking-tight text-foreground">
+              Prophetic
             </span>
           </Link>
 
@@ -72,8 +66,8 @@ export default function Header() {
             {isSearchOpen && (
               <form onSubmit={handleSearch} className="w-[250px]">
                 <Input
-                  placeholder="Search articles..."
-                  className="h-9"
+                  placeholder="Search predictions..."
+                  className="h-9 bg-muted border-border"
                   autoFocus
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -85,23 +79,10 @@ export default function Header() {
               variant="ghost"
               size="icon"
               onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className="rounded-lg"
+              className="rounded-lg text-muted-foreground hover:text-foreground"
               aria-label={isSearchOpen ? "Close search" : "Open search"}
             >
               <Search className="w-5 h-5" aria-hidden="true" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              className="rounded-lg"
-              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              {theme === "dark" ? (
-                <Sun className="w-5 h-5" aria-hidden="true" />
-              ) : (
-                <Moon className="w-5 h-5" aria-hidden="true" />
-              )}
             </Button>
           </div>
 
@@ -110,21 +91,8 @@ export default function Header() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={toggleTheme}
-              className="rounded-lg"
-              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              {theme === "dark" ? (
-                <Sun className="w-5 h-5" aria-hidden="true" />
-              ) : (
-                <Moon className="w-5 h-5" aria-hidden="true" />
-              )}
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="rounded-lg"
+              className="rounded-lg text-muted-foreground"
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={isMenuOpen}
             >
@@ -138,9 +106,9 @@ export default function Header() {
           <nav className="md:hidden border-t border-border" aria-label="Mobile navigation">
             <div className="py-4 space-y-2">
               <form onSubmit={handleSearch}>
-                <Input 
-                  placeholder="Search articles..." 
-                  className="mb-4" 
+                <Input
+                  placeholder="Search predictions..."
+                  className="mb-4 bg-muted border-border"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   aria-label="Search articles"

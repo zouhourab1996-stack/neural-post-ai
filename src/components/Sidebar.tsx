@@ -23,10 +23,10 @@ interface SidebarProps {
 }
 
 const categoryConfig = [
-  { name: "AI", color: "bg-blue-500" },
-  { name: "Tech", color: "bg-green-500" },
-  { name: "Business", color: "bg-purple-500" },
-  { name: "Science", color: "bg-orange-500" },
+  { name: "AI", color: "bg-primary" },
+  { name: "Tech", color: "bg-accent" },
+  { name: "Business", color: "bg-primary/70" },
+  { name: "Science", color: "bg-accent/70" },
 ];
 
 export default function Sidebar({ trendingArticles, lastUpdated }: SidebarProps) {
@@ -64,21 +64,22 @@ export default function Sidebar({ trendingArticles, lastUpdated }: SidebarProps)
   return (
     <aside className="space-y-8" aria-label="Sidebar">
       {/* Publishing Schedule */}
-      <section className="bg-card rounded-xl border border-border p-5" aria-labelledby="schedule-heading">
+      <section className="bg-card rounded-xl glow-border p-5" aria-labelledby="schedule-heading">
         <div className="flex items-center gap-2 mb-3">
           <CalendarClock className="w-5 h-5 text-primary" aria-hidden="true" />
           <h3 id="schedule-heading" className="font-serif text-lg font-semibold">Publishing Schedule</h3>
         </div>
         <p className="text-sm text-muted-foreground">
-          We publish two new articles daily (morning and evening).
+          We publish two new predictions daily (morning and evening).
         </p>
         <p className="text-xs text-muted-foreground mt-2">
           Last update:{" "}
           {lastUpdatedDate ? format(new Date(lastUpdatedDate), "MMM dd, yyyy") : "Updating..."}
         </p>
       </section>
+
       {/* Trending Articles */}
-      <section className="bg-card rounded-xl border border-border p-5" aria-labelledby="trending-sidebar-heading">
+      <section className="bg-card rounded-xl glow-border p-5" aria-labelledby="trending-sidebar-heading">
         <div className="flex items-center gap-2 mb-4">
           <Flame className="w-5 h-5 text-accent" aria-hidden="true" />
           <h3 id="trending-sidebar-heading" className="font-serif text-lg font-semibold">Trending Now</h3>
@@ -90,17 +91,17 @@ export default function Sidebar({ trendingArticles, lastUpdated }: SidebarProps)
             ))
           ) : (
             <p className="text-sm text-muted-foreground py-4 text-center">
-              Trending articles will appear here
+              Trending predictions will appear here
             </p>
           )}
         </div>
       </section>
 
       {/* Top Articles */}
-      <section className="bg-card rounded-xl border border-border p-5" aria-labelledby="top-sidebar-heading">
+      <section className="bg-card rounded-xl glow-border p-5" aria-labelledby="top-sidebar-heading">
         <div className="flex items-center gap-2 mb-4">
           <Trophy className="w-5 h-5 text-primary" aria-hidden="true" />
-          <h3 id="top-sidebar-heading" className="font-serif text-lg font-semibold">Top Articles</h3>
+          <h3 id="top-sidebar-heading" className="font-serif text-lg font-semibold">Top Predictions</h3>
         </div>
         <div className="space-y-1">
           {topArticles && topArticles.length > 0 ? (
@@ -109,14 +110,14 @@ export default function Sidebar({ trendingArticles, lastUpdated }: SidebarProps)
             ))
           ) : (
             <p className="text-sm text-muted-foreground py-4 text-center">
-              Top articles will appear here
+              Top predictions will appear here
             </p>
           )}
         </div>
       </section>
 
       {/* Categories */}
-      <nav className="bg-card rounded-xl border border-border p-5" aria-labelledby="categories-heading">
+      <nav className="bg-card rounded-xl glow-border p-5" aria-labelledby="categories-heading">
         <h3 id="categories-heading" className="font-serif text-lg font-semibold mb-4">Categories</h3>
         <div className="space-y-2">
           {categoryConfig.map((category) => (
@@ -140,10 +141,10 @@ export default function Sidebar({ trendingArticles, lastUpdated }: SidebarProps)
       </nav>
 
       {/* Newsletter */}
-      <section className="bg-gradient-to-br from-primary to-accent rounded-xl p-6 text-primary-foreground" aria-labelledby="newsletter-heading">
+      <section className="rounded-xl p-6 text-primary-foreground btn-glow" aria-labelledby="newsletter-heading">
         <h3 id="newsletter-heading" className="font-serif text-xl font-semibold mb-2">Stay Updated</h3>
         <p className="text-sm text-primary-foreground/80 mb-4">
-          Get the latest AI and future predictions delivered to your inbox.
+          Get the latest AI predictions and future intelligence delivered to your inbox.
         </p>
         <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
           <label htmlFor="newsletter-email" className="sr-only">Email address</label>
@@ -153,7 +154,7 @@ export default function Sidebar({ trendingArticles, lastUpdated }: SidebarProps)
             placeholder="your@email.com"
             className="w-full px-4 py-2 rounded-lg bg-primary-foreground/10 border border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary-foreground/30"
           />
-          <button 
+          <button
             type="submit"
             className="w-full px-4 py-2 rounded-lg bg-primary-foreground text-primary font-medium hover:bg-primary-foreground/90 transition-colors flex items-center justify-center gap-2"
           >
