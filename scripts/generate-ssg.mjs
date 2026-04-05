@@ -489,7 +489,7 @@ function generateArticleSchema(article, articleUrl) {
     wordCount: wordCount || undefined,
     author: {
       "@type": "Person",
-      name: "NeuralPost Editorial Team",
+      name: "Prophetic Editorial Team",
       url: `${SITE_URL}/about/`,
     },
     publisher: {
