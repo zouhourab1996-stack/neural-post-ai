@@ -4,7 +4,8 @@
       "source": "/sitemap.xml",
       "headers": [
         { "key": "Content-Type", "value": "application/xml; charset=utf-8" },
-        { "key": "Cache-Control", "value": "public, max-age=3600" }
+        { "key": "X-Robots-Tag", "value": "index" },
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
       ]
     },
     {
@@ -15,10 +16,8 @@
     }
   ],
   "rewrites": [
-    {
-      "source": "/((?!sitemap.xml|sitemap-news.xml|robots.txt|ads.txt|favicon|assets|api|googlec2dbc31ac222183d.html).*)",
-      "destination": "/index.html"
-    }
-  ],
-  "github": { "silent": true }
+    { "source": "/sitemap.xml", "destination": "/sitemap.xml" },
+    { "source": "/robots.txt", "destination": "/robots.txt" },
+    { "source": "/((?!api|assets|favicon|sitemap.xml|robots.txt|_next).*)", "destination": "/index.html" }
+  ]
 }
