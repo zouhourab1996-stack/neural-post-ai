@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "cleanUrls": true,
   "headers": [
     {
       "source": "/sitemap.xml",
@@ -9,8 +10,21 @@
           "value": "application/xml; charset=utf-8"
         },
         {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
           "key": "Cache-Control",
           "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/robots.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
         }
       ]
     }
@@ -21,7 +35,11 @@
       "destination": "/sitemap.xml"
     },
     {
-      "source": "/((?!api|assets|sitemap\\.xml|robots\\.txt|favicon).*)",
+      "source": "/robots.txt",
+      "destination": "/robots.txt"
+    },
+    {
+      "source": "/((?!api|assets|favicon|sitemap\\.xml|robots\\.txt|_next).*)",
       "destination": "/index.html"
     }
   ]
