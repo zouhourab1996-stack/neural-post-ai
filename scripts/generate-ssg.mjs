@@ -13,7 +13,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const SITE_URL = "https://prophetic.pw";
-const SITE_NAME = "NeuralPost";
+const SITE_NAME = "Prophetic";
 const DEFAULT_IMAGE =
   "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1200";
 
