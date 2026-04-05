@@ -1,21 +1,10 @@
 {
-  "rewrites": [
-    { "source": "/sitemap.xml",      "destination": "/api/sitemap.xml" },
-    { "source": "/sitemap-news.xml", "destination": "/api/sitemap-news.xml" }
-  ],
   "headers": [
     {
       "source": "/sitemap.xml",
       "headers": [
-        { "key": "Content-Type",  "value": "application/xml; charset=utf-8" },
+        { "key": "Content-Type", "value": "application/xml; charset=utf-8" },
         { "key": "Cache-Control", "value": "public, max-age=3600" }
-      ]
-    },
-    {
-      "source": "/sitemap-news.xml",
-      "headers": [
-        { "key": "Content-Type",  "value": "application/xml; charset=utf-8" },
-        { "key": "Cache-Control", "value": "public, max-age=1800" }
       ]
     },
     {
@@ -23,6 +12,12 @@
       "headers": [
         { "key": "Content-Type", "value": "text/plain; charset=utf-8" }
       ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/((?!sitemap.xml|sitemap-news.xml|robots.txt|ads.txt|favicon|assets|api|googlec2dbc31ac222183d.html).*)",
+      "destination": "/index.html"
     }
   ],
   "github": { "silent": true }
