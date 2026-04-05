@@ -9,8 +9,8 @@
           "value": "application/xml; charset=utf-8"
         },
         {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate"
         }
       ]
     }
@@ -21,11 +21,7 @@
       "destination": "/sitemap.xml"
     },
     {
-      "source": "/robots.txt",
-      "destination": "/robots.txt"
-    },
-    {
-      "source": "/((?!api|assets|sitemap\\.xml|robots\\.txt|favicon).*)",
+      "source": "/((?!api|assets|sitemap.xml|robots.txt|favicon).*)",
       "destination": "/index.html"
     }
   ]
