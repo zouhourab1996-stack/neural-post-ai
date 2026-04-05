@@ -435,7 +435,7 @@ ${head}
 <body>
   <header class="site-header">
     <div class="wrap site-header__inner">
-      <a class="brand" href="${SITE_URL}/">Neural<span>Post</span></a>
+      <a class="brand" href="${SITE_URL}/">Prophetic</a>
       <nav class="nav" aria-label="Main navigation">
         ${navLinks}
       </nav>
