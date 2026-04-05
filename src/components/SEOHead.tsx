@@ -30,10 +30,8 @@ export default function SEOHead({
   tags = [],
 }: SEOHeadProps) {
   useEffect(() => {
-    // Update document title
     document.title = `${title} | ${SITE_NAME}`;
 
-    // Helper to update or create meta tag
     const setMeta = (property: string, content: string, isProperty = false) => {
       const attr = isProperty ? "property" : "name";
       let element = document.querySelector(`meta[${attr}="${property}"]`);
@@ -47,7 +45,6 @@ export default function SEOHead({
       }
     };
 
-    // Canonical URL - normalized with trailing slash for non-root routes
     const currentPath = window.location.pathname === "/" ? "/" : `${window.location.pathname.replace(/\/+$/, "")}/`;
     const canonicalUrl = canonical || `${SITE_URL}${currentPath}`;
     let canonicalLink = document.querySelector('link[rel="canonical"]');
@@ -60,14 +57,12 @@ export default function SEOHead({
       document.head.appendChild(canonicalLink);
     }
 
-    // Basic meta tags
     setMeta("description", description);
     setMeta("author", author);
     setMeta("robots", "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1");
     setMeta("googlebot", "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1");
     setMeta("bingbot", "index, follow");
 
-    // Open Graph
     setMeta("og:title", title, true);
     setMeta("og:description", description, true);
     setMeta("og:url", canonicalUrl, true);
@@ -76,34 +71,23 @@ export default function SEOHead({
     setMeta("og:site_name", SITE_NAME, true);
     setMeta("og:locale", "en_US", true);
 
-    // Twitter Card
     setMeta("twitter:title", title);
     setMeta("twitter:description", description);
     setMeta("twitter:image", image);
     setMeta("twitter:card", "summary_large_image");
 
-    // Article specific
     if (type === "article") {
-      if (publishedTime) {
-        setMeta("article:published_time", publishedTime, true);
-      }
-      if (modifiedTime) {
-        setMeta("article:modified_time", modifiedTime, true);
-      }
-      if (section) {
-        setMeta("article:section", section, true);
-      }
-      if (author) {
-        setMeta("article:author", author, true);
-      }
+      if (publishedTime) setMeta("article:published_time", publishedTime, true);
+      if (modifiedTime) setMeta("article:modified_time", modifiedTime, true);
+      if (section) setMeta("article:section", section, true);
+      if (author) setMeta("article:author", author, true);
       tags.forEach((tag, index) => {
         setMeta(`article:tag:${index}`, tag, true);
       });
     }
 
-    // Cleanup function - reset to defaults on unmount
     return () => {
-      document.title = `${SITE_NAME} - AI Predictions & Future Intelligence`;
+      document.title = `${SITE_NAME} – AI Predictions & Future Intelligence`;
     };
   }, [title, description, canonical, image, type, publishedTime, modifiedTime, author, section, tags]);
 
@@ -159,7 +143,6 @@ export function generateArticleSchema(article: {
   };
 }
 
-// Breadcrumb Schema Generator
 export function generateBreadcrumbSchema(items: { name: string; url: string }[]) {
   return {
     "@context": "https://schema.org",
@@ -173,7 +156,6 @@ export function generateBreadcrumbSchema(items: { name: string; url: string }[])
   };
 }
 
-// FAQ Schema Generator
 export function generateFAQSchema(faqs: { question: string; answer: string }[]) {
   return {
     "@context": "https://schema.org",
@@ -189,7 +171,6 @@ export function generateFAQSchema(faqs: { question: string; answer: string }[]) 
   };
 }
 
-// HowTo Schema Generator
 export function generateHowToSchema(howTo: {
   name: string;
   description: string;

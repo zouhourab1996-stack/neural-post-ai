@@ -25,10 +25,10 @@ interface Article {
 }
 
 const categoryDescriptions: Record<string, string> = {
-  AI: "Explore the latest developments in artificial intelligence, machine learning, and neural networks.",
-  Tech: "Stay updated with cutting-edge future intelligence, gadgets, and digital innovations.",
-  Business: "Insights into the business world, startups, markets, and entrepreneurship.",
-  Science: "Discover breakthrough research, scientific discoveries, and innovations shaping our future.",
+  AI: "Explore AI predictions, future trends in machine learning, and neural network breakthroughs.",
+  Tech: "Stay updated with cutting-edge tech forecasts, gadgets, and digital innovation predictions.",
+  Business: "Market outlook, startup predictions, and business trend forecasts powered by AI analysis.",
+  Science: "Discover scientific breakthroughs and innovation predictions shaping our future.",
 };
 
 export default function Category() {
@@ -69,8 +69,8 @@ export default function Category() {
   const validCategories = ["AI", "Tech", "Business", "Science"];
   const isValidCategory = category && validCategories.includes(category);
   const categorySeoDescription = isValidCategory
-    ? `${categoryDescriptions[category] || `Latest ${category} news and updates.`} Read breaking ${category} stories, trend analysis, and long-form reporting from Prophetic.`
-    : "Latest news and analysis from Prophetic.";
+    ? `${categoryDescriptions[category] || `Latest ${category} predictions and analysis.`} Read trend forecasts and long-form analysis from Prophetic.`
+    : "Latest predictions and analysis from Prophetic.";
 
   if (!isValidCategory) {
     return (
@@ -92,7 +92,7 @@ export default function Category() {
   return (
     <>
       <SEOHead
-        title={`${category} News & Analysis`}
+        title={`${category} Predictions & Analysis`}
         description={categorySeoDescription}
         canonical={`https://prophetic.pw/category/${category}/`}
       />
@@ -114,10 +114,10 @@ export default function Category() {
         </Link>
         
         <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">
-          {category} <span className="text-primary">News</span>
+          {category} <span className="gradient-text">Predictions</span>
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl">
-          {categoryDescriptions[category] || "Latest news and updates."}
+          {categoryDescriptions[category] || "Latest predictions and analysis."}
         </p>
       </motion.header>
 
@@ -130,10 +130,10 @@ export default function Category() {
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
           ) : error || !articles || articles.length === 0 ? (
-            <div className="text-center py-20 bg-card rounded-xl border border-border">
-              <h3 className="font-serif text-xl font-semibold mb-2">No Articles Found</h3>
+            <div className="text-center py-20 bg-card rounded-xl glow-border">
+              <h3 className="font-serif text-xl font-semibold mb-2">No Predictions Found</h3>
               <p className="text-muted-foreground">
-                No articles in this category yet. Check back soon!
+                No predictions in this category yet. Check back soon!
               </p>
             </div>
           ) : (
