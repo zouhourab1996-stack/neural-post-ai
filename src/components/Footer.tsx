@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Zap, Mail, ExternalLink } from "lucide-react";
+import { Eye, Mail, ExternalLink } from "lucide-react";
 
 const footerLinks = {
   company: [
@@ -13,7 +13,7 @@ const footerLinks = {
   ],
   categories: [
     { name: "AI", path: "/category/AI/" },
-    { name: "Technology", path: "/category/Tech/" },
+    { name: "Tech", path: "/category/Tech/" },
     { name: "Business", path: "/category/Business/" },
     { name: "Science", path: "/category/Science/" },
   ],
@@ -35,16 +35,16 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <Link to="/" className="flex items-center gap-2 mb-4" aria-label="Prophetic Home">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <Zap className="w-6 h-6 text-primary-foreground" aria-hidden="true" />
+            <Link to="/" className="flex items-center gap-3 mb-4" aria-label="Prophetic Home">
+              <div className="w-10 h-10 rounded-xl btn-glow flex items-center justify-center">
+                <Eye className="w-6 h-6 text-primary-foreground" aria-hidden="true" />
               </div>
-              <span className="font-serif text-2xl font-bold tracking-tight">
-                Neural<span className="text-primary">Post</span>
+              <span className="font-serif text-2xl font-bold tracking-tight text-foreground">
+                Prophetic
               </span>
             </Link>
             <p className="text-muted-foreground mb-4 max-w-sm">
-              Your trusted source for AI-powered news covering technology, science, business, and artificial intelligence.
+              The Future, Decoded by AI. Daily predictions covering technology, markets, geopolitics, and science.
             </p>
             <div className="flex items-center gap-2 text-muted-foreground">
               <Mail className="w-4 h-4" aria-hidden="true" />
@@ -113,7 +113,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-border text-center">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Prophetic. All rights reserved.
+            © {new Date().getFullYear()} Prophetic. All rights reserved. Powered by Prophetic AI.
           </p>
         </div>
       </div>

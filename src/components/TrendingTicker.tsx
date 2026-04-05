@@ -31,10 +31,10 @@ export default function TrendingTicker() {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'AI': return 'bg-blue-500/20 text-blue-600 dark:text-blue-400 border-blue-500/30';
-      case 'Tech': return 'bg-green-500/20 text-green-600 dark:text-green-400 border-green-500/30';
-      case 'Business': return 'bg-purple-500/20 text-purple-600 dark:text-purple-400 border-purple-500/30';
-      case 'Science': return 'bg-orange-500/20 text-orange-600 dark:text-orange-400 border-orange-500/30';
+      case 'AI': return 'bg-primary/20 text-primary border-primary/30';
+      case 'Tech': return 'bg-accent/20 text-accent border-accent/30';
+      case 'Business': return 'bg-primary/15 text-primary/80 border-primary/25';
+      case 'Science': return 'bg-accent/15 text-accent/80 border-accent/25';
       default: return 'bg-primary/20 text-primary border-primary/30';
     }
   };

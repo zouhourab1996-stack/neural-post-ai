@@ -13,7 +13,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const SITE_URL = "https://prophetic.pw";
-const SITE_NAME = "NeuralPost";
+const SITE_NAME = "Prophetic";
 const DEFAULT_IMAGE =
   "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1200";
 
@@ -43,80 +43,80 @@ const categories = ["AI", "Tech", "Business", "Science"];
 const staticPages = [
   {
     route: "/about",
-    title: "About NeuralPost",
+    title: "About Prophetic",
     description:
-      "Learn about NeuralPost and our mission to provide fast, high-quality AI-powered news coverage.",
-    heading: "About NeuralPost",
+      "Learn about Prophetic and our mission to provide AI-powered future predictions and trend analysis.",
+    heading: "About Prophetic",
     content:
-      "NeuralPost is a digital publication focused on AI, technology, business, and science coverage with clear analysis and daily updates.",
+      "Prophetic is a digital publication focused on AI predictions, future intelligence, and trend forecasting across technology, markets, and science.",
   },
   {
     route: "/contact",
-    title: "Contact NeuralPost",
+    title: "Contact Prophetic",
     description:
-      "Contact NeuralPost for editorial questions, partnerships, and support.",
+      "Contact Prophetic for editorial questions, partnerships, and support.",
     heading: "Contact",
     content:
-      "For inquiries, feedback, or partnership opportunities, please reach out to the NeuralPost editorial team.",
+      "For inquiries, feedback, or partnership opportunities, please reach out to the Prophetic editorial team.",
   },
   {
     route: "/privacy",
-    title: "Privacy Policy - NeuralPost",
-    description: "Read the privacy policy for NeuralPost.",
+    title: "Privacy Policy - Prophetic",
+    description: "Read the privacy policy for Prophetic.",
     heading: "Privacy Policy",
     content:
-      "This page outlines how NeuralPost collects, processes, and protects data in accordance with modern privacy standards.",
+      "This page outlines how Prophetic collects, processes, and protects data in accordance with modern privacy standards.",
   },
   {
     route: "/terms",
-    title: "Terms of Service - NeuralPost",
-    description: "Read the terms of service for using NeuralPost.",
+    title: "Terms of Service - Prophetic",
+    description: "Read the terms of service for using Prophetic.",
     heading: "Terms of Service",
     content:
-      "These terms describe acceptable use, content ownership, and user responsibilities when accessing NeuralPost.",
+      "These terms describe acceptable use, content ownership, and user responsibilities when accessing Prophetic.",
   },
   {
     route: "/disclaimer",
-    title: "Disclaimer - NeuralPost",
-    description: "Important legal and editorial disclaimers for NeuralPost.",
+    title: "Disclaimer - Prophetic",
+    description: "Important legal and editorial disclaimers for Prophetic.",
     heading: "Disclaimer",
     content:
-      "NeuralPost content is published for informational purposes and should not be treated as legal, medical, or investment advice.",
+      "Prophetic content is published for informational purposes and should not be treated as legal, medical, or investment advice.",
   },
   {
     route: "/editorial",
-    title: "Editorial Policy - NeuralPost",
-    description: "Read the editorial standards and AI disclosure for NeuralPost.",
+    title: "Editorial Policy - Prophetic",
+    description: "Read the editorial standards and AI disclosure for Prophetic.",
     heading: "Editorial Policy",
     content:
-      "NeuralPost publishes AI-assisted coverage with human oversight. We aim for accuracy, transparency, and clear sourcing. When sources are available, we cite them. Corrections can be requested via our contact page.",
+      "Prophetic publishes AI-assisted predictions with human oversight. We aim for accuracy, transparency, and clear sourcing.",
   },
   {
     route: "/ai-policy",
-    title: "AI Content Policy - NeuralPost",
-    description: "How NeuralPost uses AI systems to assist editorial coverage.",
+    title: "AI Content Policy - Prophetic",
+    description: "How Prophetic uses AI systems to generate predictions and analysis.",
     heading: "AI Content Policy",
     content:
-      "NeuralPost uses AI systems to draft and summarize coverage. We apply automated quality checks and publish only when content meets minimum length, structure, and clarity requirements.",
+      "Prophetic uses AI systems to draft predictions and analyze trends. We apply automated quality checks and publish only when content meets minimum length, structure, and clarity requirements.",
   },
   {
     route: "/topics",
-    title: "Top Topics - NeuralPost",
-    description: "Evergreen guides and topical hubs across AI, tech, business, and science.",
+    title: "Top Topics - Prophetic",
+    description: "Evergreen guides and topical hubs across AI predictions, tech forecasts, and market outlook.",
     heading: "Top Topics",
     content: "",
   },
   {
     route: "/guides",
-    title: "Top Guides - NeuralPost",
-    description: "Evergreen guides and practical playbooks for AI, tech, business, and science readers.",
+    title: "Top Guides - Prophetic",
+    description: "Evergreen guides and practical playbooks for AI predictions, tech forecasts, and future intelligence.",
     heading: "Top Guides",
     content: "",
   },
   {
     route: "/sitemap",
-    title: "Sitemap - NeuralPost",
-    description: "Browse all categories and recent NeuralPost articles.",
+    title: "Sitemap - Prophetic",
+    description: "Browse all categories and recent Prophetic predictions.",
     heading: "Sitemap",
     content: "",
   },
@@ -253,7 +253,7 @@ function baseHead({
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeHtml(description)}" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
-  <meta name="author" content="NeuralPost Editorial Team" />
+  <meta name="author" content="Prophetic Editorial Team" />
   <meta name="language" content="en" />
   <link rel="canonical" href="${canonical}" />
 
@@ -300,9 +300,9 @@ ${head}
 <style>
   body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #0b1020;
-    color: #e5e7eb;
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #050514;
+    color: #e0e0ff;
     line-height: 1.7;
   }
   .wrap {
@@ -334,7 +334,7 @@ ${head}
     letter-spacing: -0.02em;
   }
   .brand span {
-    color: #fbbf24;
+    color: #f59e0b;
   }
   .nav {
     display: flex;
@@ -435,7 +435,7 @@ ${head}
 <body>
   <header class="site-header">
     <div class="wrap site-header__inner">
-      <a class="brand" href="${SITE_URL}/">Neural<span>Post</span></a>
+      <a class="brand" href="${SITE_URL}/">Prophetic</a>
       <nav class="nav" aria-label="Main navigation">
         ${navLinks}
       </nav>
@@ -489,7 +489,7 @@ function generateArticleSchema(article, articleUrl) {
     wordCount: wordCount || undefined,
     author: {
       "@type": "Person",
-      name: "NeuralPost Editorial Team",
+      name: "Prophetic Editorial Team",
       url: `${SITE_URL}/about/`,
     },
     publisher: {
@@ -552,7 +552,7 @@ function generateArticleHtml(article, relatedArticles = []) {
   <meta property="article:published_time" content="${article.created_at}" />
   <meta property="article:modified_time" content="${article.updated_at}" />
   <meta property="article:section" content="${escapeHtml(article.category)}" />
-  <meta property="article:author" content="NeuralPost Editorial Team" />
+  <meta property="article:author" content="Prophetic Editorial Team" />
   <script type="application/ld+json">${JSON.stringify(
     generateArticleSchema(article, articleUrl),
   )}</script>
@@ -639,7 +639,7 @@ function generateSitemapHtml(articles) {
   const url = toAbsoluteUrl("/sitemap");
   const head = baseHead({
     title: `Sitemap | ${SITE_NAME}`,
-    description: "Browse categories and the latest articles from NeuralPost.",
+    description: "Browse categories and the latest predictions from Prophetic.",
     canonical: url,
   });
 
