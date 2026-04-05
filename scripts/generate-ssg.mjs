@@ -334,7 +334,7 @@ ${head}
     letter-spacing: -0.02em;
   }
   .brand span {
-    color: #fbbf24;
+    color: #f59e0b;
   }
   .nav {
     display: flex;
