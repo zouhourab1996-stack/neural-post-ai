@@ -253,7 +253,7 @@ function baseHead({
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeHtml(description)}" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
-  <meta name="author" content="NeuralPost Editorial Team" />
+  <meta name="author" content="Prophetic Editorial Team" />
   <meta name="language" content="en" />
   <link rel="canonical" href="${canonical}" />
 
