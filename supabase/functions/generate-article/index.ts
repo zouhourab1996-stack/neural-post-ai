@@ -93,8 +93,8 @@ function appendSourcesAndRelated(
   }
 
   sections.push(
-    '## About NeuralPost',
-    '- Learn more about our editorial mission: [About NeuralPost](https://prophetic.pw/about/)',
+    '## About Prophetic',
+    '- Learn more about our editorial mission: [About Prophetic](https://prophetic.pw/about/)',
     '- Transparency and standards: [Editorial Policy](https://prophetic.pw/editorial/)',
     '- Contact the team: [Contact](https://prophetic.pw/contact/)',
   );
