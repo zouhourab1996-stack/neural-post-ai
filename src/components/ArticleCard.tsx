@@ -23,14 +23,14 @@ interface ArticleCardProps {
 
 export default function ArticleCard({ article, variant = "default", index = 0 }: ArticleCardProps) {
   const timeAgo = formatDistanceToNow(new Date(article.created_at), { addSuffix: true });
-  const altText = `${article.title} - ${article.category} news`;
+  const altText = `${article.title} - ${article.category} prediction`;
   const fallbackImage = `https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80`;
   const imgSrc = article.image_url || fallbackImage;
 
   if (variant === "featured") {
     return (
       <article
-        className="group relative overflow-hidden rounded-2xl bg-card border border-border shadow-lg"
+        className="group relative overflow-hidden rounded-2xl bg-card glow-border shadow-lg"
         itemScope
         itemType="https://schema.org/NewsArticle"
       >
@@ -47,11 +47,11 @@ export default function ArticleCard({ article, variant = "default", index = 0 }:
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               itemProp="image"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
           </div>
-          <div className="absolute bottom-0 left-0 right-0 p-6 text-primary-foreground">
+          <div className="absolute bottom-0 left-0 right-0 p-6">
             <div className="flex items-center gap-2 mb-3">
-              <Badge variant="secondary" className="bg-primary text-primary-foreground" itemProp="articleSection">
+              <Badge className="bg-primary text-primary-foreground" itemProp="articleSection">
                 {article.category}
               </Badge>
               {article.is_trending && (
@@ -61,13 +61,13 @@ export default function ArticleCard({ article, variant = "default", index = 0 }:
                 </Badge>
               )}
             </div>
-            <h2 className="font-serif text-2xl md:text-3xl font-bold mb-2 line-clamp-2 group-hover:text-primary transition-colors" itemProp="headline">
+            <h2 className="font-serif text-2xl md:text-3xl font-bold mb-2 line-clamp-2 text-foreground group-hover:text-primary transition-colors" itemProp="headline">
               {article.title}
             </h2>
-            <p className="text-sm text-primary-foreground/80 line-clamp-2 mb-3" itemProp="description">
+            <p className="text-sm text-muted-foreground line-clamp-2 mb-3" itemProp="description">
               {article.meta_description}
             </p>
-            <div className="flex items-center text-sm text-primary-foreground/60">
+            <div className="flex items-center text-sm text-muted-foreground">
               <Clock className="w-4 h-4 mr-1" aria-hidden="true" />
               <time dateTime={article.created_at} itemProp="datePublished">{timeAgo}</time>
             </div>
@@ -111,7 +111,7 @@ export default function ArticleCard({ article, variant = "default", index = 0 }:
 
   return (
     <article
-      className="group bg-card rounded-xl border border-border overflow-hidden card-hover"
+      className="group bg-card rounded-xl glow-border overflow-hidden card-hover"
       itemScope
       itemType="https://schema.org/NewsArticle"
     >
