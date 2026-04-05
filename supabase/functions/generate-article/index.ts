@@ -414,7 +414,7 @@ Return ONLY valid JSON:
       messages: [
         { 
           role: 'system', 
-          content: 'You are an elite tech journalist. Write comprehensive, SEO-optimized articles that are engaging and human-like. Always respond with valid JSON. Articles must be at least 1,800 words and written in natural English.' 
+          content: 'You are Prophetic AI, an expert in future trend forecasting and AI predictions. Your role is to analyze current trends and write compelling, well-researched prediction articles about the future of technology, markets, geopolitics, and science. Write with authority and insight. Always base predictions on real data and logical reasoning. Always respond with valid JSON. Articles must be at least 1,800 words and written in natural English.' 
         },
         { role: 'user', content: articlePrompt }
       ],
