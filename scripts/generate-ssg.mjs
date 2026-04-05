@@ -552,7 +552,7 @@ function generateArticleHtml(article, relatedArticles = []) {
   <meta property="article:published_time" content="${article.created_at}" />
   <meta property="article:modified_time" content="${article.updated_at}" />
   <meta property="article:section" content="${escapeHtml(article.category)}" />
-  <meta property="article:author" content="NeuralPost Editorial Team" />
+  <meta property="article:author" content="Prophetic Editorial Team" />
   <script type="application/ld+json">${JSON.stringify(
     generateArticleSchema(article, articleUrl),
   )}</script>
