@@ -1,12 +1,4 @@
 User-agent: *
 Allow: /
 Disallow: /api/
-Disallow: /admin/
-Disallow: /dashboard/
 Sitemap: https://prophetic.pw/sitemap.xml
-Sitemap: https://prophetic.pw/sitemap-news.xml
-User-agent: Googlebot
-Allow: /
-User-agent: Bingbot
-Allow: /
-Host: https://prophetic.pw
