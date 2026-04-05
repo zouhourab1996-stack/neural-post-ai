@@ -1,12 +1,32 @@
 {
   "version": 2,
+  "cleanUrls": true,
+  "headers": [
+    {
+      "source": "/sitemap.xml",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/xml; charset=utf-8"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "index"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/sitemap.xml",
-      "destination": "/api/sitemap"
+      "destination": "/sitemap.xml"
     },
     {
-      "source": "/((?!api|assets|favicon|robots.txt).*)",
+      "source": "/robots.txt",
+      "destination": "/robots.txt"
+    },
+    {
+      "source": "/((?!sitemap\\.xml|robots\\.txt|assets|api|favicon).*)",
       "destination": "/index.html"
     }
   ]
