@@ -427,7 +427,9 @@ ABSOLUTE RULES:
         },
         { role: 'user', content: articlePrompt }
       ],
-      temperature: 0.75,
+      temperature: 0.85,
+      frequency_penalty: 0.4,
+      presence_penalty: 0.3,
       max_tokens: 8000,
       stream: false,
     }),
