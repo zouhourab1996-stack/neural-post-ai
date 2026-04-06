@@ -12,11 +12,11 @@ const corsHeaders = {
 const categories = ["AI", "Tech", "Business", "Science"];
 
 const staticPages = [
-  { path: "/about/", priority: "0.7", freq: "monthly" },
-  { path: "/contact/", priority: "0.7", freq: "monthly" },
-  { path: "/privacy/", priority: "0.5", freq: "yearly" },
-  { path: "/terms/", priority: "0.5", freq: "yearly" },
-  { path: "/disclaimer/", priority: "0.5", freq: "yearly" },
+  { path: "/about", priority: "0.7", freq: "monthly" },
+  { path: "/contact", priority: "0.7", freq: "monthly" },
+  { path: "/privacy", priority: "0.5", freq: "yearly" },
+  { path: "/terms", priority: "0.5", freq: "yearly" },
+  { path: "/disclaimer", priority: "0.5", freq: "yearly" },
 ];
 
 function escapeXml(str: string): string {
@@ -51,19 +51,9 @@ Deno.serve(async (req) => {
     const safeArticles = articles || [];
     const now = new Date().toISOString().split("T")[0];
 
-    if (format === "txt") {
-      return generateTxtSitemap(safeArticles);
-    }
-
-    if (format === "rss") {
-      return generateRssFeed(safeArticles);
-    }
-
-    if (format === "atom") {
-      return generateAtomFeed(safeArticles);
-    }
-
-    // Default: XML sitemap
+    if (format === "txt") return generateTxtSitemap(safeArticles);
+    if (format === "rss") return generateRssFeed(safeArticles);
+    if (format === "atom") return generateAtomFeed(safeArticles);
     return generateXmlSitemap(safeArticles, now);
   } catch (error: unknown) {
     console.error("Sitemap generation error:", error);
@@ -101,7 +91,7 @@ function generateXmlSitemap(articles: any[], now: string) {
   for (const cat of categories) {
     xml += `
   <url>
-    <loc>${SITE_URL}/category/${encodeURIComponent(cat)}/</loc>
+    <loc>${SITE_URL}/category/${encodeURIComponent(cat)}</loc>
     <lastmod>${now}</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
@@ -122,12 +112,11 @@ function generateXmlSitemap(articles: any[], now: string) {
     const lastmod = article.updated_at
       ? article.updated_at.split("T")[0]
       : article.created_at.split("T")[0];
-
     const escapedTitle = escapeXml(article.title || "");
 
     xml += `
   <url>
-    <loc>${SITE_URL}/article/${article.slug}/</loc>
+    <loc>${SITE_URL}/article/${article.slug}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>${
@@ -142,8 +131,7 @@ function generateXmlSitemap(articles: any[], now: string) {
   </url>`;
   }
 
-  xml += `
-</urlset>`;
+  xml += `\n</urlset>`;
 
   return new Response(xml, {
     headers: {
@@ -157,9 +145,9 @@ function generateXmlSitemap(articles: any[], now: string) {
 function generateTxtSitemap(articles: any[]) {
   const urls = [
     `${SITE_URL}/`,
-    ...categories.map((c) => `${SITE_URL}/category/${c}/`),
+    ...categories.map((c) => `${SITE_URL}/category/${c}`),
     ...staticPages.map((p) => `${SITE_URL}${p.path}`),
-    ...articles.map((a) => `${SITE_URL}/article/${a.slug}/`),
+    ...articles.map((a) => `${SITE_URL}/article/${a.slug}`),
   ];
 
   return new Response(urls.join("\n"), {
@@ -177,7 +165,7 @@ function generateRssFeed(articles: any[]) {
 
   const items = latest
     .map((a) => {
-      const url = `${SITE_URL}/article/${a.slug}/`;
+      const url = `${SITE_URL}/article/${a.slug}`;
       const pubDate = new Date(a.created_at).toUTCString();
       return `    <item>
       <title>${escapeXml(a.title)}</title>
@@ -217,7 +205,7 @@ function generateAtomFeed(articles: any[]) {
 
   const entries = latest
     .map((a) => {
-      const url = `${SITE_URL}/article/${a.slug}/`;
+      const url = `${SITE_URL}/article/${a.slug}`;
       const published = new Date(a.created_at).toISOString();
       const modified = new Date(a.updated_at || a.created_at).toISOString();
       return `  <entry>
