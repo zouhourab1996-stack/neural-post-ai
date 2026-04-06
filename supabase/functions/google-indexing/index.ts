@@ -111,7 +111,6 @@ serve(async (req) => {
         (a: { slug: string }) => `https://prophetic.pw/article/${a.slug}`
       );
 
-      // Also add static pages
       const staticPages = [
         "https://prophetic.pw/",
         "https://prophetic.pw/about",
@@ -119,6 +118,10 @@ serve(async (req) => {
         "https://prophetic.pw/privacy",
         "https://prophetic.pw/terms",
         "https://prophetic.pw/disclaimer",
+        "https://prophetic.pw/category/AI",
+        "https://prophetic.pw/category/Tech",
+        "https://prophetic.pw/category/Business",
+        "https://prophetic.pw/category/Science",
       ];
       urlsToSubmit = [...staticPages, ...urlsToSubmit];
     }
