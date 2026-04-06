@@ -1,5 +1,5 @@
-import { lazy, Suspense, useEffect } from "react";
-import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { lazy, Suspense } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import Layout from "@/components/Layout";
@@ -30,47 +30,22 @@ const Loading = () => (
   </div>
 );
 
-// GitHub Pages SPA redirect handler
-function RedirectHandler() {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    // Handle sessionStorage redirect from 404.html
-    const redirect = sessionStorage.getItem("redirect");
-    if (redirect && redirect !== location.pathname) {
-      sessionStorage.removeItem("redirect");
-      navigate(redirect, { replace: true });
-    }
-  }, []);
-
-  return null;
-}
-
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="prophetic-theme">
         <BrowserRouter>
-          <RedirectHandler />
           <Suspense fallback={<Loading />}>
             <Routes>
               <Route element={<Layout />}>
                 <Route path="/" element={<Index />} />
                 <Route path="/article/:slug" element={<Article />} />
-                <Route path="/article/:slug/" element={<Article />} />
                 <Route path="/category/:category" element={<Category />} />
-                <Route path="/category/:category/" element={<Category />} />
                 <Route path="/about" element={<About />} />
-                <Route path="/about/" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/contact/" element={<Contact />} />
                 <Route path="/privacy" element={<Privacy />} />
-                <Route path="/privacy/" element={<Privacy />} />
                 <Route path="/terms" element={<Terms />} />
-                <Route path="/terms/" element={<Terms />} />
                 <Route path="/disclaimer" element={<Disclaimer />} />
-                <Route path="/disclaimer/" element={<Disclaimer />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>
