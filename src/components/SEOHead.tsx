@@ -15,7 +15,7 @@ interface SEOHeadProps {
 
 const SITE_URL = "https://prophetic.pw";
 const SITE_NAME = "Prophetic";
-const DEFAULT_IMAGE = "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1200";
+const DEFAULT_IMAGE = "https://prophetic.pw/og-image.jpg";
 
 export default function SEOHead({
   title,
@@ -87,7 +87,7 @@ export default function SEOHead({
     }
 
     return () => {
-      document.title = `${SITE_NAME} – AI-Powered Tech News & Analysis`;
+      document.title = `${SITE_NAME} — AI Predictions, Tech Forecasts & Market Analysis`;
     };
   }, [title, description, canonical, image, type, publishedTime, modifiedTime, author, section, tags]);
 
@@ -131,7 +131,7 @@ export function generateArticleSchema(article: {
       "name": SITE_NAME,
       "logo": {
         "@type": "ImageObject",
-        "url": `${SITE_URL}/favicon.ico`
+        "url": `${SITE_URL}/logo.svg`
       }
     },
     "mainEntityOfPage": {

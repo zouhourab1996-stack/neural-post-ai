@@ -38,7 +38,7 @@ const NotFound = () => {
           transition={{ delay: 0.2, duration: 0.5 }}
           className="mb-8"
         >
-          <span className="text-8xl md:text-9xl font-bold gradient-text">
+          <span className="text-8xl md:text-9xl font-bold text-primary">
             404
           </span>
         </motion.div>
@@ -53,7 +53,7 @@ const NotFound = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Button asChild size="lg" className="gap-2 btn-glow text-primary-foreground border-0">
+          <Button asChild size="lg" className="gap-2 bg-primary text-primary-foreground border-0">
             <Link to="/">
               <Home className="w-4 h-4" />
               Back to Homepage

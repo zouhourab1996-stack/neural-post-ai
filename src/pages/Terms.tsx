@@ -10,13 +10,13 @@ export default function Terms() {
         className="max-w-4xl mx-auto"
       >
         <header className="mb-12 text-center">
-          <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">Terms of Service</h1>
+          <h1 className="font-display text-4xl md:text-5xl font-bold mb-4">Terms of Service</h1>
           <p className="text-muted-foreground">Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
         </header>
 
         <div className="prose prose-lg max-w-none dark:prose-invert">
           <section className="mb-8">
-            <h2 className="font-serif text-2xl font-bold mb-4">1. Agreement to Terms</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">1. Agreement to Terms</h2>
             <p className="text-muted-foreground">
               By accessing and using Prophetic ("the Website"), you agree to be bound by these Terms of 
               Service and all applicable laws and regulations. If you do not agree with any of these terms, 
@@ -25,7 +25,7 @@ export default function Terms() {
           </section>
 
           <section className="mb-8">
-            <h2 className="font-serif text-2xl font-bold mb-4">2. Use License</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">2. Use License</h2>
             <p className="text-muted-foreground mb-4">
               Permission is granted to temporarily view the materials on Prophetic for personal, 
               non-commercial transitory viewing only. This is the grant of a license, not a transfer 
@@ -41,7 +41,7 @@ export default function Terms() {
           </section>
 
           <section className="mb-8">
-            <h2 className="font-serif text-2xl font-bold mb-4">3. Content and Intellectual Property</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">3. Content and Intellectual Property</h2>
             <p className="text-muted-foreground mb-4">
               All content on Prophetic, including but not limited to text, graphics, logos, images, 
               and software, is the property of Prophetic or its content suppliers and is protected 
@@ -54,7 +54,7 @@ export default function Terms() {
           </section>
 
           <section className="mb-8">
-            <h2 className="font-serif text-2xl font-bold mb-4">4. AI-Generated Content Disclaimer</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">4. AI-Generated Content Disclaimer</h2>
             <p className="text-muted-foreground mb-4">
               Prophetic utilizes artificial intelligence technology to generate and curate news content. 
               While we strive for accuracy and quality, you acknowledge and agree that:
@@ -68,7 +68,7 @@ export default function Terms() {
           </section>
 
           <section className="mb-8">
-            <h2 className="font-serif text-2xl font-bold mb-4">5. User Conduct</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">5. User Conduct</h2>
             <p className="text-muted-foreground mb-4">When using our Website, you agree not to:</p>
             <ul className="list-disc list-inside text-muted-foreground space-y-2">
               <li>Use the Website in any way that violates applicable laws or regulations</li>
@@ -81,7 +81,7 @@ export default function Terms() {
           </section>
 
           <section className="mb-8">
-            <h2 className="font-serif text-2xl font-bold mb-4">6. Third-Party Links</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">6. Third-Party Links</h2>
             <p className="text-muted-foreground">
               The Website may contain links to third-party websites or services that are not owned 
               or controlled by Prophetic. We have no control over and assume no responsibility for 
@@ -92,7 +92,7 @@ export default function Terms() {
           </section>
 
           <section className="mb-8">
-            <h2 className="font-serif text-2xl font-bold mb-4">7. Advertising</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">7. Advertising</h2>
             <p className="text-muted-foreground">
               The Website may display advertisements from third-party advertising networks. 
               These advertisements may be targeted based on your browsing behavior. We are not 
@@ -102,7 +102,7 @@ export default function Terms() {
           </section>
 
           <section className="mb-8">
-            <h2 className="font-serif text-2xl font-bold mb-4">8. Disclaimer</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">8. Disclaimer</h2>
             <p className="text-muted-foreground">
               THE MATERIALS ON PROPHETIC ARE PROVIDED ON AN "AS IS" BASIS. PROPHETIC MAKES NO 
               WARRANTIES, EXPRESSED OR IMPLIED, AND HEREBY DISCLAIMS AND NEGATES ALL OTHER WARRANTIES 
@@ -113,7 +113,7 @@ export default function Terms() {
           </section>
 
           <section className="mb-8">
-            <h2 className="font-serif text-2xl font-bold mb-4">9. Limitations</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">9. Limitations</h2>
             <p className="text-muted-foreground">
               In no event shall Prophetic or its suppliers be liable for any damages (including, 
               without limitation, damages for loss of data or profit, or due to business interruption) 
@@ -124,7 +124,7 @@ export default function Terms() {
           </section>
 
           <section className="mb-8">
-            <h2 className="font-serif text-2xl font-bold mb-4">10. Revisions</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">10. Revisions</h2>
             <p className="text-muted-foreground">
               Prophetic may revise these Terms of Service at any time without notice. By using this 
               Website, you are agreeing to be bound by the then current version of these Terms of Service. 
@@ -133,7 +133,7 @@ export default function Terms() {
           </section>
 
           <section className="mb-8">
-            <h2 className="font-serif text-2xl font-bold mb-4">11. Governing Law</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">11. Governing Law</h2>
             <p className="text-muted-foreground">
               These terms and conditions are governed by and construed in accordance with applicable laws, 
               and you irrevocably submit to the exclusive jurisdiction of the courts in that location.
@@ -141,7 +141,7 @@ export default function Terms() {
           </section>
 
           <section>
-            <h2 className="font-serif text-2xl font-bold mb-4">12. Contact Information</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">12. Contact Information</h2>
             <p className="text-muted-foreground">
               If you have any questions about these Terms of Service, please contact us at:{" "}
               <a href="mailto:touatihadi0@gmail.com" className="text-primary hover:underline">

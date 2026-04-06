@@ -81,7 +81,7 @@ These links are provided for convenience and reference only. The inclusion of an
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
             <AlertTriangle className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">
+          <h1 className="font-display text-4xl md:text-5xl font-bold mb-4">
             Disclaimer
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -121,7 +121,7 @@ These links are provided for convenience and reference only. The inclusion of an
                 <div className="p-2 rounded-lg bg-primary/10">
                   <section.icon className="w-6 h-6 text-primary" />
                 </div>
-                <h2 className="font-serif text-2xl font-bold">{section.title}</h2>
+                <h2 className="font-display text-2xl font-bold">{section.title}</h2>
               </div>
               <div className="prose prose-muted max-w-none">
                 {section.content.split('\n\n').map((paragraph, pIndex) => (
@@ -136,7 +136,7 @@ These links are provided for convenience and reference only. The inclusion of an
 
         {/* Contact Section */}
         <div className="mt-12 text-center bg-muted rounded-xl p-8">
-          <h2 className="font-serif text-xl font-semibold mb-2">Questions About This Disclaimer?</h2>
+          <h2 className="font-display text-xl font-semibold mb-2">Questions About This Disclaimer?</h2>
           <p className="text-muted-foreground mb-4">
             If you have any questions or concerns about this disclaimer, please contact us.
           </p>

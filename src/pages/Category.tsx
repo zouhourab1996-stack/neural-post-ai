@@ -75,7 +75,7 @@ export default function Category() {
   if (!isValidCategory) {
     return (
       <div className="container-main py-20 text-center">
-        <h1 className="font-serif text-3xl font-bold mb-4">Category Not Found</h1>
+        <h1 className="font-display text-3xl font-bold mb-4">Category Not Found</h1>
         <p className="text-muted-foreground mb-8">
           The category you're looking for doesn't exist.
         </p>
@@ -113,8 +113,8 @@ export default function Category() {
           Back to Home
         </Link>
         
-        <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">
-          {category} <span className="gradient-text">Predictions</span>
+        <h1 className="font-display text-4xl md:text-5xl font-bold mb-4">
+          {category} <span className="text-primary">Predictions</span>
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl">
           {categoryDescriptions[category] || "Latest predictions and analysis."}
@@ -130,8 +130,8 @@ export default function Category() {
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
           ) : error || !articles || articles.length === 0 ? (
-            <div className="text-center py-20 bg-card rounded-xl glow-border">
-              <h3 className="font-serif text-xl font-semibold mb-2">No Predictions Found</h3>
+            <div className="text-center py-20 bg-card rounded-xl border border-border/60">
+              <h3 className="font-display text-xl font-semibold mb-2">No Predictions Found</h3>
               <p className="text-muted-foreground">
                 No predictions in this category yet. Check back soon!
               </p>

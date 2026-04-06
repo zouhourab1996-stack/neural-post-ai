@@ -10,13 +10,13 @@ export default function Privacy() {
         className="max-w-4xl mx-auto"
       >
         <header className="mb-12 text-center">
-          <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">Privacy Policy</h1>
+          <h1 className="font-display text-4xl md:text-5xl font-bold mb-4">Privacy Policy</h1>
           <p className="text-muted-foreground">Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
         </header>
 
         <div className="prose prose-lg max-w-none dark:prose-invert">
           <section className="mb-8">
-            <h2 className="font-serif text-2xl font-bold mb-4">1. Introduction</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">1. Introduction</h2>
             <p className="text-muted-foreground mb-4">
               Welcome to Prophetic ("we," "our," or "us"). We are committed to protecting your privacy 
               and ensuring the security of your personal information. This Privacy Policy explains how 
@@ -25,7 +25,7 @@ export default function Privacy() {
           </section>
 
           <section className="mb-8">
-            <h2 className="font-serif text-2xl font-bold mb-4">2. Information We Collect</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">2. Information We Collect</h2>
             <p className="text-muted-foreground mb-4">We may collect information about you in various ways:</p>
             <h3 className="font-semibold text-lg mb-2">Personal Data</h3>
             <ul className="list-disc list-inside text-muted-foreground mb-4 space-y-2">
@@ -44,7 +44,7 @@ export default function Privacy() {
           </section>
 
           <section className="mb-8">
-            <h2 className="font-serif text-2xl font-bold mb-4">3. How We Use Your Information</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">3. How We Use Your Information</h2>
             <p className="text-muted-foreground mb-4">We use the information we collect to:</p>
             <ul className="list-disc list-inside text-muted-foreground space-y-2">
               <li>Provide, operate, and maintain our website</li>
@@ -57,7 +57,7 @@ export default function Privacy() {
           </section>
 
           <section className="mb-8">
-            <h2 className="font-serif text-2xl font-bold mb-4">4. Cookies and Tracking Technologies</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">4. Cookies and Tracking Technologies</h2>
             <p className="text-muted-foreground mb-4">
               We use cookies and similar tracking technologies to enhance your browsing experience. 
               Cookies are small files stored on your device that help us remember your preferences 
@@ -70,7 +70,7 @@ export default function Privacy() {
           </section>
 
           <section className="mb-8">
-            <h2 className="font-serif text-2xl font-bold mb-4">5. Third-Party Services</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">5. Third-Party Services</h2>
             <p className="text-muted-foreground mb-4">
               We may use third-party services for analytics, advertising, and other purposes. 
               These services may collect information about your online activities across different 
@@ -84,7 +84,7 @@ export default function Privacy() {
           </section>
 
           <section className="mb-8">
-            <h2 className="font-serif text-2xl font-bold mb-4">6. Data Security</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">6. Data Security</h2>
             <p className="text-muted-foreground">
               We implement appropriate technical and organizational measures to protect your personal 
               information against unauthorized access, alteration, disclosure, or destruction. However, 
@@ -94,7 +94,7 @@ export default function Privacy() {
           </section>
 
           <section className="mb-8">
-            <h2 className="font-serif text-2xl font-bold mb-4">7. Your Rights</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">7. Your Rights</h2>
             <p className="text-muted-foreground mb-4">Depending on your location, you may have the right to:</p>
             <ul className="list-disc list-inside text-muted-foreground space-y-2">
               <li>Access the personal information we hold about you</li>
@@ -107,7 +107,7 @@ export default function Privacy() {
           </section>
 
           <section className="mb-8">
-            <h2 className="font-serif text-2xl font-bold mb-4">8. Children's Privacy</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">8. Children's Privacy</h2>
             <p className="text-muted-foreground">
               Our website is not intended for children under 13 years of age. We do not knowingly 
               collect personal information from children under 13. If you are a parent or guardian 
@@ -116,7 +116,7 @@ export default function Privacy() {
           </section>
 
           <section className="mb-8">
-            <h2 className="font-serif text-2xl font-bold mb-4">9. Changes to This Policy</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">9. Changes to This Policy</h2>
             <p className="text-muted-foreground">
               We may update this Privacy Policy from time to time. We will notify you of any changes 
               by posting the new Privacy Policy on this page and updating the "Last updated" date. 
@@ -125,7 +125,7 @@ export default function Privacy() {
           </section>
 
           <section>
-            <h2 className="font-serif text-2xl font-bold mb-4">10. Contact Us</h2>
+            <h2 className="font-display text-2xl font-bold mb-4">10. Contact Us</h2>
             <p className="text-muted-foreground">
               If you have any questions about this Privacy Policy, please contact us at:{" "}
               <a href="mailto:touatihadi0@gmail.com" className="text-primary hover:underline">

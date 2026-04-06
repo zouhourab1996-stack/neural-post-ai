@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Sparkles, ArrowRight, Loader2, Calendar, Eye } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowRight, Loader2, Calendar } from "lucide-react";
 import ArticleCard from "@/components/ArticleCard";
 import Sidebar from "@/components/Sidebar";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,6 +21,17 @@ interface Article {
   updated_at: string;
 }
 
+const AdSlot = ({ className = '' }: { className?: string }) => (
+  <div className={`ad-container ${className}`}>
+    <ins className="adsbygoogle"
+      style={{ display: 'block' }}
+      data-ad-client="ca-pub-3898992716389443"
+      data-ad-slot="auto"
+      data-ad-format="auto"
+      data-full-width-responsive="true" />
+  </div>
+);
+
 const getCurrentDate = () => {
   return new Date().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -30,6 +40,14 @@ const getCurrentDate = () => {
     day: 'numeric'
   });
 };
+
+const categories = [
+  { name: "All", path: "/" },
+  { name: "AI", path: "/category/AI/" },
+  { name: "Tech", path: "/category/Tech/" },
+  { name: "Business", path: "/category/Business/" },
+  { name: "Science", path: "/category/Science/" },
+];
 
 export default function Index() {
   const today = getCurrentDate();
@@ -56,151 +74,169 @@ export default function Index() {
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 6);
   const lastUpdated = articles?.[0]?.created_at || new Date().toISOString();
-  const homepageDescription = `AI-powered tech news and analysis for ${today}. Daily coverage of AI, technology, business, and science from Prophetic.`;
+  const homepageDescription = `AI and technology predictions for ${today}. Daily coverage of AI breakthroughs, tech forecasts, market predictions, and science innovations from Prophetic.`;
+
+  const heroArticle = featuredArticles[0] || latestArticles[0];
+  const secondaryHeroArticles = featuredArticles.length > 1
+    ? featuredArticles.slice(1, 3)
+    : latestArticles.slice(1, 3);
+
+  // Build article list with ads inserted every 3rd
+  const renderArticlesWithAds = (articleList: Article[]) => {
+    const items: React.ReactNode[] = [];
+    articleList.forEach((article, index) => {
+      items.push(
+        <ArticleCard key={article.id} article={article} index={index} />
+      );
+      if ((index + 1) % 3 === 0 && index < articleList.length - 1) {
+        items.push(
+          <div key={`ad-${index}`} className="md:col-span-2">
+            <AdSlot />
+          </div>
+        );
+      }
+    });
+    return items;
+  };
 
   return (
     <>
       <SEOHead
-        title="AI-Powered Tech News & Analysis"
+        title="AI & Tech Predictions — Daily Forecasts & Analysis"
         description={homepageDescription}
         canonical="https://prophetic.pw/"
       />
 
-      <main className="container-main py-8" role="main">
-      {/* Hero Section */}
-      <section className="text-center mb-16 relative" aria-labelledby="hero-heading">
-        {/* Floating orbs background */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-          <div className="absolute top-10 left-1/4 w-64 h-64 rounded-full bg-primary/5 blur-3xl animate-float" />
-          <div className="absolute top-20 right-1/4 w-48 h-48 rounded-full bg-accent/5 blur-3xl animate-float" style={{ animationDelay: '2s' }} />
-          <div className="absolute bottom-0 left-1/2 w-72 h-72 rounded-full bg-primary/3 blur-3xl animate-float" style={{ animationDelay: '4s' }} />
-        </div>
-
-        <div className="relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6 glow-border">
-            <Eye className="w-4 h-4" aria-hidden="true" />
-            AI-Powered Predictions
-          </div>
-          <h2 id="hero-heading" className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            The Future,{" "}
-            <span className="gradient-text">Decoded by AI</span>
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
-            Stay ahead with cutting-edge AI predictions covering technology, markets,
-            geopolitics, and scientific breakthroughs.
-          </p>
-          <div className="inline-flex items-center gap-2 text-sm text-muted-foreground">
-            <Calendar className="w-4 h-4" aria-hidden="true" />
-            <time dateTime={new Date().toISOString()}>{today}</time>
-          </div>
-          <p className="text-sm text-muted-foreground mt-2">
-            Publishing schedule: 2 predictions daily • Last update{" "}
-            <time dateTime={lastUpdated}>{new Date(lastUpdated).toLocaleDateString("en-US")}</time>
-          </p>
-        </div>
-      </section>
-
-      {/* Featured Articles */}
-      {featuredArticles.length > 0 && (
-        <section className="mb-12" aria-labelledby="featured-heading">
-          <div className="flex items-center justify-between mb-6">
-            <h2 id="featured-heading" className="font-serif text-2xl font-bold">Featured Predictions</h2>
-            <Link to="/category/AI/">
-              <Button variant="ghost" className="text-primary">
-                View all <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
-              </Button>
-            </Link>
-          </div>
-          <div className="grid md:grid-cols-2 gap-6">
-            {featuredArticles.slice(0, 2).map((article, index) => (
-              <ArticleCard key={article.id} article={article} variant="featured" index={index} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Top Articles */}
-      {topArticles.length > 0 && (
-        <section className="mb-12" aria-labelledby="top-heading">
-          <div className="flex items-center justify-between mb-6">
-            <h2 id="top-heading" className="font-serif text-2xl font-bold">Top Predictions</h2>
-            <Link to="/sitemap/">
-              <Button variant="ghost" className="text-primary">
-                Browse all <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
-              </Button>
-            </Link>
-          </div>
-          <div className="grid md:grid-cols-2 gap-6">
-            {topArticles.map((article, index) => (
-              <ArticleCard key={article.id} article={article} variant="featured" index={index} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Top Topics */}
-      <section className="mb-12" aria-labelledby="topics-heading">
-        <div className="flex items-center justify-between mb-6">
-          <h2 id="topics-heading" className="font-serif text-2xl font-bold">Top Topics</h2>
-          <Link to="/topics/">
-            <Button variant="ghost" className="text-primary">
-              Explore topics <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
-            </Button>
-          </Link>
-        </div>
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-card rounded-xl glow-border p-6">
-            <h3 className="font-serif text-lg font-semibold mb-3">AI & Future Tech</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link to="/category/AI/" className="hover:text-primary">AI Predictions & Analysis</Link></li>
-              <li><Link to="/ai-policy/" className="hover:text-primary">AI Policy & Transparency</Link></li>
-            </ul>
-          </div>
-          <div className="bg-card rounded-xl glow-border p-6">
-            <h3 className="font-serif text-lg font-semibold mb-3">Markets, Business, Science</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link to="/category/Tech/" className="hover:text-primary">Tech Forecasts</Link></li>
-              <li><Link to="/category/Business/" className="hover:text-primary">Market Outlook</Link></li>
-              <li><Link to="/category/Science/" className="hover:text-primary">Science & Innovation</Link></li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* Main Content Grid */}
-      <div className="grid lg:grid-cols-3 gap-8">
-        <section className="lg:col-span-2" aria-labelledby="latest-heading">
-          <div className="flex items-center justify-between mb-6">
-            <h2 id="latest-heading" className="font-serif text-2xl font-bold">Latest Predictions</h2>
-          </div>
-
-          {isLoading ? (
-            <div className="flex items-center justify-center py-20" role="status" aria-label="Loading articles">
-              <Loader2 className="w-8 h-8 animate-spin text-primary" aria-hidden="true" />
-              <span className="sr-only">Loading predictions...</span>
+      <main className="container-main py-6" role="main">
+        {/* Hero Section */}
+        {heroArticle && (
+          <section className="mb-10" aria-labelledby="hero-heading">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
+                <time dateTime={new Date().toISOString()}>{today}</time>
+              </div>
+              <span className="text-border">|</span>
+              <span className="text-xs text-muted-foreground">
+                Updated <time dateTime={lastUpdated}>{new Date(lastUpdated).toLocaleDateString("en-US")}</time>
+              </span>
             </div>
-          ) : error ? (
-            <div className="text-center py-20" role="alert">
-              <p className="text-muted-foreground mb-4">No predictions found yet.</p>
-              <p className="text-sm text-muted-foreground">Predictions will appear here once generated.</p>
+
+            <div className="grid lg:grid-cols-5 gap-5">
+              {/* Main hero article */}
+              <div className="lg:col-span-3">
+                <article className="group relative overflow-hidden rounded-lg bg-card border border-border/60 h-full">
+                  <Link to={`/article/${heroArticle.slug}/`} className="block h-full">
+                    <div className="aspect-[16/10] overflow-hidden">
+                      <img
+                        src={heroArticle.image_url || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&q=80'}
+                        alt={heroArticle.title}
+                        width={1200}
+                        height={750}
+                        loading="eager"
+                        fetchPriority="high"
+                        decoding="async"
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent" />
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border mb-2.5 ${
+                        heroArticle.category === 'AI' ? 'badge-ai' :
+                        heroArticle.category === 'Tech' ? 'badge-tech' :
+                        heroArticle.category === 'Business' ? 'badge-business' :
+                        'badge-science'
+                      }`}>
+                        {heroArticle.category}
+                      </span>
+                      <h1 id="hero-heading" className="font-display text-2xl md:text-3xl lg:text-4xl font-bold mb-2 line-clamp-3 text-foreground group-hover:text-primary transition-colors">
+                        {heroArticle.title}
+                      </h1>
+                      <p className="text-sm text-slate-400 line-clamp-2 max-w-2xl">
+                        {heroArticle.meta_description}
+                      </p>
+                    </div>
+                  </Link>
+                </article>
+              </div>
+
+              {/* Secondary hero articles */}
+              <div className="lg:col-span-2 grid gap-5">
+                {secondaryHeroArticles.map((article, index) => (
+                  <ArticleCard key={article.id} article={article} variant="featured" index={index + 1} />
+                ))}
+              </div>
             </div>
-          ) : latestArticles.length > 0 ? (
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
-              {latestArticles.map((article, index) => (
-                <ArticleCard key={article.id} article={article} index={index} />
+          </section>
+        )}
+
+        {/* Category Tabs */}
+        <nav className="flex items-center gap-1 mb-6 overflow-x-auto pb-2" aria-label="Category filter">
+          {categories.map((cat) => (
+            <Link
+              key={cat.name}
+              to={cat.path}
+              className={`px-3.5 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                cat.name === "All"
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              }`}
+            >
+              {cat.name}
+            </Link>
+          ))}
+        </nav>
+
+        {/* Top Articles */}
+        {topArticles.length > 0 && (
+          <section className="mb-10" aria-labelledby="top-heading">
+            <div className="flex items-center justify-between mb-5">
+              <h2 id="top-heading" className="font-display text-xl font-bold">Editor&apos;s Picks</h2>
+              <Link to="/sitemap/" className="text-sm text-primary font-medium flex items-center gap-1 hover:underline">
+                Browse all <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+              </Link>
+            </div>
+            <div className="grid md:grid-cols-2 gap-5">
+              {topArticles.slice(0, 4).map((article, index) => (
+                <ArticleCard key={article.id} article={article} variant="featured" index={index} />
               ))}
             </div>
-          ) : (
-            <div className="text-center py-20 bg-card rounded-xl glow-border">
-              <Sparkles className="w-12 h-12 text-primary mx-auto mb-4" aria-hidden="true" />
-              <h3 className="font-serif text-xl font-semibold mb-2">No Predictions Yet</h3>
-              <p className="text-muted-foreground mb-4">Predictions will be generated automatically using AI.</p>
-            </div>
-          )}
-        </section>
+          </section>
+        )}
 
-        <Sidebar trendingArticles={trendingArticles} lastUpdated={lastUpdated} />
-      </div>
+        <AdSlot className="mb-8" />
+
+        {/* Main Content Grid */}
+        <div className="grid lg:grid-cols-3 gap-8">
+          <section className="lg:col-span-2" aria-labelledby="latest-heading">
+            <div className="flex items-center justify-between mb-5">
+              <h2 id="latest-heading" className="font-display text-xl font-bold">Latest Predictions</h2>
+            </div>
+
+            {isLoading ? (
+              <div className="flex items-center justify-center py-20" role="status" aria-label="Loading articles">
+                <Loader2 className="w-6 h-6 animate-spin text-primary" aria-hidden="true" />
+                <span className="sr-only">Loading predictions...</span>
+              </div>
+            ) : error ? (
+              <div className="text-center py-20" role="alert">
+                <p className="text-muted-foreground mb-2">No predictions found yet.</p>
+                <p className="text-sm text-muted-foreground">Predictions will appear here once generated.</p>
+              </div>
+            ) : latestArticles.length > 0 ? (
+              <div className="grid md:grid-cols-2 gap-5 mb-8">
+                {renderArticlesWithAds(latestArticles)}
+              </div>
+            ) : (
+              <div className="text-center py-20 bg-card rounded-lg border border-border/60">
+                <h3 className="font-display text-lg font-semibold mb-2">No Predictions Yet</h3>
+                <p className="text-muted-foreground text-sm">Predictions will be generated automatically.</p>
+              </div>
+            )}
+          </section>
+
+          <Sidebar trendingArticles={trendingArticles} lastUpdated={lastUpdated} />
+        </div>
       </main>
     </>
   );
