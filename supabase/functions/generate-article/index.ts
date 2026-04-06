@@ -342,65 +342,64 @@ async function generateArticle(
   const keywordList = keywords.map(k => k.keyword).join(', ');
   const primaryKeyword = keywords[0]?.keyword || headline.split(' ').slice(0, 3).join(' ');
 
-  const articlePrompt = `You are Prophetic AI, an expert in future trend forecasting and AI predictions. Today is ${currentDate}.
+  const articlePrompt = `Today is ${currentDate}.
 
 TRENDING TOPIC: "${headline}"
 Source: ${source}
 Brief: ${description}
 
-TASK: Write a comprehensive, forward-looking prediction article analyzing this trend and forecasting what comes next. Write in fluent, natural English.
+TASK: Write an investigative, analytical article about this topic as a seasoned human journalist and domain expert would. This is NOT an AI-generated article — write like a real person with years of experience covering ${category}.
+
+CRITICAL ANTI-AI-DETECTION RULES (MANDATORY):
+1. NEVER use these words/phrases: "delve", "unleash", "testament", "landscape", "paradigm shift", "game-changer", "revolutionize", "cutting-edge", "groundbreaking", "in conclusion", "it's worth noting", "it remains to be seen", "only time will tell", "in today's rapidly evolving", "navigate the complexities", "at the forefront", "a tapestry of", "robust", "leverage", "synergy", "holistic", "comprehensive", "multifaceted", "nuanced"
+2. Vary sentence length dramatically — mix 5-word punches with 30+ word complex sentences
+3. Start some paragraphs with dependent clauses, others with short declarations, others with questions
+4. Use contractions naturally ("it's", "won't", "they're") — real writers use them
+5. Include occasional informal phrasing or colloquial expressions a real expert would use
+6. Add personal analytical voice — phrases like "What strikes me about this...", "The real question here is...", "Here's what most people miss..."
+7. Use specific, concrete examples rather than vague generalities
+8. Occasionally reference your own analytical perspective or reasoning process
+9. Include rhetorical questions to engage readers
+10. Use transitional phrases that feel natural, not formulaic — avoid "Furthermore", "Moreover", "Additionally" in sequence
+11. Break conventional structure occasionally — a one-sentence paragraph for emphasis, a parenthetical aside, an em-dash interruption
+12. Write the way a columnist at Bloomberg, Wired, or The Economist would
 
 MANDATORY SEO REQUIREMENTS:
 1. Primary Keyword: "${primaryKeyword}"
-2. Secondary Keywords to naturally include: ${keywordList}
-3. The article MUST be at least 1,800 words (this is critical!)
-4. Include the primary keyword in:
-   - The H1 title (55-65 characters)
-   - The first paragraph (within first 100 words)
-   - At least 2 H2 subheadings
-   - Naturally throughout the body (no keyword stuffing)
-5. Use a clear search intent: explain the current state, why it matters, and predict what comes next.
-6. Meta description must be 150-160 characters, include the primary keyword, and end with a soft CTA.
+2. Secondary Keywords to naturally weave in: ${keywordList}
+3. The article MUST be at least 1,800 words
+4. Include the primary keyword in the title (55-65 chars), first paragraph, and at least 2 H2 subheadings
+5. Meta description: 150-160 characters, includes primary keyword, ends with a hook
 
-FRESHNESS SIGNAL (CRITICAL):
-- The article must explicitly mention that this covers developments from ${currentDate}
-- Reference "today", "this week", or current month/year to signal freshness to Google
-- Include a "What This Means Going Forward" section for timeliness
-
-WRITING STYLE:
-- Authoritative, intelligent, forward-looking tone - HUMAN-LIKE writing
-- Write like an expert futurist and trend analyst
-- Use data, statistics, and expert perspectives where relevant
-- Include thought-provoking predictions backed by logical reasoning
-- Break up text with bullet points, quotes, and subheadings
-- Make it engaging and readable for a general audience
-- Do NOT invent quotes, sources, or specific statistics
-- If you mention numbers, keep them clearly framed as estimates or trends
-- Add a brief "At a Glance" bullet list near the top (3-5 bullets)
-- Add a "Key Terms Explained" mini-section (3-5 concise definitions)
-- Add a "Practical Takeaways" section aimed at general readers
-- Add a short FAQ section with 3 questions (and brief answers)
-- Avoid repeating the same phrases; keep paragraphs varied
+FRESHNESS SIGNAL:
+- Explicitly mention this covers developments as of ${currentDate}
+- Reference "today", "this week", or current month/year
+- Include a forward-looking section
 
 STRUCTURE (Minimum 1,800 words):
-1. **Headline (H1)**: SEO-optimized, prediction-style, under 60 chars
-2. **Hook/Lead**: Attention-grabbing first paragraph with keyword
-3. **Current State (H2)**: What's happening now and why it matters
-4. **Short-Term Predictions (H2)**: What to expect in 3-6 months
-5. **Long-Term Outlook (H2)**: Predictions for 1-3 years ahead
-6. **Expert Analysis (H2)**: Data-backed insights and implications
-7. **Industry Impact (H2)**: How this affects the broader ${category} landscape
-8. **What's Next (H2)**: Future predictions and timeline
-9. **FAQ (H2)**: 3 short Q&A
-10. **Key Takeaways**: Bullet-point summary
+1. **Headline (H1)**: Sharp, specific, under 60 chars — not clickbait but compelling
+2. **Opening**: Drop the reader into the story. No throat-clearing. Start with a fact, a scene, or a provocative claim.
+3. **At a Glance**: 3-5 bullet summary for scanners
+4. **The Current Picture (H2)**: What's happening now — with specifics, not platitudes
+5. **Technical Specification**: Include a markdown table comparing key metrics, specs, or data points relevant to the topic
+6. **Short-Term Outlook (H2)**: What to expect in 3-6 months, and why
+7. **The Bigger Picture (H2)**: 1-3 year predictions grounded in logic
+8. **What Most Analysis Gets Wrong (H2)**: Contrarian or nuanced take
+9. **Historical Context**: Compare to similar events from 2024-2025 — what rhymes and what's different
+10. **Practical Takeaways (H2)**: Actionable insights for readers
+11. **Key Terms Explained**: 3-5 concise definitions
+12. **FAQ (H2)**: 3 questions with brief, direct answers
+13. **Final Thought**: End with a strong, memorable closing line — not a summary
+
+IMPORTANT: Do NOT invent quotes, fabricate statistics, or attribute claims to unnamed experts. If citing numbers, frame them as estimates or trends. Be honest about uncertainty.
 
 Return ONLY valid JSON:
 {
-  "title": "SEO-optimized prediction headline under 60 characters with keyword",
-  "meta_description": "Compelling meta description 150-160 chars with keyword and CTA",
+  "title": "SEO-optimized headline under 60 characters",
+  "meta_description": "Unique compelling description 150-160 chars with keyword",
   "slug": "url-friendly-slug-with-keyword",
-  "content": "Full markdown article, minimum 1500 words, well-structured",
-  "image_query": "2-3 word search term for finding a relevant high-quality image"
+  "content": "Full markdown article, minimum 1800 words",
+  "image_query": "2-3 word image search term"
 }`;
 
   const response = await fetch('https://api.deepseek.com/chat/completions', {
@@ -414,11 +413,23 @@ Return ONLY valid JSON:
       messages: [
         { 
           role: 'system', 
-          content: 'You are Prophetic AI, an expert in future trend forecasting and AI predictions. Your role is to analyze current trends and write compelling, well-researched prediction articles about the future of technology, markets, geopolitics, and science. Write with authority and insight. Always base predictions on real data and logical reasoning. Always respond with valid JSON. Articles must be at least 1,800 words and written in natural English.' 
+          content: `You are a veteran investigative journalist and industry analyst with 20+ years of experience. You write for publications like Bloomberg, Wired, and The Economist. Your writing is sharp, opinionated, and deeply informed — never generic or formulaic.
+
+ABSOLUTE RULES:
+- Write as a REAL HUMAN EXPERT. Every sentence must sound like it came from a person, not an algorithm.
+- NEVER use AI-typical words: "delve", "unleash", "testament", "landscape", "paradigm shift", "game-changer", "revolutionize", "cutting-edge", "groundbreaking", "comprehensive", "multifaceted", "nuanced", "robust", "leverage", "synergy", "holistic", "navigate", "tapestry", "at the forefront"
+- Use contractions. Use informal asides. Use rhetorical questions. Use em-dashes and parentheticals.
+- Vary sentence rhythm: short punchy sentences mixed with longer analytical ones. Some one-sentence paragraphs for impact.
+- Show your thinking process: "Here's what's interesting...", "The part nobody's talking about...", "I'd argue that..."
+- Be specific and concrete. Avoid vague corporate language.
+- It's okay to express uncertainty: "It's hard to say exactly...", "The data is murky here, but..."
+- Always respond with valid JSON only. Articles must be at least 1,800 words.` 
         },
         { role: 'user', content: articlePrompt }
       ],
-      temperature: 0.75,
+      temperature: 0.85,
+      frequency_penalty: 0.4,
+      presence_penalty: 0.3,
       max_tokens: 8000,
       stream: false,
     }),
