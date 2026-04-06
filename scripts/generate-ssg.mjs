@@ -1103,63 +1103,37 @@ async function main() {
   writeRouteIndex(distDir, "/guides", generateGuidesHtml(safeArticles));
   console.log("  ✓ /guides/");
 
-  // Generate paginated article sitemaps (200 URLs each for Google compatibility)
-  console.log("\n📍 Writing paginated article sitemaps...");
-  const paginatedSitemaps = generatePaginatedSitemaps(safeArticles, 200);
-  if (paginatedSitemaps.length === 1) {
-    fs.writeFileSync(path.join(distDir, "sitemap-articles.xml"), paginatedSitemaps[0], "utf8");
-    console.log("  ✓ /sitemap-articles.xml");
-  } else {
-    paginatedSitemaps.forEach((content, i) => {
-      const filename = `sitemap-articles-${i + 1}.xml`;
-      fs.writeFileSync(path.join(distDir, filename), content, "utf8");
-      console.log(`  ✓ /${filename}`);
-    });
-  }
-
-  // Generate primary sitemap.xml as a sitemap index (Google recommended for large sites)
-  console.log("\n📍 Writing sitemap.xml as sitemap index...");
   const now = new Date().toISOString().split("T")[0];
-  fs.writeFileSync(path.join(distDir, "sitemap.xml"), generateSitemapIndexXml(now, paginatedSitemaps.length), "utf8");
-  console.log("  ✓ /sitemap.xml (index)");
 
-  // Keep flat sitemap for validators
-  console.log("\n📍 Writing sitemap-flat.xml (full flat sitemap)...");
-  fs.writeFileSync(path.join(distDir, "sitemap-flat.xml"), generateSitemapXmlFlat(safeArticles), "utf8");
-  console.log("  ✓ /sitemap-flat.xml");
+  // PRIMARY: sitemap.xml — simple flat <urlset> with ALL URLs (Google-friendly)
+  console.log("\n📍 Writing sitemap.xml (flat urlset)...");
+  fs.writeFileSync(path.join(distDir, "sitemap.xml"), generateSitemapXml(safeArticles), "utf8");
+  console.log("  ✓ /sitemap.xml");
 
-  // Keep legacy sitemap-index.xml
-  fs.writeFileSync(path.join(distDir, "sitemap-index.xml"), generateSitemapIndexXml(now, paginatedSitemaps.length), "utf8");
-
-  // Also write a flat sitemap for broader compatibility
+  // sitemap.txt — plain text list of all URLs
   console.log("\n📍 Writing sitemap.txt...");
   fs.writeFileSync(path.join(distDir, "sitemap.txt"), generateSitemapTxt(safeArticles), "utf8");
   console.log("  ✓ /sitemap.txt");
 
-  // Write sitemap-static.xml
-  console.log("\n📍 Writing sitemap-static.xml...");
-  fs.writeFileSync(path.join(distDir, "sitemap-static.xml"), generateStaticSitemapXml(), "utf8");
-  console.log("  ✓ /sitemap-static.xml");
-
+  // Atom feed
   console.log("\n📍 Writing RSS + Atom feeds...");
   fs.writeFileSync(path.join(distDir, "rss.xml"), generateRssXml(safeArticles), "utf8");
   fs.writeFileSync(path.join(distDir, "atom.xml"), generateAtomXml(safeArticles), "utf8");
   console.log("  ✓ /rss.xml");
   console.log("  ✓ /atom.xml");
 
-  // Generate Google News Sitemap (last 2 days only)
+  // Google News Sitemap (last 2 days only)
   console.log("\n📍 Writing sitemap-news.xml...");
   fs.writeFileSync(path.join(distDir, "sitemap-news.xml"), generateNewsSitemapXml(safeArticles), "utf8");
   console.log("  ✓ /sitemap-news.xml");
 
-  // Write canonical robots.txt into dist (overrides any copy from public/)
+  // Write canonical robots.txt
   console.log("\n📍 Writing robots.txt...");
   const robotsTxt = `User-agent: *
 Allow: /
 Disallow: /api/
 
 Sitemap: ${SITE_URL}/sitemap.xml
-Sitemap: ${SITE_URL}/sitemap-news.xml
 Sitemap: ${SITE_URL}/atom.xml
 `;
   fs.writeFileSync(path.join(distDir, "robots.txt"), robotsTxt, "utf8");
