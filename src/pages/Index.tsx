@@ -56,12 +56,12 @@ export default function Index() {
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 6);
   const lastUpdated = articles?.[0]?.created_at || new Date().toISOString();
-  const homepageDescription = `AI-powered predictions and future intelligence for ${today}. Daily forecasts on technology, markets, and science from Prophetic.`;
+  const homepageDescription = `AI-powered tech news and analysis for ${today}. Daily coverage of AI, technology, business, and science from Prophetic.`;
 
   return (
     <>
       <SEOHead
-        title="AI Predictions & Future Intelligence"
+        title="AI-Powered Tech News & Analysis"
         description={homepageDescription}
         canonical="https://prophetic.pw/"
       />
