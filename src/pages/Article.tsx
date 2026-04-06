@@ -1,25 +1,23 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
 import { 
   Clock, 
   ArrowLeft, 
-  Share2, 
   Twitter, 
   Facebook, 
   Linkedin, 
   Link2, 
   Loader2,
-  Eye
+  BookOpen,
+  ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import ArticleCard from "@/components/ArticleCard";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow, format } from "date-fns";
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { generateArticleSchema, generateBreadcrumbSchema } from "@/components/SEOHead";
 
 interface Article {
@@ -37,6 +35,24 @@ interface Article {
   updated_at: string;
 }
 
+const categoryBadgeClass: Record<string, string> = {
+  AI: "badge-ai",
+  Tech: "badge-tech",
+  Business: "badge-business",
+  Science: "badge-science",
+};
+
+const AdSlot = ({ className = '' }: { className?: string }) => (
+  <div className={`ad-container ${className}`}>
+    <ins className="adsbygoogle"
+      style={{ display: 'block' }}
+      data-ad-client="ca-pub-3898992716389443"
+      data-ad-slot="auto"
+      data-ad-format="auto"
+      data-full-width-responsive="true" />
+  </div>
+);
+
 const buildDocumentTitle = (title: string) => {
   const suffix = " | Prophetic";
   const clean = title.replace(/\s+/g, " ").trim();
@@ -45,13 +61,27 @@ const buildDocumentTitle = (title: string) => {
   return `${trimmed}${suffix}`;
 };
 
+function estimateReadingTime(content: string): number {
+  const words = content.replace(/[#*_`\[\]()]/g, '').split(/\s+/).length;
+  return Math.max(1, Math.ceil(words / 230));
+}
+
+function extractHeadings(content: string): { text: string; level: number; id: string }[] {
+  const headingRegex = /^(#{2,3})\s+(.+)$/gm;
+  const headings: { text: string; level: number; id: string }[] = [];
+  let match;
+  while ((match = headingRegex.exec(content)) !== null) {
+    const text = match[2].replace(/[*_`]/g, '').trim();
+    const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    headings.push({ text, level: match[1].length, id });
+  }
+  return headings;
+}
+
 // Component to insert ads within article content
 function ArticleContentWithAds({ content }: { content: string }) {
-  // Split content by double newlines (paragraphs in markdown)
   const sections = content.split(/\n\n+/);
-  
-  // Insert ad after the 2nd section (or at the end if content is short)
-  const adInsertIndex = Math.min(2, sections.length - 1);
+  const adInsertIndex = Math.min(3, sections.length - 1);
   
   const beforeAd = sections.slice(0, adInsertIndex + 1).join('\n\n');
   const afterAd = sections.slice(adInsertIndex + 1).join('\n\n');
@@ -60,10 +90,8 @@ function ArticleContentWithAds({ content }: { content: string }) {
     <>
       <ReactMarkdown>{beforeAd}</ReactMarkdown>
       
-      {sections.length > 2 && (
-        <div className="w-full my-8 overflow-hidden" aria-label="Advertisement">
-          <ins className="adsbygoogle" style={{ display: 'block', textAlign: 'center' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="fluid" data-ad-layout="in-article"></ins>
-        </div>
+      {sections.length > 3 && (
+        <AdSlot className="my-8" />
       )}
       
       {afterAd && <ReactMarkdown>{afterAd}</ReactMarkdown>}
@@ -106,6 +134,16 @@ export default function Article() {
     enabled: !!article,
   });
 
+  const readingTime = useMemo(() => {
+    if (!article) return 0;
+    return estimateReadingTime(article.content);
+  }, [article]);
+
+  const headings = useMemo(() => {
+    if (!article) return [];
+    return extractHeadings(article.content);
+  }, [article]);
+
   // Update meta tags and inject JSON-LD schema for SEO
   useEffect(() => {
     if (article) {
@@ -113,19 +151,16 @@ export default function Article() {
 
       const canonicalUrl = `${window.location.origin}/article/${article.slug}/`;
       
-      // Update meta description
       const metaDescription = document.querySelector('meta[name="description"]');
       if (metaDescription) {
         metaDescription.setAttribute("content", article.meta_description);
       }
 
-      // Update canonical
       const canonicalLink = document.querySelector('link[rel="canonical"]');
       if (canonicalLink) {
         canonicalLink.setAttribute("href", canonicalUrl);
       }
 
-      // Update OpenGraph tags
       const ogTitle = document.querySelector('meta[property="og:title"]');
       if (ogTitle) ogTitle.setAttribute("content", article.title);
       
@@ -138,7 +173,6 @@ export default function Article() {
       const ogImage = document.querySelector('meta[property="og:image"]');
       if (ogImage && article.image_url) ogImage.setAttribute("content", article.image_url);
 
-      // Inject NewsArticle JSON-LD schema
       const articleSchema = generateArticleSchema({
         title: article.title,
         description: article.meta_description,
@@ -150,32 +184,27 @@ export default function Article() {
         author: "Prophetic Editorial Team"
       });
 
-      // Inject Breadcrumb JSON-LD schema
       const breadcrumbSchema = generateBreadcrumbSchema([
         { name: "Home", url: "/" },
         { name: article.category, url: `/category/${article.category}/` },
         { name: article.title, url: `/article/${article.slug}/` }
       ]);
 
-      // Remove existing article schemas
       document.querySelectorAll('script[data-schema="article"]').forEach(el => el.remove());
       document.querySelectorAll('script[data-schema="breadcrumb"]').forEach(el => el.remove());
 
-      // Add article schema
       const articleScriptEl = document.createElement("script");
       articleScriptEl.type = "application/ld+json";
       articleScriptEl.setAttribute("data-schema", "article");
       articleScriptEl.textContent = JSON.stringify(articleSchema);
       document.head.appendChild(articleScriptEl);
 
-      // Add breadcrumb schema
       const breadcrumbScriptEl = document.createElement("script");
       breadcrumbScriptEl.type = "application/ld+json";
       breadcrumbScriptEl.setAttribute("data-schema", "breadcrumb");
       breadcrumbScriptEl.textContent = JSON.stringify(breadcrumbSchema);
       document.head.appendChild(breadcrumbScriptEl);
 
-      // Cleanup on unmount
       return () => {
         document.querySelectorAll('script[data-schema="article"]').forEach(el => el.remove());
         document.querySelectorAll('script[data-schema="breadcrumb"]').forEach(el => el.remove());
@@ -212,7 +241,7 @@ export default function Article() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
       </div>
     );
   }
@@ -220,12 +249,12 @@ export default function Article() {
   if (error || !article) {
     return (
       <div className="container-main py-20 text-center">
-        <h1 className="font-serif text-3xl font-bold mb-4">Article Not Found</h1>
-        <p className="text-muted-foreground mb-8">
+        <h1 className="font-display text-2xl font-bold mb-3">Article Not Found</h1>
+        <p className="text-muted-foreground mb-6 text-sm">
           The article you're looking for doesn't exist or has been removed.
         </p>
         <Link to="/">
-          <Button>
+          <Button variant="outline" size="sm">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Home
           </Button>
@@ -236,16 +265,12 @@ export default function Article() {
 
   const timeAgo = formatDistanceToNow(new Date(article.created_at), { addSuffix: true });
   const publishDate = format(new Date(article.created_at), "MMMM d, yyyy");
+  const badgeClass = categoryBadgeClass[article.category] || "bg-muted text-muted-foreground";
 
   return (
     <article>
       {/* Hero Section */}
-      <motion.header
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="relative"
-      >
+      <header className="relative">
         <div className="aspect-[21/9] md:aspect-[3/1] overflow-hidden">
           <img
             src={article.image_url || `https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1600&q=80`}
@@ -257,146 +282,140 @@ export default function Article() {
             decoding="async"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
         </div>
         
-        <div className="container-main relative -mt-32 md:-mt-40 pb-8">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-4"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to all articles
-          </Link>
-          
-          <div className="flex items-center gap-3 mb-4">
-            <Badge className="bg-primary text-primary-foreground">{article.category}</Badge>
-            <span className="text-sm text-muted-foreground flex items-center gap-1">
-              <Clock className="w-4 h-4" />
+        <div className="container-main relative -mt-28 md:-mt-36 pb-6">
+          {/* Breadcrumb */}
+          <nav className="flex items-center gap-1.5 text-xs text-muted-foreground mb-3" aria-label="Breadcrumb">
+            <Link to="/" className="hover:text-primary transition-colors">Home</Link>
+            <ChevronRight className="w-3 h-3" />
+            <Link to={`/category/${article.category}/`} className="hover:text-primary transition-colors">{article.category}</Link>
+            <ChevronRight className="w-3 h-3" />
+            <span className="text-slate-400 line-clamp-1">{article.title}</span>
+          </nav>
+
+          <div className="flex items-center flex-wrap gap-2.5 mb-3">
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${badgeClass}`}>
+              {article.category}
+            </span>
+            <span className="text-xs text-muted-foreground flex items-center gap-1">
+              <Clock className="w-3.5 h-3.5" />
               {timeAgo}
             </span>
-            {article.views && (
-              <span className="text-sm text-muted-foreground flex items-center gap-1">
-                <Eye className="w-4 h-4" />
+            <span className="text-xs text-muted-foreground flex items-center gap-1">
+              <BookOpen className="w-3.5 h-3.5" />
+              {readingTime} min read
+            </span>
+            {article.views != null && article.views > 0 && (
+              <span className="text-xs text-muted-foreground">
                 {article.views.toLocaleString()} views
               </span>
             )}
           </div>
           
-          <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold mb-4 max-w-4xl">
+          <h1 className="font-display text-2xl md:text-3xl lg:text-4xl font-bold mb-3 max-w-4xl leading-tight">
             {article.title}
           </h1>
           
-          <p className="text-lg text-muted-foreground max-w-3xl">
+          <p className="text-base text-slate-400 max-w-3xl">
             {article.meta_description}
           </p>
         </div>
-      </motion.header>
+      </header>
 
       {/* Content */}
       <div className="container-main">
         <div className="grid lg:grid-cols-12 gap-8">
           {/* Sharing Sidebar - Desktop */}
           <aside className="hidden lg:block lg:col-span-1">
-            <div className="sticky top-24 space-y-3">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Share</p>
-              <button
-                onClick={() => handleShare("twitter")}
-                className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
-              >
-                <Twitter className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => handleShare("facebook")}
-                className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
-              >
-                <Facebook className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => handleShare("linkedin")}
-                className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
-              >
-                <Linkedin className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => handleShare("copy")}
-                className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
-              >
-                <Link2 className="w-5 h-5" />
-              </button>
+            <div className="sticky top-20 space-y-2">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1.5 font-medium">Share</p>
+              {[
+                { platform: "twitter", icon: Twitter, label: "Share on X" },
+                { platform: "facebook", icon: Facebook, label: "Share on Facebook" },
+                { platform: "linkedin", icon: Linkedin, label: "Share on LinkedIn" },
+                { platform: "copy", icon: Link2, label: "Copy link" },
+              ].map(({ platform, icon: Icon, label }) => (
+                <button
+                  key={platform}
+                  onClick={() => handleShare(platform)}
+                  className="w-9 h-9 rounded-md bg-card border border-border/60 flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-colors"
+                  aria-label={label}
+                >
+                  <Icon className="w-4 h-4" />
+                </button>
+              ))}
             </div>
           </aside>
 
           {/* Article Content */}
           <div className="lg:col-span-7">
-            {/* AdSense - Article Top */}
-            <div className="w-full mb-8 rounded-xl overflow-hidden">
-              <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
-            </div>
+            <AdSlot className="mb-8" />
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="article-content"
-            >
+            {/* Table of Contents */}
+            {headings.length > 2 && (
+              <div className="bg-card border border-border/60 rounded-lg p-4 mb-8">
+                <h2 className="font-display text-sm font-semibold mb-2.5">In this article</h2>
+                <nav aria-label="Table of contents">
+                  <ul className="space-y-1.5">
+                    {headings.map((heading) => (
+                      <li key={heading.id} className={heading.level === 3 ? "pl-4" : ""}>
+                        <a
+                          href={`#${heading.id}`}
+                          className="text-sm text-muted-foreground hover:text-primary transition-colors line-clamp-1"
+                        >
+                          {heading.text}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              </div>
+            )}
+
+            <div className="article-content">
               <ArticleContentWithAds content={article.content} />
-            </motion.div>
+            </div>
 
             {/* Mobile Share Buttons */}
-            <div className="lg:hidden flex items-center gap-2 mt-8 pt-8 border-t border-border">
-              <span className="text-sm text-muted-foreground mr-2">Share:</span>
-              <button
-                onClick={() => handleShare("twitter")}
-                className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
-              >
-                <Twitter className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => handleShare("facebook")}
-                className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
-              >
-                <Facebook className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => handleShare("linkedin")}
-                className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
-              >
-                <Linkedin className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => handleShare("copy")}
-                className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
-              >
-                <Link2 className="w-5 h-5" />
-              </button>
+            <div className="lg:hidden flex items-center gap-2 mt-8 pt-6 border-t border-border/60">
+              <span className="text-xs text-muted-foreground mr-1 font-medium">Share:</span>
+              {[
+                { platform: "twitter", icon: Twitter },
+                { platform: "facebook", icon: Facebook },
+                { platform: "linkedin", icon: Linkedin },
+                { platform: "copy", icon: Link2 },
+              ].map(({ platform, icon: Icon }) => (
+                <button
+                  key={platform}
+                  onClick={() => handleShare(platform)}
+                  className="w-9 h-9 rounded-md bg-card border border-border/60 flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+                >
+                  <Icon className="w-4 h-4" />
+                </button>
+              ))}
             </div>
 
-            {/* AdSense - Article Bottom */}
-            <div className="w-full my-8 rounded-xl overflow-hidden">
-              <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
-            </div>
+            <AdSlot className="my-8" />
 
             {/* Article Footer */}
-            <div className="py-8 border-t border-border">
-              <p className="text-sm text-muted-foreground">
-                Published on {publishDate}
+            <div className="py-6 border-t border-border/60">
+              <p className="text-xs text-muted-foreground">
+                Published on {publishDate} by Prophetic Editorial Team
               </p>
             </div>
           </div>
 
           {/* Sidebar */}
-          <aside className="lg:col-span-4 space-y-8">
-            {/* AdSense - Sidebar */}
-            <div className="w-full rounded-xl overflow-hidden">
-              <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="rectangle" data-full-width-responsive="true"></ins>
-            </div>
+          <aside className="lg:col-span-4 space-y-6">
+            <AdSlot />
 
             {/* Related Articles */}
             {relatedArticles && relatedArticles.length > 0 && (
-              <div className="bg-card rounded-xl border border-border p-5">
-                <h3 className="font-serif text-lg font-semibold mb-4">Related Articles</h3>
-                <div className="space-y-1">
+              <div className="bg-card rounded-lg border border-border/60 p-4">
+                <h3 className="font-display text-sm font-semibold mb-3">Related Articles</h3>
+                <div className="space-y-0.5">
                   {relatedArticles.map((related, index) => (
                     <ArticleCard
                       key={related.id}
@@ -409,9 +428,8 @@ export default function Article() {
               </div>
             )}
 
-            {/* AdSense - Sticky Sidebar */}
-            <div className="w-full rounded-xl sticky top-24 overflow-hidden">
-              <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="rectangle" data-full-width-responsive="true"></ins>
+            <div className="sticky top-20">
+              <AdSlot />
             </div>
           </aside>
         </div>

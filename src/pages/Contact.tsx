@@ -63,8 +63,8 @@ export default function Contact() {
         transition={{ duration: 0.5 }}
         className="text-center mb-12"
       >
-        <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">
-          Contact <span className="gradient-text">Us</span>
+        <h1 className="font-display text-4xl md:text-5xl font-bold mb-4">
+          Contact <span className="text-primary">Us</span>
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           Have a question, feedback, or just want to say hello? We'd love to hear from you. 
@@ -126,7 +126,7 @@ export default function Contact() {
               <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center mx-auto mb-6">
                 <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
               </div>
-              <h3 className="font-serif text-2xl font-bold mb-3">Message Sent!</h3>
+              <h3 className="font-display text-2xl font-bold mb-3">Message Sent!</h3>
               <p className="text-muted-foreground mb-6">
                 Thank you for reaching out. We'll get back to you as soon as possible.
               </p>

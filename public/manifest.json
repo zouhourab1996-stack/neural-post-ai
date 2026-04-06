@@ -1,17 +1,17 @@
 {
-  "name": "Prophetic - AI Predictions & Future Intelligence",
+  "name": "Prophetic — AI Predictions & Tech Forecasts",
   "short_name": "Prophetic",
-  "description": "Daily AI-powered predictions covering technology, markets, geopolitics, and science.",
+  "description": "Daily AI predictions, tech forecasts, market analysis, and science coverage. Expert insights on emerging trends.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a0a2e",
-  "theme_color": "#7c3aed",
+  "background_color": "#0a0f1e",
+  "theme_color": "#3b82f6",
   "lang": "en",
   "dir": "ltr",
   "icons": [
-    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],
-  "categories": ["news", "technology"],
+  "categories": ["news", "technology", "finance"],
   "orientation": "portrait"
 }

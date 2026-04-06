@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Prophetic Logo: Stylized all-seeing eye / foresight symbol -->
+  <!-- Outer eye shape -->
+  <path d="M100 50C60 50 25 80 10 100C25 120 60 150 100 150C140 150 175 120 190 100C175 80 140 50 100 50Z" stroke="#3b82f6" stroke-width="6" fill="none"/>
+  <!-- Inner iris circle -->
+  <circle cx="100" cy="100" r="28" stroke="#3b82f6" stroke-width="5" fill="none"/>
+  <!-- Pupil -->
+  <circle cx="100" cy="100" r="12" fill="#3b82f6"/>
+  <!-- Light reflection -->
+  <circle cx="108" cy="92" r="5" fill="#60a5fa" opacity="0.8"/>
+  <!-- Top accent line - foresight rays -->
+  <path d="M100 30L100 42" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+  <path d="M130 35L125 46" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M70 35L75 46" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

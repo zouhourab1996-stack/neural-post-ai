@@ -57,6 +57,12 @@ jobs:
           cp public/ads.txt ./dist/ads.txt || true
           cp public/googlec2dbc31ac222183d.html ./dist/googlec2dbc31ac222183d.html || true
           cp public/404.html ./dist/404.html || true
+          cp public/favicon.ico ./dist/favicon.ico || true
+          cp public/favicon.svg ./dist/favicon.svg || true
+          cp public/logo.svg ./dist/logo.svg || true
+          cp public/icon-192.png ./dist/icon-192.png || true
+          cp public/icon-512.png ./dist/icon-512.png || true
+          cp public/og-image.jpg ./dist/og-image.jpg || true
           cp robots.txt ./dist/robots.txt
 
       - name: Setup GitHub Pages

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Flame, ArrowRight, Trophy, CalendarClock } from "lucide-react";
+import { TrendingUp, Trophy, CalendarClock } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import ArticleCard from "@/components/ArticleCard";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,11 +23,22 @@ interface SidebarProps {
 }
 
 const categoryConfig = [
-  { name: "AI", color: "bg-primary" },
-  { name: "Tech", color: "bg-accent" },
-  { name: "Business", color: "bg-primary/70" },
-  { name: "Science", color: "bg-accent/70" },
+  { name: "AI", color: "bg-violet-500", badge: "badge-ai" },
+  { name: "Tech", color: "bg-cyan-500", badge: "badge-tech" },
+  { name: "Business", color: "bg-amber-500", badge: "badge-business" },
+  { name: "Science", color: "bg-emerald-500", badge: "badge-science" },
 ];
+
+const AdSlot = ({ className = '' }: { className?: string }) => (
+  <div className={`ad-container ${className}`}>
+    <ins className="adsbygoogle"
+      style={{ display: 'block' }}
+      data-ad-client="ca-pub-3898992716389443"
+      data-ad-slot="auto"
+      data-ad-format="auto"
+      data-full-width-responsive="true" />
+  </div>
+);
 
 export default function Sidebar({ trendingArticles, lastUpdated }: SidebarProps) {
   const lastUpdatedDate = lastUpdated || trendingArticles?.[0]?.created_at;
@@ -62,35 +73,38 @@ export default function Sidebar({ trendingArticles, lastUpdated }: SidebarProps)
   });
 
   return (
-    <aside className="space-y-8" aria-label="Sidebar">
+    <aside className="space-y-6" aria-label="Sidebar">
       {/* Publishing Schedule */}
-      <section className="bg-card rounded-xl glow-border p-5" aria-labelledby="schedule-heading">
-        <div className="flex items-center gap-2 mb-3">
-          <CalendarClock className="w-5 h-5 text-primary" aria-hidden="true" />
-          <h3 id="schedule-heading" className="font-serif text-lg font-semibold">Publishing Schedule</h3>
+      <section className="bg-card rounded-lg border border-border/60 p-4" aria-labelledby="schedule-heading">
+        <div className="flex items-center gap-2 mb-2">
+          <CalendarClock className="w-4 h-4 text-primary" aria-hidden="true" />
+          <h3 id="schedule-heading" className="font-display text-sm font-semibold">Publishing Schedule</h3>
         </div>
-        <p className="text-sm text-muted-foreground">
-          We publish two new predictions daily (morning and evening).
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          New AI predictions and market forecasts published daily (morning &amp; evening).
         </p>
-        <p className="text-xs text-muted-foreground mt-2">
+        <p className="text-[11px] text-muted-foreground/70 mt-1.5">
           Last update:{" "}
           {lastUpdatedDate ? format(new Date(lastUpdatedDate), "MMM dd, yyyy") : "Updating..."}
         </p>
       </section>
 
+      {/* Ad Slot */}
+      <AdSlot />
+
       {/* Trending Articles */}
-      <section className="bg-card rounded-xl glow-border p-5" aria-labelledby="trending-sidebar-heading">
-        <div className="flex items-center gap-2 mb-4">
-          <Flame className="w-5 h-5 text-accent" aria-hidden="true" />
-          <h3 id="trending-sidebar-heading" className="font-serif text-lg font-semibold">Trending Now</h3>
+      <section className="bg-card rounded-lg border border-border/60 p-4" aria-labelledby="trending-sidebar-heading">
+        <div className="flex items-center gap-2 mb-3">
+          <TrendingUp className="w-4 h-4 text-amber-400" aria-hidden="true" />
+          <h3 id="trending-sidebar-heading" className="font-display text-sm font-semibold">Trending Now</h3>
         </div>
-        <div className="space-y-1">
+        <div className="space-y-0.5">
           {trendingArticles.length > 0 ? (
             trendingArticles.slice(0, 5).map((article, index) => (
               <ArticleCard key={article.id} article={article} variant="compact" index={index} />
             ))
           ) : (
-            <p className="text-sm text-muted-foreground py-4 text-center">
+            <p className="text-xs text-muted-foreground py-3 text-center">
               Trending predictions will appear here
             </p>
           )}
@@ -98,18 +112,18 @@ export default function Sidebar({ trendingArticles, lastUpdated }: SidebarProps)
       </section>
 
       {/* Top Articles */}
-      <section className="bg-card rounded-xl glow-border p-5" aria-labelledby="top-sidebar-heading">
-        <div className="flex items-center gap-2 mb-4">
-          <Trophy className="w-5 h-5 text-primary" aria-hidden="true" />
-          <h3 id="top-sidebar-heading" className="font-serif text-lg font-semibold">Top Predictions</h3>
+      <section className="bg-card rounded-lg border border-border/60 p-4" aria-labelledby="top-sidebar-heading">
+        <div className="flex items-center gap-2 mb-3">
+          <Trophy className="w-4 h-4 text-primary" aria-hidden="true" />
+          <h3 id="top-sidebar-heading" className="font-display text-sm font-semibold">Most Read</h3>
         </div>
-        <div className="space-y-1">
+        <div className="space-y-0.5">
           {topArticles && topArticles.length > 0 ? (
             topArticles.map((article, index) => (
               <ArticleCard key={article.id} article={article} variant="compact" index={index} />
             ))
           ) : (
-            <p className="text-sm text-muted-foreground py-4 text-center">
+            <p className="text-xs text-muted-foreground py-3 text-center">
               Top predictions will appear here
             </p>
           )}
@@ -117,51 +131,28 @@ export default function Sidebar({ trendingArticles, lastUpdated }: SidebarProps)
       </section>
 
       {/* Categories */}
-      <nav className="bg-card rounded-xl glow-border p-5" aria-labelledby="categories-heading">
-        <h3 id="categories-heading" className="font-serif text-lg font-semibold mb-4">Categories</h3>
-        <div className="space-y-2">
+      <nav className="bg-card rounded-lg border border-border/60 p-4" aria-labelledby="categories-heading">
+        <h3 id="categories-heading" className="font-display text-sm font-semibold mb-3">Categories</h3>
+        <div className="space-y-1">
           {categoryConfig.map((category) => (
             <Link
               key={category.name}
               to={`/category/${category.name}/`}
-              className="flex items-center justify-between p-3 rounded-lg hover:bg-muted transition-colors group"
+              className="flex items-center justify-between p-2.5 rounded-md hover:bg-muted/50 transition-colors group"
             >
-              <div className="flex items-center gap-3">
-                <div className={`w-3 h-3 rounded-full ${category.color}`} aria-hidden="true" />
-                <span className="font-medium group-hover:text-primary transition-colors">
+              <div className="flex items-center gap-2.5">
+                <div className={`w-2 h-2 rounded-full ${category.color}`} aria-hidden="true" />
+                <span className="text-sm font-medium group-hover:text-primary transition-colors">
                   {category.name}
                 </span>
               </div>
-              <span className="text-sm text-muted-foreground" aria-label={`${categoryCounts?.[category.name] || 0} articles`}>
+              <span className="text-xs text-muted-foreground tabular-nums" aria-label={`${categoryCounts?.[category.name] || 0} articles`}>
                 {categoryCounts?.[category.name] || 0}
               </span>
             </Link>
           ))}
         </div>
       </nav>
-
-      {/* Newsletter */}
-      <section className="rounded-xl p-6 text-primary-foreground btn-glow" aria-labelledby="newsletter-heading">
-        <h3 id="newsletter-heading" className="font-serif text-xl font-semibold mb-2">Stay Updated</h3>
-        <p className="text-sm text-primary-foreground/80 mb-4">
-          Get the latest AI predictions and future intelligence delivered to your inbox.
-        </p>
-        <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
-          <label htmlFor="newsletter-email" className="sr-only">Email address</label>
-          <input
-            id="newsletter-email"
-            type="email"
-            placeholder="your@email.com"
-            className="w-full px-4 py-2 rounded-lg bg-primary-foreground/10 border border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary-foreground/30"
-          />
-          <button
-            type="submit"
-            className="w-full px-4 py-2 rounded-lg bg-primary-foreground text-primary font-medium hover:bg-primary-foreground/90 transition-colors flex items-center justify-center gap-2"
-          >
-            Subscribe <ArrowRight className="w-4 h-4" aria-hidden="true" />
-          </button>
-        </form>
-      </section>
     </aside>
   );
 }
