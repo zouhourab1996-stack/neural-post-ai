@@ -56,6 +56,7 @@ jobs:
           cp public/manifest.json ./dist/manifest.json || true
           cp public/ads.txt ./dist/ads.txt || true
           cp public/googlec2dbc31ac222183d.html ./dist/googlec2dbc31ac222183d.html || true
+          cp public/404.html ./dist/404.html || true
           cp robots.txt ./dist/robots.txt
 
       - name: Setup GitHub Pages

@@ -87,7 +87,7 @@ export default function SEOHead({
     }
 
     return () => {
-      document.title = `${SITE_NAME} – AI Predictions & Future Intelligence`;
+      document.title = `${SITE_NAME} – AI-Powered Tech News & Analysis`;
     };
   }, [title, description, canonical, image, type, publishedTime, modifiedTime, author, section, tags]);
 
