@@ -980,6 +980,37 @@ function generateAtomXml(articles) {
 </feed>`;
 }
 
+function generateNewsSitemapXml(articles) {
+  // Google News Sitemap only includes articles from the last 2 days
+  const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+  const recentArticles = articles.filter((article) => {
+    const pubDate = new Date(article.created_at || article.updated_at);
+    return pubDate >= twoDaysAgo;
+  });
+
+  const entries = recentArticles.map((article) => {
+    const articleUrl = toAbsoluteUrl(`/article/${article.slug}`);
+    const pubDate = toIsoDate(article.created_at || article.updated_at);
+    return `  <url>
+    <loc>${escapeXml(articleUrl)}</loc>
+    <news:news>
+      <news:publication>
+        <news:name>${SITE_NAME}</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>${pubDate}</news:publication_date>
+      <news:title>${escapeXml(article.title)}</news:title>
+    </news:news>
+  </url>`;
+  });
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+${entries.join("\n")}
+</urlset>`;
+}
+
 async function main() {
   console.log("🚀 Starting static generation...\n");
 
@@ -1065,6 +1096,11 @@ async function main() {
   console.log("  ✓ /rss.xml");
   console.log("  ✓ /atom.xml");
 
+  // Generate Google News Sitemap (last 2 days only)
+  console.log("\n📍 Writing sitemap-news.xml...");
+  fs.writeFileSync(path.join(distDir, "sitemap-news.xml"), generateNewsSitemapXml(safeArticles), "utf8");
+  console.log("  ✓ /sitemap-news.xml");
+
   // Write canonical robots.txt into dist (overrides any copy from public/)
   console.log("\n📍 Writing robots.txt...");
   const robotsTxt = `User-agent: *
@@ -1072,6 +1108,7 @@ Allow: /
 Disallow: /api/
 
 Sitemap: ${SITE_URL}/sitemap.xml
+Sitemap: ${SITE_URL}/sitemap-news.xml
 Sitemap: ${SITE_URL}/sitemap.txt
 `;
   fs.writeFileSync(path.join(distDir, "robots.txt"), robotsTxt, "utf8");
