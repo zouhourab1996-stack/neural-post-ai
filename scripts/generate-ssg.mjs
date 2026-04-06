@@ -867,6 +867,29 @@ ${[...staticEntries, ...articleEntries].join("\n")}
 </urlset>`;
 }
 
+// Flat sitemap (all URLs in one file) — kept as backup/fallback
+function generateSitemapXmlFlat(articles) {
+  return generateSitemapXml(articles);
+}
+
+// Paginated sitemaps: split articles into chunks of 200 for Google compatibility
+function generatePaginatedSitemaps(articles, chunkSize = 200) {
+  const now = new Date().toISOString().split("T")[0];
+  const sitemaps = [];
+  for (let i = 0; i < articles.length; i += chunkSize) {
+    const chunk = articles.slice(i, i + chunkSize);
+    const entries = chunk.map((article) => {
+      const lastmod = (article.updated_at || article.created_at || "").split("T")[0] || now;
+      return renderSitemapUrl(toAbsoluteUrl(`/article/${article.slug}`), lastmod, "weekly", "0.8");
+    });
+    sitemaps.push(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${entries.join("\n")}
+</urlset>`);
+  }
+  return sitemaps;
+}
+
 function generateArticlesSitemapXml(articles) {
   const now = new Date().toISOString().split("T")[0];
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -891,14 +914,24 @@ ${urls.map(renderSitemapUrl).join("\n")}
 </urlset>`;
 }
 
-function generateSitemapIndexXml(now) {
+function generateSitemapIndexXml(now, articleChunkCount = 1) {
+  let chunks = "";
+  for (let i = 0; i < articleChunkCount; i++) {
+    const suffix = articleChunkCount > 1 ? `-${i + 1}` : "";
+    chunks += `  <sitemap>
+    <loc>${SITE_URL}/sitemap-articles${suffix}.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>\n`;
+  }
   return `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
     <loc>${SITE_URL}/sitemap-static.xml</loc>
+    <lastmod>${now}</lastmod>
   </sitemap>
-  <sitemap>
-    <loc>${SITE_URL}/sitemap-articles.xml</loc>
+${chunks}  <sitemap>
+    <loc>${SITE_URL}/sitemap-news.xml</loc>
+    <lastmod>${now}</lastmod>
   </sitemap>
 </sitemapindex>`;
 }
@@ -1070,21 +1103,33 @@ async function main() {
   writeRouteIndex(distDir, "/guides", generateGuidesHtml(safeArticles));
   console.log("  ✓ /guides/");
 
-  // Generate sitemap-articles.xml (just articles)
-  console.log("\n📍 Writing sitemap-articles.xml...");
-  fs.writeFileSync(path.join(distDir, "sitemap-articles.xml"), generateArticlesSitemapXml(safeArticles), "utf8");
-  console.log("  ✓ /sitemap-articles.xml");
+  // Generate paginated article sitemaps (200 URLs each for Google compatibility)
+  console.log("\n📍 Writing paginated article sitemaps...");
+  const paginatedSitemaps = generatePaginatedSitemaps(safeArticles, 200);
+  if (paginatedSitemaps.length === 1) {
+    fs.writeFileSync(path.join(distDir, "sitemap-articles.xml"), paginatedSitemaps[0], "utf8");
+    console.log("  ✓ /sitemap-articles.xml");
+  } else {
+    paginatedSitemaps.forEach((content, i) => {
+      const filename = `sitemap-articles-${i + 1}.xml`;
+      fs.writeFileSync(path.join(distDir, filename), content, "utf8");
+      console.log(`  ✓ /${filename}`);
+    });
+  }
 
-  // Generate primary sitemap.xml as a flat URL set for maximum compatibility
-  console.log("\n📍 Writing sitemap.xml...");
+  // Generate primary sitemap.xml as a sitemap index (Google recommended for large sites)
+  console.log("\n📍 Writing sitemap.xml as sitemap index...");
   const now = new Date().toISOString().split("T")[0];
-  fs.writeFileSync(path.join(distDir, "sitemap.xml"), generateSitemapXml(safeArticles), "utf8");
-  console.log("  ✓ /sitemap.xml");
+  fs.writeFileSync(path.join(distDir, "sitemap.xml"), generateSitemapIndexXml(now, paginatedSitemaps.length), "utf8");
+  console.log("  ✓ /sitemap.xml (index)");
 
-  // Keep a sitemap index available for validators/tools that prefer split maps
-  console.log("\n📍 Writing sitemap-index.xml...");
-  fs.writeFileSync(path.join(distDir, "sitemap-index.xml"), generateSitemapIndexXml(now), "utf8");
-  console.log("  ✓ /sitemap-index.xml");
+  // Keep flat sitemap for validators
+  console.log("\n📍 Writing sitemap-flat.xml (full flat sitemap)...");
+  fs.writeFileSync(path.join(distDir, "sitemap-flat.xml"), generateSitemapXmlFlat(safeArticles), "utf8");
+  console.log("  ✓ /sitemap-flat.xml");
+
+  // Keep legacy sitemap-index.xml
+  fs.writeFileSync(path.join(distDir, "sitemap-index.xml"), generateSitemapIndexXml(now, paginatedSitemaps.length), "utf8");
 
   // Also write a flat sitemap for broader compatibility
   console.log("\n📍 Writing sitemap.txt...");
@@ -1115,7 +1160,7 @@ Disallow: /api/
 
 Sitemap: ${SITE_URL}/sitemap.xml
 Sitemap: ${SITE_URL}/sitemap-news.xml
-Sitemap: ${SITE_URL}/sitemap.txt
+Sitemap: ${SITE_URL}/atom.xml
 `;
   fs.writeFileSync(path.join(distDir, "robots.txt"), robotsTxt, "utf8");
   console.log("  ✓ /robots.txt");
