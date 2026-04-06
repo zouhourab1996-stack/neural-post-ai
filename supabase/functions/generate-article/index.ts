@@ -6,7 +6,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Get current date formatted
 function getCurrentDate(): string {
   const now = new Date();
   return now.toLocaleDateString('en-US', { 
@@ -17,7 +16,6 @@ function getCurrentDate(): string {
   });
 }
 
-// Get ISO date for database
 function getISODate(): string {
   return new Date().toISOString().split('T')[0];
 }
@@ -27,10 +25,28 @@ const fallbackImages: Record<string, string> = {
   Tech: 'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1200',
   Business: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1200',
   Science: 'https://images.pexels.com/photos/256262/pexels-photo-256262.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  Markets: 'https://images.pexels.com/photos/6801648/pexels-photo-6801648.jpeg?auto=compress&cs=tinysrgb&w=1200',
 };
 
 function normalizeHeadlineKey(value: string): string {
   return value.toLowerCase().replace(/\s+/g, ' ').trim().slice(0, 100);
+}
+
+function countWords(text: string): number {
+  return String(text || '')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .length;
+}
+
+function buildMetaDescription(content: string, fallback: string): string {
+  const clean = String(content || '')
+    .replace(/\s+/g, ' ')
+    .replace(/[#>*_`]/g, '')
+    .trim();
+  const base = clean || fallback || '';
+  return base.slice(0, 160);
 }
 
 function enhanceTitleForCTR(title: string): string {
@@ -54,23 +70,6 @@ function ensureUniqueSlug(slug: string, used: Set<string>) {
   }
   used.add(finalSlug);
   return finalSlug;
-}
-
-function countWords(text: string): number {
-  return String(text || '')
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .length;
-}
-
-function buildMetaDescription(content: string, fallback: string): string {
-  const clean = String(content || '')
-    .replace(/\s+/g, ' ')
-    .replace(/[#>*_`]/g, '')
-    .trim();
-  const base = clean || fallback || '';
-  return base.slice(0, 160);
 }
 
 function appendSourcesAndRelated(
@@ -115,7 +114,6 @@ async function fetchRelatedLinks(
 ) {
   const client = createClient(supabaseUrl, serviceRoleKey);
 
-  // Fetch same-category articles
   const { data: sameCat } = await client
     .from('articles')
     .select('title,slug')
@@ -124,10 +122,8 @@ async function fetchRelatedLinks(
     .order('created_at', { ascending: false })
     .limit(4);
 
-  // Fetch cross-category articles matching keywords (for topical relevance)
   let crossCat: any[] = [];
   if (keywords.length > 0) {
-    const searchTerm = keywords.slice(0, 2).join(' | ');
     const { data } = await client
       .from('articles')
       .select('title,slug')
@@ -168,22 +164,43 @@ async function selectFreshHeadline(
   try {
     const adminClient = createClient(supabaseUrl, serviceRoleKey);
     const recentDate = new Date();
-    recentDate.setDate(recentDate.getDate() - 2);
+    recentDate.setDate(recentDate.getDate() - 3);
 
-    const { data, error } = await adminClient
-      .from('trending_keywords')
-      .select('keyword')
-      .eq('category', category)
-      .gte('discovered_at', recentDate.toISOString().split('T')[0])
-      .limit(100);
+    // Check both trending_keywords AND existing article titles to avoid duplicates
+    const [{ data: recentKeywords }, { data: recentArticles }] = await Promise.all([
+      adminClient
+        .from('trending_keywords')
+        .select('keyword')
+        .eq('category', category)
+        .gte('discovered_at', recentDate.toISOString().split('T')[0])
+        .limit(200),
+      adminClient
+        .from('articles')
+        .select('title')
+        .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+        .limit(50),
+    ]);
 
-    if (error) {
-      console.error('Failed to load recent keyword history:', error);
-      return headlines[0];
-    }
+    const usedHeadlines = new Set([
+      ...(recentKeywords || []).map((item: any) => normalizeHeadlineKey(item.keyword || '')),
+      ...(recentArticles || []).map((item: any) => normalizeHeadlineKey(item.title || '')),
+    ]);
 
-    const usedHeadlines = new Set((data || []).map((item: any) => normalizeHeadlineKey(item.keyword || '')));
-    return headlines.find((headline) => !usedHeadlines.has(normalizeHeadlineKey(headline.title))) || headlines[0];
+    // Find a headline that hasn't been covered recently
+    const fresh = headlines.find((headline) => {
+      const key = normalizeHeadlineKey(headline.title);
+      // Check for exact match AND partial overlap (>60% word match)
+      if (usedHeadlines.has(key)) return false;
+      const words = key.split(' ').filter(w => w.length > 3);
+      for (const used of usedHeadlines) {
+        const usedWords = used.split(' ').filter((w: string) => w.length > 3);
+        const overlap = words.filter(w => usedWords.includes(w)).length;
+        if (words.length > 0 && overlap / words.length > 0.6) return false;
+      }
+      return true;
+    });
+
+    return fresh || headlines[0];
   } catch (error) {
     console.error('Headline freshness selection failed:', error);
     return headlines[0];
@@ -195,19 +212,19 @@ async function fetchNewsAPIHeadlines(category: string, apiKey: string): Promise<
   headlines: { title: string; source: string; url: string; description: string }[];
 }> {
   try {
-    // Map our categories to NewsAPI categories
     const categoryMap: Record<string, string> = {
       'AI': 'technology',
       'Tech': 'technology',
       'Business': 'business',
-      'Science': 'science'
+      'Science': 'science',
+      'Markets': 'business',
     };
     
     const newsCategory = categoryMap[category] || 'technology';
     
-    // Fetch top headlines from NewsAPI
+    // Fetch top headlines
     const response = await fetch(
-      `https://newsapi.org/v2/top-headlines?category=${newsCategory}&language=en&pageSize=10&apiKey=${apiKey}`
+      `https://newsapi.org/v2/top-headlines?category=${newsCategory}&language=en&pageSize=15&apiKey=${apiKey}`
     );
 
     if (!response.ok) {
@@ -218,12 +235,16 @@ async function fetchNewsAPIHeadlines(category: string, apiKey: string): Promise<
     const data = await response.json();
     
     if (data.articles && data.articles.length > 0) {
-      // Filter and map headlines
       const headlines = data.articles
-        .filter((article: any) => article.title && article.title !== '[Removed]')
-        .slice(0, 5)
+        .filter((article: any) => 
+          article.title && 
+          article.title !== '[Removed]' &&
+          article.title.length > 20 &&
+          !article.title.includes('...')  // Skip truncated titles
+        )
+        .slice(0, 8)
         .map((article: any) => ({
-          title: article.title,
+          title: article.title.replace(/ - [^-]+$/, '').trim(), // Remove source suffix
           source: article.source?.name || 'Unknown',
           url: article.url || '',
           description: article.description || ''
@@ -268,31 +289,42 @@ async function fetchPexelsImage(query: string, apiKey: string): Promise<string |
   }
 }
 
-// Discover SEO keywords using DeepSeek based on headline
+// Enhanced keyword discovery with search-engine-focused SEO targeting
 async function discoverKeywords(headline: string, category: string, apiKey: string): Promise<{
   keywords: { keyword: string; volume: string; competition: string }[];
 }> {
   const currentDate = getCurrentDate();
   
-  const keywordPrompt = `You are an expert SEO analyst. Today is ${currentDate}.
+  const keywordPrompt = `You are a world-class SEO strategist specializing in search engine traffic acquisition. Today is ${currentDate}.
 
-For the news headline: "${headline}"
+For the trending news headline: "${headline}"
 Category: ${category}
 
-Identify 4-5 high-value SEO keywords that:
-- Have high search volume potential
-- Have relatively low competition (long-tail keywords)
-- Are specific enough to rank for
-- Include the current year (2025/2026) where relevant
-- Relate directly to the headline topic
+Your task: Identify 6 high-value SEO keywords that will RANK on Google and drive organic search traffic.
 
-Return ONLY valid JSON in this exact format:
+STRATEGY:
+1. Think about what REAL USERS type into Google when searching for this topic
+2. Target "informational intent" keywords (questions, "how", "what", "why", "will")
+3. Include "prediction" and "forecast" variations — these match our brand "Prophetic"
+4. Mix: 2 high-volume head terms + 2 medium long-tail + 2 low-competition question keywords
+5. Always include the current year (2026) in at least 2 keywords
+6. For Business/Markets category: include financial terms (forecast, outlook, prediction, analysis)
+
+EXAMPLES OF GOOD KEYWORDS:
+- "bitcoin price prediction 2026" (high volume, prediction-focused)
+- "will AI replace programmers" (question-based, high engagement)  
+- "S&P 500 forecast Q2 2026" (specific, timely, financial)
+- "OpenAI GPT-5 release date" (specific, high search volume)
+
+Return ONLY valid JSON:
 {
   "keywords": [
-    {"keyword": "primary keyword phrase 2026", "volume": "high", "competition": "low"},
-    {"keyword": "secondary keyword phrase", "volume": "medium", "competition": "low"},
-    {"keyword": "long-tail keyword phrase", "volume": "medium", "competition": "very-low"},
-    {"keyword": "another relevant keyword 2026", "volume": "high", "competition": "medium"}
+    {"keyword": "primary keyword phrase 2026", "volume": "high", "competition": "medium"},
+    {"keyword": "secondary long-tail phrase", "volume": "medium", "competition": "low"},
+    {"keyword": "question-based keyword", "volume": "medium", "competition": "low"},
+    {"keyword": "trending topic keyword 2026", "volume": "high", "competition": "medium"},
+    {"keyword": "specific niche keyword", "volume": "low", "competition": "very-low"},
+    {"keyword": "another search query users type", "volume": "medium", "competition": "low"}
   ]
 }`;
 
@@ -305,11 +337,11 @@ Return ONLY valid JSON in this exact format:
     body: JSON.stringify({
       model: 'deepseek-chat',
       messages: [
-        { role: 'system', content: 'You are an SEO expert. Always respond with valid JSON only.' },
+        { role: 'system', content: 'You are a search engine optimization expert who specializes in keyword research for news and prediction websites. Always respond with valid JSON only. Focus on keywords real users actually search for on Google.' },
         { role: 'user', content: keywordPrompt }
       ],
-      temperature: 0.7,
-      max_tokens: 500,
+      temperature: 0.6,
+      max_tokens: 600,
     }),
   });
 
@@ -329,18 +361,23 @@ Return ONLY valid JSON in this exact format:
   }
 }
 
-// Generate the full article with SEO optimization using DeepSeek
+// Enhanced article generation with human-quality writing and maximum SEO
 async function generateArticle(
   headline: string, 
   description: string,
   source: string,
   keywords: { keyword: string; volume: string; competition: string }[],
   category: string,
-  apiKey: string
+  apiKey: string,
+  existingTitles: string[] = [],
 ): Promise<any> {
   const currentDate = getCurrentDate();
   const keywordList = keywords.map(k => k.keyword).join(', ');
   const primaryKeyword = keywords[0]?.keyword || headline.split(' ').slice(0, 3).join(' ');
+  const secondaryKeyword = keywords[1]?.keyword || '';
+
+  // Build a list of recent titles to avoid repetition
+  const avoidTitles = existingTitles.slice(0, 10).map(t => `- "${t}"`).join('\n');
 
   const articlePrompt = `Today is ${currentDate}.
 
@@ -348,58 +385,91 @@ TRENDING TOPIC: "${headline}"
 Source: ${source}
 Brief: ${description}
 
-TASK: Write an investigative, analytical article about this topic as a seasoned human journalist and domain expert would. This is NOT an AI-generated article — write like a real person with years of experience covering ${category}.
+PRIMARY KEYWORD (must appear in title, H1, first paragraph, 2+ H2s): "${primaryKeyword}"
+SECONDARY KEYWORD: "${secondaryKeyword}"
+ALL KEYWORDS to weave naturally: ${keywordList}
 
-CRITICAL ANTI-AI-DETECTION RULES (MANDATORY):
-1. NEVER use these words/phrases: "delve", "unleash", "testament", "landscape", "paradigm shift", "game-changer", "revolutionize", "cutting-edge", "groundbreaking", "in conclusion", "it's worth noting", "it remains to be seen", "only time will tell", "in today's rapidly evolving", "navigate the complexities", "at the forefront", "a tapestry of", "robust", "leverage", "synergy", "holistic", "comprehensive", "multifaceted", "nuanced"
-2. Vary sentence length dramatically — mix 5-word punches with 30+ word complex sentences
-3. Start some paragraphs with dependent clauses, others with short declarations, others with questions
-4. Use contractions naturally ("it's", "won't", "they're") — real writers use them
-5. Include occasional informal phrasing or colloquial expressions a real expert would use
-6. Add personal analytical voice — phrases like "What strikes me about this...", "The real question here is...", "Here's what most people miss..."
-7. Use specific, concrete examples rather than vague generalities
-8. Occasionally reference your own analytical perspective or reasoning process
-9. Include rhetorical questions to engage readers
-10. Use transitional phrases that feel natural, not formulaic — avoid "Furthermore", "Moreover", "Additionally" in sequence
-11. Break conventional structure occasionally — a one-sentence paragraph for emphasis, a parenthetical aside, an em-dash interruption
-12. Write the way a columnist at Bloomberg, Wired, or The Economist would
+${avoidTitles ? `AVOID SIMILARITY to these recent articles:\n${avoidTitles}\n` : ''}
 
-MANDATORY SEO REQUIREMENTS:
-1. Primary Keyword: "${primaryKeyword}"
-2. Secondary Keywords to naturally weave in: ${keywordList}
-3. The article MUST be at least 1,800 words
-4. Include the primary keyword in the title (55-65 chars), first paragraph, and at least 2 H2 subheadings
-5. Meta description: 150-160 characters, includes primary keyword, ends with a hook
+TASK: Write a thorough, analytical article as a veteran journalist covering ${category}. This article must rank on Google's first page for the primary keyword.
 
-FRESHNESS SIGNAL:
-- Explicitly mention this covers developments as of ${currentDate}
-- Reference "today", "this week", or current month/year
-- Include a forward-looking section
+═══════════════════════════════════════
+WRITING VOICE — CRITICAL (READ CAREFULLY)
+═══════════════════════════════════════
 
-STRUCTURE (Minimum 1,800 words):
-1. **Headline (H1)**: Sharp, specific, under 60 chars — not clickbait but compelling
-2. **Opening**: Drop the reader into the story. No throat-clearing. Start with a fact, a scene, or a provocative claim.
-3. **At a Glance**: 3-5 bullet summary for scanners
-4. **The Current Picture (H2)**: What's happening now — with specifics, not platitudes
-5. **Technical Specification**: Include a markdown table comparing key metrics, specs, or data points relevant to the topic
-6. **Short-Term Outlook (H2)**: What to expect in 3-6 months, and why
-7. **The Bigger Picture (H2)**: 1-3 year predictions grounded in logic
-8. **What Most Analysis Gets Wrong (H2)**: Contrarian or nuanced take
-9. **Historical Context**: Compare to similar events from 2024-2025 — what rhymes and what's different
-10. **Practical Takeaways (H2)**: Actionable insights for readers
-11. **Key Terms Explained**: 3-5 concise definitions
-12. **FAQ (H2)**: 3 questions with brief, direct answers
-13. **Final Thought**: End with a strong, memorable closing line — not a summary
+You are a senior correspondent with 15+ years covering ${category}. Write EXACTLY like a human expert columnist — NOT like an AI.
 
-IMPORTANT: Do NOT invent quotes, fabricate statistics, or attribute claims to unnamed experts. If citing numbers, frame them as estimates or trends. Be honest about uncertainty.
+BANNED WORDS (using ANY of these = article rejected):
+"delve", "unleash", "testament", "landscape", "paradigm shift", "game-changer", 
+"revolutionize", "cutting-edge", "groundbreaking", "in conclusion", "it's worth noting", 
+"it remains to be seen", "only time will tell", "in today's rapidly evolving", 
+"navigate the complexities", "at the forefront", "a tapestry of", "robust", "leverage", 
+"synergy", "holistic", "comprehensive", "multifaceted", "nuanced", "realm", "pivotal",
+"crucial", "essential", "transformative", "innovative", "disruptive", "seamless",
+"empower", "foster", "harness", "spearhead", "underscore", "underpin", "bolster",
+"facilitate", "optimize", "streamline", "elevate", "amplify", "catalyze",
+"in the realm of", "it is important to note", "needless to say", "at the end of the day"
+
+HUMAN WRITING TECHNIQUES (mandatory):
+1. Sentence length variation: alternate 4-8 word punches with 25-35 word analysis
+2. Start paragraphs differently: question → dependent clause → short declaration → anecdote
+3. Use contractions always ("it's", "won't", "they're", "that's", "I'd")  
+4. Personal voice: "What catches my eye here...", "The real story is...", "I'd bet that...", "Here's the thing most coverage misses..."
+5. Concrete specifics over abstractions — name companies, cite approximate figures, reference real products
+6. Occasional colloquial phrasing: "the math doesn't add up", "that's a tough sell", "let's be real"
+7. Em-dashes for interruption — like this — and parenthetical asides (which add texture)
+8. One or two one-sentence paragraphs for emphasis
+9. Rhetorical questions that provoke thought
+10. Reference the news source naturally: "According to ${source}..." or "As ${source} reported..."
+
+═══════════════════════════════════════
+SEO REQUIREMENTS — GOOGLE RANKING FOCUSED
+═══════════════════════════════════════
+
+1. TITLE (H1): 50-60 characters, includes primary keyword, compelling but NOT clickbait
+2. META DESCRIPTION: 150-155 characters, includes primary keyword, ends with a reason to click
+3. SLUG: URL-friendly, includes primary keyword, 4-6 words max
+4. FIRST PARAGRAPH: Must contain primary keyword within first 100 words
+5. H2 HEADINGS: At least 4 H2 headings, 2+ must include the primary or secondary keyword
+6. KEYWORD DENSITY: Primary keyword appears 4-6 times naturally; secondary 2-3 times
+7. INTERNAL LINK ANCHORS: Include 2-3 natural anchor texts for internal linking (e.g., "our analysis of [topic]", "as we covered in our [category] section")
+8. WORD COUNT: Minimum 2,000 words (longer content ranks better for informational queries)
+9. FRESHNESS SIGNALS: Mention today's date, "this week", "as of April 2026", "latest"
+10. E-E-A-T SIGNALS: Show expertise through specific analysis, cite the original source, provide actionable insights
+
+═══════════════════════════════════════
+ARTICLE STRUCTURE (2,000+ words minimum)
+═══════════════════════════════════════
+
+1. **Headline (H1)**: Sharp, specific, includes primary keyword, under 60 chars
+2. **Opening hook** (100-150 words): Drop straight into the story with a striking fact or development. Include primary keyword.
+3. **Key Takeaways** (H2): 4-5 bullet points summarizing the most important points — great for featured snippets
+4. **What's Happening Now** (H2, include keyword): Deep analysis of current developments with specific data points
+5. **Why This Matters** (H2): Context and implications — who's affected, what changes
+6. **Data & Comparison Table**: Markdown table with relevant metrics, specs, or comparisons
+7. **Market/Industry Impact** (H2, include keyword): How this affects the broader ecosystem  
+8. **Expert Perspective** (H2): Your analytical take — what most coverage gets wrong, contrarian angles
+9. **What Comes Next** (H2): Short-term (3-6 month) and long-term (1-2 year) predictions
+10. **Historical Context**: Brief comparison to similar past events — what patterns repeat
+11. **Practical Implications** (H2): Actionable insights for readers — what to watch, what to do
+12. **Key Terms Glossary**: 3-4 brief definitions of technical terms (good for featured snippets)
+13. **FAQ** (H2): 3-4 questions people actually search for, with concise 2-3 sentence answers
+14. **Final Thought**: One strong closing sentence — memorable, not a summary
+
+IMPORTANT RULES:
+- Do NOT invent quotes from unnamed sources or fabricate specific statistics
+- If citing numbers, frame as "estimated", "approximately", "industry analysts suggest"
+- Be honest about uncertainty — predictions should acknowledge unknowns
+- No hallucinated company announcements or fake product details
+- Reference the ACTUAL source headline and publication
 
 Return ONLY valid JSON:
 {
-  "title": "SEO-optimized headline under 60 characters",
-  "meta_description": "Unique compelling description 150-160 chars with keyword",
-  "slug": "url-friendly-slug-with-keyword",
-  "content": "Full markdown article, minimum 1800 words",
-  "image_query": "2-3 word image search term"
+  "title": "SEO-optimized headline with primary keyword, under 60 characters",
+  "meta_description": "Compelling 150-155 char description with primary keyword and click-worthy hook",
+  "slug": "keyword-rich-url-slug-2026",
+  "content": "Full markdown article, minimum 2000 words, following the exact structure above",
+  "image_query": "2-3 word image search term for article hero image"
 }`;
 
   const response = await fetch('https://api.deepseek.com/chat/completions', {
@@ -413,27 +483,27 @@ Return ONLY valid JSON:
       messages: [
         { 
           role: 'system', 
-          content: `You are a veteran investigative journalist and industry analyst with 20+ years of experience. You write for publications like Bloomberg, Wired, and The Economist. Your writing is sharp, opinionated, and deeply informed — never generic or formulaic.
+          content: `You are Marcus Chen, a veteran technology and markets correspondent who has written for Bloomberg, Reuters, and Wired over a 17-year career. Your byline appears twice weekly. Your writing style:
 
-ABSOLUTE RULES:
-- Write as a REAL HUMAN EXPERT. Every sentence must sound like it came from a person, not an algorithm.
-- NEVER use AI-typical words: "delve", "unleash", "testament", "landscape", "paradigm shift", "game-changer", "revolutionize", "cutting-edge", "groundbreaking", "comprehensive", "multifaceted", "nuanced", "robust", "leverage", "synergy", "holistic", "navigate", "tapestry", "at the forefront"
-- Use contractions. Use informal asides. Use rhetorical questions. Use em-dashes and parentheticals.
-- Vary sentence rhythm: short punchy sentences mixed with longer analytical ones. Some one-sentence paragraphs for impact.
-- Show your thinking process: "Here's what's interesting...", "The part nobody's talking about...", "I'd argue that..."
-- Be specific and concrete. Avoid vague corporate language.
-- It's okay to express uncertainty: "It's hard to say exactly...", "The data is murky here, but..."
-- Always respond with valid JSON only. Articles must be at least 1,800 words.` 
+VOICE: Confident but not arrogant. You have strong opinions backed by analysis. You write the way you'd explain something to a smart colleague over coffee — clear, direct, occasionally witty, always substantive.
+
+RHYTHM: You naturally mix sentence lengths. Short punches. Then longer, more complex sentences that unpack an idea across thirty or forty words before landing on a conclusion. Sometimes a question. Sometimes just a fragment for effect.
+
+HABITS: You use contractions. You start sentences with "But" and "And" and "So." You use em-dashes — frequently — for parenthetical thoughts. You occasionally address the reader directly. You reference your own uncertainty when warranted.
+
+WHAT YOU NEVER DO: You never write like a corporate press release. You never use buzzwords. You never pad word count with filler. You never start with "In the ever-evolving world of..." or end with "Only time will tell." You never use: delve, unleash, testament, landscape, paradigm shift, game-changer, revolutionize, cutting-edge, groundbreaking, comprehensive, multifaceted, nuanced, robust, leverage, synergy, holistic, navigate, tapestry, at the forefront, pivotal, crucial, essential, transformative, innovative, disruptive, seamless, empower, foster, harness, spearhead, underscore, underpin, bolster, facilitate, optimize, streamline, elevate, amplify, catalyze, realm.
+
+FORMAT: Always respond with valid JSON only. Articles must be at least 2,000 words. Use proper markdown with H2 headings, bullet points, and a data table.`
         },
         { role: 'user', content: articlePrompt }
       ],
-      temperature: 0.85,
-      frequency_penalty: 0.4,
-      presence_penalty: 0.3,
-      max_tokens: 8000,
+      temperature: 0.82,
+      frequency_penalty: 0.5,
+      presence_penalty: 0.35,
+      max_tokens: 10000,
       stream: false,
     }),
-    signal: AbortSignal.timeout(120000),
+    signal: AbortSignal.timeout(180000), // 3 min timeout for longer articles
   });
 
   if (!response.ok) {
@@ -482,7 +552,7 @@ serve(async (req) => {
     const { category, autoPublish = false } = await req.json();
     
     const NEWSAPI_KEY = Deno.env.get('NEWSAPI_KEY');
-      const DEEPSEEK_API_KEY = Deno.env.get('DEEPSEEK_API_KEY');
+    const DEEPSEEK_API_KEY = Deno.env.get('DEEPSEEK_API_KEY');
     const PEXELS_API_KEY = Deno.env.get('PEXELS_API_KEY');
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
@@ -500,14 +570,16 @@ serve(async (req) => {
 
     console.log(`[${new Date().toISOString()}] Starting article generation for: ${selectedCategory}`);
 
-    // Phase 1: Fetch Real-Time Headlines from NewsAPI
+    // Phase 1: Fetch Real-Time Trending Headlines from NewsAPI
     const { headlines } = await fetchNewsAPIHeadlines(selectedCategory, NEWSAPI_KEY);
     
     if (headlines.length === 0) {
       throw new Error('No headlines found from NewsAPI');
     }
 
-    // Pick the top headline for article generation
+    console.log(`Found ${headlines.length} candidate headlines`);
+
+    // Phase 2: Select a fresh headline (not covered recently)
     const selectedHeadline = await selectFreshHeadline(
       headlines,
       selectedCategory,
@@ -516,48 +588,66 @@ serve(async (req) => {
     );
     console.log(`Selected headline: ${selectedHeadline.title} (${selectedHeadline.source})`);
 
-    // Phase 2: Discover SEO Keywords for the headline
+    // Phase 3: Discover high-value SEO keywords for this headline
     const { keywords } = await discoverKeywords(selectedHeadline.title, selectedCategory, DEEPSEEK_API_KEY);
-    console.log(`Extracted keywords: ${keywords.map(k => k.keyword).join(', ')}`);
+    console.log(`Target keywords: ${keywords.map(k => k.keyword).join(', ')}`);
 
-    // Phase 3: Generate Article using DeepSeek
+    // Phase 4: Get recent article titles to avoid repetition
+    let existingTitles: string[] = [];
+    if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
+      const adminClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+      const { data: recent } = await adminClient
+        .from('articles')
+        .select('title')
+        .order('created_at', { ascending: false })
+        .limit(15);
+      existingTitles = (recent || []).map((a: any) => a.title);
+    }
+
+    // Phase 5: Generate article with DeepSeek — human-quality, SEO-optimized
     let article = await generateArticle(
       selectedHeadline.title, 
       selectedHeadline.description,
       selectedHeadline.source,
       keywords, 
       selectedCategory, 
-      DEEPSEEK_API_KEY
+      DEEPSEEK_API_KEY,
+      existingTitles,
     );
 
     let wordCount = countWords(article.content);
-    if (wordCount < 1500) {
-      console.warn(`Article too short (${wordCount}). Retrying once with expanded guidance.`);
+    console.log(`First attempt: ${wordCount} words`);
+
+    if (wordCount < 1800) {
+      console.warn(`Article too short (${wordCount}). Retrying with expanded guidance.`);
       article = await generateArticle(
         selectedHeadline.title, 
         selectedHeadline.description,
         selectedHeadline.source,
         keywords, 
         selectedCategory, 
-        DEEPSEEK_API_KEY
+        DEEPSEEK_API_KEY,
+        existingTitles,
       );
       wordCount = countWords(article.content);
+      console.log(`Retry: ${wordCount} words`);
       if (wordCount < 1500) {
         throw new Error(`Generated article too short: ${wordCount} words`);
       }
     }
     
-    // Phase 4: Fetch image from Pexels
+    // Phase 6: Fetch image from Pexels
     let imageUrl = null;
     if (PEXELS_API_KEY && article.image_query) {
       imageUrl = await fetchPexelsImage(article.image_query, PEXELS_API_KEY);
-      console.log(`Fetched image for query "${article.image_query}": ${imageUrl ? 'Success' : 'Failed'}`);
+      console.log(`Image for "${article.image_query}": ${imageUrl ? 'Success' : 'Fallback'}`);
     }
 
     if (!imageUrl) {
       imageUrl = fallbackImages[selectedCategory] || fallbackImages.AI;
     }
 
+    // Phase 7: Build final slug with date stamp
     const normalizedSlug = String(article.slug || article.title || selectedHeadline.title)
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
@@ -588,6 +678,7 @@ serve(async (req) => {
 
     let finalContent = String(article.content || '').trim();
 
+    // Phase 8: Add internal links and source attribution
     if (autoPublish && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
       const keywordStrings = keywords.map((k: any) => k.keyword);
       const relatedLinks = await fetchRelatedLinks(
@@ -604,7 +695,6 @@ serve(async (req) => {
       }, relatedLinks);
     }
 
-    // Prepare the final article object
     const finalTitle = enhanceTitleForCTR(String(article.title || selectedHeadline.title).trim());
 
     const finalArticle = {
@@ -618,11 +708,10 @@ serve(async (req) => {
       is_trending: true,
     };
 
-    // Phase 5: Auto-publish if requested
+    // Phase 9: Auto-publish if requested
     if (autoPublish && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
       const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-      // Save article
       const { data: savedArticle, error: articleError } = await supabase
         .from('articles')
         .insert(finalArticle)
@@ -634,7 +723,7 @@ serve(async (req) => {
         throw new Error(`Failed to save article: ${articleError.message}`);
       }
 
-      // Save keywords with headline info
+      // Save keywords
       const keywordsToSave = keywords.map(k => ({
         keyword: k.keyword,
         category: selectedCategory,
@@ -643,7 +732,6 @@ serve(async (req) => {
         discovered_at: getISODate(),
       }));
 
-      // Also save the original headline as a keyword for trending display
       keywordsToSave.push({
         keyword: selectedHeadline.title.slice(0, 100),
         category: selectedCategory,
@@ -660,7 +748,7 @@ serve(async (req) => {
         console.error('Error saving keywords:', keywordsError);
       }
 
-      console.log(`Article published: ${savedArticle.title}`);
+      console.log(`✅ Published: "${savedArticle.title}" (${wordCount} words)`);
 
       // Notify Bing IndexNow
       const articleUrl = `https://prophetic.pw/article/${savedArticle.slug}/`;
@@ -672,20 +760,21 @@ serve(async (req) => {
         keywords: keywordsToSave,
         headline: selectedHeadline,
         allHeadlines: headlines,
-        published: true
+        published: true,
+        wordCount,
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Return without publishing
     return new Response(JSON.stringify({ 
       success: true, 
       article: finalArticle,
       keywords,
       headline: selectedHeadline,
       allHeadlines: headlines,
-      published: false
+      published: false,
+      wordCount,
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
