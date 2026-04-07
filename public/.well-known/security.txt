@@ -1,0 +1,4 @@
+Contact: mailto:Touatihadi0@gmail.com
+Expires: 2027-01-16T23:59:59.000Z
+Preferred-Languages: ar, en
+Canonical: https://prophetic.pw/.well-known/security.txt
