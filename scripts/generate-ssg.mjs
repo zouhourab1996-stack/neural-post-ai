@@ -246,34 +246,68 @@ function baseHead({
   canonical,
   image = DEFAULT_IMAGE,
   type = "website",
+  publishedTime = null,
+  modifiedTime = null,
+  category = null,
+  keywords = null,
 }) {
+  const keywordsTag = keywords ? `<meta name="keywords" content="${escapeHtml(keywords)}" />` : "";
+  const articleTags = type === "article" ? `
+  <meta property="article:published_time" content="${publishedTime || ""}" />
+  <meta property="article:modified_time" content="${modifiedTime || publishedTime || ""}" />
+  ${category ? `<meta property="article:section" content="${escapeHtml(category)}" />` : ""}
+  <meta property="article:author" content="Prophetic Editorial Team" />` : "";
+
   return `
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeHtml(description)}" />
-  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <meta name="author" content="Prophetic Editorial Team" />
   <meta name="language" content="en" />
+  <meta name="revisit-after" content="1 days" />
+  <meta name="rating" content="general" />
+  <meta name="distribution" content="global" />
   <link rel="canonical" href="${canonical}" />
+  <link rel="alternate" hreflang="en" href="${canonical}" />
+  <link rel="alternate" hreflang="x-default" href="${canonical}" />
+  ${keywordsTag}
 
   <meta property="og:type" content="${type}" />
   <meta property="og:title" content="${escapeHtml(title)}" />
   <meta property="og:description" content="${escapeHtml(description)}" />
   <meta property="og:url" content="${canonical}" />
   <meta property="og:image" content="${image}" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <meta property="og:site_name" content="${SITE_NAME}" />
   <meta property="og:locale" content="en_US" />
+  ${articleTags}
 
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@PropheticAI" />
+  <meta name="twitter:creator" content="@PropheticAI" />
   <meta name="twitter:title" content="${escapeHtml(title)}" />
   <meta name="twitter:description" content="${escapeHtml(description)}" />
   <meta name="twitter:image" content="${image}" />
+  <meta name="twitter:image:alt" content="${escapeHtml(title)}" />
+
   <link rel="alternate" type="application/rss+xml" title="${SITE_NAME} RSS Feed" href="${SITE_URL}/rss.xml" />
+  <link rel="alternate" type="application/atom+xml" title="${SITE_NAME} Atom Feed" href="${SITE_URL}/atom.xml" />
 
   <meta name="google-site-verification" content="LinTLA24lUQNkp3-Jnmx63UIro3uY1tF8Y9fN-XMrmk" />
   <meta name="msvalidate.01" content="DF3557B334AD60DC263293F8F0967114" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0a0f1e" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
+  <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
   `;
 }
 
@@ -477,11 +511,13 @@ ${head}
 function generateArticleSchema(article, articleUrl) {
   const articleBody = getArticleBody(article);
   const wordCount = articleBody ? articleBody.split(/\s+/).length : undefined;
+  const keywords = extractKeywords(article);
   return {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
     "@id": `${articleUrl}#article`,
     headline: article.title,
+    alternativeHeadline: normalizeDescription(article.meta_description).slice(0, 110),
     description: normalizeDescription(article.meta_description),
     image: {
       "@type": "ImageObject",
@@ -493,6 +529,8 @@ function generateArticleSchema(article, articleUrl) {
     dateModified: toIsoDate(article.updated_at || article.created_at),
     articleBody: articleBody ? articleBody.slice(0, 5000) : undefined,
     wordCount: wordCount || undefined,
+    keywords: keywords.length > 0 ? keywords.join(", ") : undefined,
+    inLanguage: "en-US",
     author: {
       "@type": "Person",
       name: "Prophetic Editorial Team",
@@ -502,9 +540,12 @@ function generateArticleSchema(article, articleUrl) {
       "@type": "Organization",
       "@id": `${SITE_URL}/#organization`,
       name: SITE_NAME,
+      url: SITE_URL,
       logo: {
         "@type": "ImageObject",
-        url: `${SITE_URL}/favicon.ico`,
+        url: `${SITE_URL}/logo.svg`,
+        width: 200,
+        height: 60,
       },
     },
     mainEntityOfPage: {
@@ -513,6 +554,53 @@ function generateArticleSchema(article, articleUrl) {
     },
     articleSection: article.category,
     isAccessibleForFree: true,
+    isPartOf: {
+      "@type": "WebSite",
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
+  };
+}
+
+// Extract keywords from article title and description
+function extractKeywords(article) {
+  const stopWords = new Set(["the", "a", "an", "is", "are", "was", "were", "in", "on", "at", "to", "for", "of", "with", "and", "or", "but", "not", "this", "that", "it", "its", "by", "from", "as", "be", "has", "have", "had", "will", "would", "can", "could", "may", "might", "do", "does", "did", "how", "what", "why", "when", "where", "who", "which", "new"]);
+  const text = `${article.title} ${article.meta_description || ""}`;
+  const words = text.toLowerCase().replace(/[^a-z0-9\s]/g, "").split(/\s+/);
+  const unique = [...new Set(words)].filter(w => w.length > 3 && !stopWords.has(w));
+  return unique.slice(0, 10);
+}
+
+// Generate FAQ Schema from article content headings
+function generateFAQSchema(article) {
+  const content = article.content || "";
+  const headingRegex = /^##\s+(.+)$/gm;
+  const faqs = [];
+  let match;
+  while ((match = headingRegex.exec(content)) !== null && faqs.length < 5) {
+    const question = match[1].trim();
+    // Get paragraph after heading
+    const afterHeading = content.slice(match.index + match[0].length).trim();
+    const nextSection = afterHeading.split(/^##\s/m)[0].trim();
+    const answer = nextSection.replace(/[#*_\[\]]/g, "").split("\n").filter(l => l.trim()).slice(0, 3).join(" ").slice(0, 300);
+    if (question.length > 10 && answer.length > 30) {
+      // Convert heading to question format if not already
+      const q = question.endsWith("?") ? question : `What about ${question}?`;
+      faqs.push({ q, a: answer });
+    }
+  }
+  if (faqs.length < 2) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map(faq => ({
+      "@type": "Question",
+      name: faq.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.a,
+      },
+    })),
   };
 }
 
@@ -535,16 +623,27 @@ function generateArticleHtml(article, relatedArticles = []) {
   const title = formatPageTitle(article.title);
   const description = normalizeDescription(article.meta_description);
   const imageUrl = article.image_url || DEFAULT_IMAGE;
+  const keywords = extractKeywords(article);
+  const articleBody = getArticleBody(article);
+  const wordCount = articleBody ? articleBody.split(/\s+/).length : 0;
+  const readTime = Math.max(1, Math.ceil(wordCount / 250));
+
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Home", url: `${SITE_URL}/` },
     { name: article.category, url: categoryUrl },
     { name: article.title, url: articleUrl },
   ]);
-  const relatedLinks = relatedArticles
-    .slice(0, 4)
+  const faqSchema = generateFAQSchema(article);
+
+  // Related articles: 4 same category + 2 different category for cross-linking
+  const sameCat = relatedArticles.filter(r => r.category === article.category).slice(0, 4);
+  const diffCat = relatedArticles.filter(r => r.category !== article.category).slice(0, 2);
+  const allRelated = [...sameCat, ...diffCat];
+
+  const relatedLinks = allRelated
     .map(
       (relatedArticle) =>
-        `<li><a href="${toAbsoluteUrl(`/article/${relatedArticle.slug}`)}">${escapeHtml(relatedArticle.title)}</a></li>`,
+        `<li><a href="${toAbsoluteUrl(`/article/${relatedArticle.slug}`)}">${escapeHtml(relatedArticle.title)}</a> <span class="tag" style="font-size:.7rem;padding:.15rem .4rem">${escapeHtml(relatedArticle.category)}</span></li>`,
     )
     .join("");
 
@@ -554,37 +653,47 @@ function generateArticleHtml(article, relatedArticles = []) {
     canonical: articleUrl,
     image: imageUrl,
     type: "article",
+    publishedTime: article.created_at,
+    modifiedTime: article.updated_at,
+    category: article.category,
+    keywords: keywords.join(", "),
   })}
-  <meta property="article:published_time" content="${article.created_at}" />
-  <meta property="article:modified_time" content="${article.updated_at}" />
-  <meta property="article:section" content="${escapeHtml(article.category)}" />
-  <meta property="article:author" content="Prophetic Editorial Team" />
   <script type="application/ld+json">${JSON.stringify(
     generateArticleSchema(article, articleUrl),
   )}</script>
-  <script type="application/ld+json">${JSON.stringify(breadcrumbSchema)}</script>`;
+  <script type="application/ld+json">${JSON.stringify(breadcrumbSchema)}</script>
+  ${faqSchema ? `<script type="application/ld+json">${JSON.stringify(faqSchema)}</script>` : ""}`;
 
   const body = `
     <nav class="breadcrumbs" aria-label="Breadcrumb">
       <a href="${SITE_URL}/">Home</a>
-      <span>/</span>
+      <span>›</span>
       <a href="${categoryUrl}">${escapeHtml(article.category)}</a>
-      <span>/</span>
+      <span>›</span>
       <span>${escapeHtml(article.title)}</span>
     </nav>
     <a class="tag" href="${categoryUrl}">${escapeHtml(article.category)}</a>
-    <p class="meta">Published: ${new Date(article.created_at).toLocaleDateString("en-US", {
+    <p class="meta">
+      <time datetime="${article.created_at}">${new Date(article.created_at).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
-    })} • Updated: ${new Date(article.updated_at || article.created_at).toLocaleDateString("en-US", {
+    })}</time>
+      • ${readTime} min read
+      • ${wordCount.toLocaleString()} words
+      • Updated: <time datetime="${article.updated_at || article.created_at}">${new Date(article.updated_at || article.created_at).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
-    })}</p>
-    <img class="hero-image" src="${imageUrl}" alt="${escapeHtml(article.title)}" loading="eager" width="1200" height="675" />
+    })}</time>
+    </p>
+    <img class="hero-image" src="${imageUrl}" alt="${escapeHtml(article.title)}" loading="eager" width="1200" height="675" fetchpriority="high" />
     ${markdownToHtml(article.content || article.meta_description || "")}
-    ${relatedLinks ? `<section class="related-links"><h2>More ${escapeHtml(article.category)} coverage</h2><ul>${relatedLinks}</ul></section>` : ""}
+    ${relatedLinks ? `<section class="related-links"><h2>Related Coverage</h2><ul>${relatedLinks}</ul></section>` : ""}
+    <section class="related-links" style="margin-top:1.2rem">
+      <h2>Explore More</h2>
+      <p style="margin:0"><a href="${categoryUrl}">All ${escapeHtml(article.category)} Articles</a> · <a href="${SITE_URL}/topics/">Top Topics</a> · <a href="${SITE_URL}/guides/">Guides</a> · <a href="${SITE_URL}/sitemap/">Full Sitemap</a></p>
+    </section>
   `;
 
   return shellTemplate({
@@ -1071,8 +1180,9 @@ async function main() {
 
   console.log("📝 Generating article pages...");
   for (const article of safeArticles) {
+    // Pass ALL other articles for cross-category internal linking
     const relatedArticles = safeArticles.filter(
-      (candidate) => candidate.slug !== article.slug && candidate.category === article.category,
+      (candidate) => candidate.slug !== article.slug,
     );
     writeRouteIndex(distDir, `/article/${article.slug}`, generateArticleHtml(article, relatedArticles));
     console.log(`  ✓ /article/${article.slug}/`);
