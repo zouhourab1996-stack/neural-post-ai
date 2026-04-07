@@ -1133,6 +1133,30 @@ async function main() {
 Allow: /
 Disallow: /api/
 
+User-agent: GPTBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
 Sitemap: ${SITE_URL}/sitemap.xml
 Sitemap: ${SITE_URL}/atom.xml
 `;
