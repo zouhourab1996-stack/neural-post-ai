@@ -272,7 +272,7 @@ function baseHead({
   <link rel="alternate" type="application/rss+xml" title="${SITE_NAME} RSS Feed" href="${SITE_URL}/rss.xml" />
 
   <meta name="google-site-verification" content="LinTLA24lUQNkp3-Jnmx63UIro3uY1tF8Y9fN-XMrmk" />
-  <meta name="msvalidate.01" content="A5E7F9B2C3D4E5F6G7H8I9J0K1L2M3N4" />
+  <meta name="msvalidate.01" content="DF3557B334AD60DC263293F8F0967114" />
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
   `;
 }
