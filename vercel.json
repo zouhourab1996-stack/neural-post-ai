@@ -1,5 +1,18 @@
 {
   "version": 2,
+  "redirects": [
+    {
+      "source": "/:path(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.prophetic.pw"
+        }
+      ],
+      "destination": "https://prophetic.pw/:path",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/sitemap.xml",
@@ -14,7 +27,25 @@
         },
         {
           "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
+          "value": "public, max-age=3600, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/atom.xml",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/atom+xml; charset=utf-8"
+        }
+      ]
+    },
+    {
+      "source": "/rss.xml",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/rss+xml; charset=utf-8"
         }
       ]
     },
@@ -24,6 +55,32 @@
         {
           "key": "Content-Type",
           "value": "text/plain; charset=utf-8"
+        }
+      ]
+    },
+    {
+      "source": "/llms.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
         }
       ]
     }
@@ -38,7 +95,23 @@
       "destination": "/robots.txt"
     },
     {
-      "source": "/((?!api|assets|favicon|sitemap\\.xml|robots\\.txt|_next).*)",
+      "source": "/atom.xml",
+      "destination": "/atom.xml"
+    },
+    {
+      "source": "/rss.xml",
+      "destination": "/rss.xml"
+    },
+    {
+      "source": "/llms.txt",
+      "destination": "/llms.txt"
+    },
+    {
+      "source": "/BingSiteAuth.xml",
+      "destination": "/BingSiteAuth.xml"
+    },
+    {
+      "source": "/((?!api|assets|favicon|sitemap\\.xml|sitemap-news\\.xml|robots\\.txt|atom\\.xml|rss\\.xml|llms\\.txt|BingSiteAuth\\.xml|manifest\\.json|_next|icon-|og-image|logo\\.).*)",
       "destination": "/index.html"
     }
   ]

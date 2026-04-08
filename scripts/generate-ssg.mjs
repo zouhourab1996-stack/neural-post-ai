@@ -1237,6 +1237,35 @@ async function main() {
   fs.writeFileSync(path.join(distDir, "sitemap-news.xml"), generateNewsSitemapXml(safeArticles), "utf8");
   console.log("  ✓ /sitemap-news.xml");
 
+  // Generate 404 page
+  console.log("\n📍 Writing 404.html...");
+  const notFoundHead = baseHead({
+    title: "Page Not Found — Prophetic",
+    description: "The page you are looking for does not exist or has been moved.",
+    canonical: `${SITE_URL}/404`,
+  });
+  const notFoundHtml = shellTemplate({
+    head: notFoundHead,
+    heading: "Page Not Found",
+    body: `
+      <div style="text-align:center;padding:3rem 0">
+        <p style="font-size:4rem;margin:0;opacity:.3">404</p>
+        <p style="font-size:1.2rem;color:#94a3b8">The page you're looking for doesn't exist or has been moved.</p>
+        <p style="margin-top:2rem"><a href="${SITE_URL}/" style="color:#3b82f6;text-decoration:underline">Go to Homepage</a></p>
+        <section class="related-links" style="margin-top:3rem;text-align:left">
+          <h2>Popular Sections</h2>
+          <ul>
+            ${categories.map(c => `<li><a href="${toAbsoluteUrl(`/category/${c}`)}">${c} Articles</a></li>`).join("")}
+            <li><a href="${SITE_URL}/topics/">Top Topics</a></li>
+            <li><a href="${SITE_URL}/guides/">Guides</a></li>
+          </ul>
+        </section>
+      </div>
+    `,
+  });
+  fs.writeFileSync(path.join(distDir, "404.html"), notFoundHtml, "utf8");
+  console.log("  \u2713 /404.html");
+
   // Write canonical robots.txt
   console.log("\n📍 Writing robots.txt...");
   const robotsTxt = `User-agent: *
