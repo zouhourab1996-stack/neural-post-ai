@@ -166,6 +166,25 @@ function escapeXml(text = "") {
   return escapeHtml(text);
 }
 
+function adUnit(className = '') {
+  return `<div class="ad-unit ${className}"><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins></div>`;
+}
+
+function insertAdsInContent(htmlContent) {
+  const blocks = htmlContent.split('</p>');
+  if (blocks.length < 6) return htmlContent;
+
+  const result = [];
+  for (let i = 0; i < blocks.length; i++) {
+    result.push(blocks[i]);
+    if (i < blocks.length - 1) result.push('</p>');
+    if ((i + 1) % 4 === 0 && i < blocks.length - 2) {
+      result.push(adUnit());
+    }
+  }
+  return result.join('');
+}
+
 function stripMarkdown(markdown = "") {
   return String(markdown)
     .replace(/```[\s\S]*?```/g, " ")
@@ -464,6 +483,16 @@ ${head}
     color: #94a3b8;
   }
   .footer-links a:hover { color: #60a5fa; text-decoration: none; }
+  .ad-unit{margin:1.5rem 0;text-align:center;min-height:90px;overflow:hidden}
+  .ad-unit ins{display:block}
+  .gdpr-banner{position:fixed;bottom:0;left:0;right:0;background:#1e293b;border-top:1px solid rgba(148,163,184,.2);padding:1rem;z-index:100;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.8rem}
+  .gdpr-banner p{color:#94a3b8;font-size:.85rem;margin:0}
+  .gdpr-banner button{background:#3b82f6;color:#fff;border:none;padding:.5rem 1.2rem;border-radius:6px;cursor:pointer;font-size:.85rem}
+  .gdpr-banner button:hover{background:#2563eb}
+  .gdpr-banner button.reject{background:transparent;border:1px solid #475569;color:#94a3b8}
+  .share-bar{display:flex;gap:.5rem;margin:1.5rem 0}
+  .share-bar a{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:6px;background:rgba(17,24,39,.6);border:1px solid rgba(148,163,184,.14);color:#94a3b8;text-decoration:none;font-size:.85rem;transition:all .15s}
+  .share-bar a:hover{color:#f1f5f9;background:#1e293b;text-decoration:none}
   @media (max-width: 720px) {
     .site-header__inner {
       align-items: flex-start;
@@ -504,6 +533,39 @@ ${head}
       <div>© ${new Date().getFullYear()} ${SITE_NAME}. All rights reserved.</div>
     </div>
   </footer>
+  <div id="gdpr" class="gdpr-banner" style="display:none">
+    <p>We use cookies and advertising to keep this site free. By continuing, you accept our <a href="${SITE_URL}/privacy/" style="color:#60a5fa">Privacy Policy</a>.</p>
+    <button onclick="document.getElementById('gdpr').style.display='none';localStorage.setItem('gdpr','1')">Accept</button>
+    <button class="reject" onclick="document.getElementById('gdpr').style.display='none';localStorage.setItem('gdpr','0')">Decline</button>
+  </div>
+  <script>if(!localStorage.getItem('gdpr'))document.getElementById('gdpr').style.display='flex'</script>
+  <script>
+  window.addEventListener('load',function(){
+    var g=document.createElement('script');
+    g.src='https://www.googletagmanager.com/gtag/js?id=G-1W7PC1JDKH';
+    g.async=true;
+    document.head.appendChild(g);
+    g.onload=function(){
+      window.dataLayer=window.dataLayer||[];
+      function gtag(){dataLayer.push(arguments)}
+      gtag('js',new Date());
+      gtag('config','G-1W7PC1JDKH',{send_page_view:true});
+    };
+    setTimeout(function(){
+      if(localStorage.getItem('gdpr')==='0')return;
+      var a=document.createElement('script');
+      a.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3898992716389443';
+      a.async=true;
+      a.crossOrigin='anonymous';
+      document.head.appendChild(a);
+      a.onload=function(){
+        document.querySelectorAll('.adsbygoogle').forEach(function(){
+          try{(adsbygoogle=window.adsbygoogle||[]).push({})}catch(e){}
+        });
+      };
+    },2000);
+  });
+  </script>
 </body>
 </html>`;
 }
@@ -664,6 +726,18 @@ function generateArticleHtml(article, relatedArticles = []) {
   <script type="application/ld+json">${JSON.stringify(breadcrumbSchema)}</script>
   ${faqSchema ? `<script type="application/ld+json">${JSON.stringify(faqSchema)}</script>` : ""}`;
 
+  const shareUrl = encodeURIComponent(articleUrl);
+  const shareTitle = encodeURIComponent(article.title);
+  const shareBar = `
+  <div class="share-bar">
+    <a href="https://twitter.com/intent/tweet?text=${shareTitle}&url=${shareUrl}" target="_blank" rel="noopener" aria-label="Share on X">\u{1D54F}</a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u=${shareUrl}" target="_blank" rel="noopener" aria-label="Share on Facebook">f</a>
+    <a href="https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}" target="_blank" rel="noopener" aria-label="Share on LinkedIn">in</a>
+    <a href="https://reddit.com/submit?url=${shareUrl}&title=${shareTitle}" target="_blank" rel="noopener" aria-label="Share on Reddit">r</a>
+  </div>`;
+
+  const articleContent = insertAdsInContent(markdownToHtml(article.content || article.meta_description || ""));
+
   const body = `
     <nav class="breadcrumbs" aria-label="Breadcrumb">
       <a href="${SITE_URL}/">Home</a>
@@ -687,8 +761,11 @@ function generateArticleHtml(article, relatedArticles = []) {
       day: "numeric",
     })}</time>
     </p>
+    ${shareBar}
+    ${adUnit()}
     <img class="hero-image" src="${imageUrl}" alt="${escapeHtml(article.title)}" loading="eager" width="1200" height="675" fetchpriority="high" />
-    ${markdownToHtml(article.content || article.meta_description || "")}
+    ${articleContent}
+    ${adUnit()}
     ${relatedLinks ? `<section class="related-links"><h2>Related Coverage</h2><ul>${relatedLinks}</ul></section>` : ""}
     <section class="related-links" style="margin-top:1.2rem">
       <h2>Explore More</h2>
@@ -1301,6 +1378,44 @@ Sitemap: ${SITE_URL}/atom.xml
 `;
   fs.writeFileSync(path.join(distDir, "robots.txt"), robotsTxt, "utf8");
   console.log("  ✓ /robots.txt");
+
+  // Inject noscript content into homepage for SEO
+  const homepageIndexPath = path.join(distDir, "index.html");
+  if (fs.existsSync(homepageIndexPath)) {
+    let homepageHtml = fs.readFileSync(homepageIndexPath, "utf8");
+
+    const latestArticlesHtml = safeArticles
+      .slice(0, 30)
+      .map(a => `<li><a href="${toAbsoluteUrl(`/article/${a.slug}`)}">${escapeHtml(a.title)}</a></li>`)
+      .join("\n");
+
+    const noscriptBlock = `
+  <noscript>
+    <div style="padding:2rem;max-width:920px;margin:0 auto;font-family:sans-serif;background:#0a0f1e;color:#f1f5f9">
+      <h1>Prophetic — AI-Powered Tech News &amp; Analysis</h1>
+      <p>Daily AI predictions, tech forecasts, and market analysis.</p>
+      <h2>Categories</h2>
+      <ul>
+        ${categories.map(c => `<li><a href="${toAbsoluteUrl(`/category/${c}`)}" style="color:#60a5fa">${c}</a></li>`).join("\n")}
+      </ul>
+      <h2>Latest Articles</h2>
+      <ul>${latestArticlesHtml}</ul>
+      <p><a href="${SITE_URL}/sitemap/" style="color:#60a5fa">View Full Sitemap</a></p>
+    </div>
+  </noscript>`;
+
+    // Insert noscript block after <div id="root"></div>
+    if (homepageHtml.includes('<div id="root"></div>')) {
+      homepageHtml = homepageHtml.replace(
+        '<div id="root"></div>',
+        `<div id="root"></div>\n${noscriptBlock}`
+      );
+      fs.writeFileSync(homepageIndexPath, homepageHtml, "utf8");
+      console.log("\n✓ Injected noscript content into homepage");
+    } else {
+      console.log("\n⚠ Could not find <div id=\"root\"></div> in index.html — skipping noscript injection");
+    }
+  }
 
   console.log("\n🎉 SSG completed successfully.");
 }
