@@ -37,14 +37,6 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
 
-      - name: Generate static pages + sitemaps (SSG)
-        run: node scripts/generate-ssg.mjs
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
-          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
-          BING_INDEXNOW_API_KEY: ${{ secrets.BING_INDEXNOW_API_KEY }}
-
       - name: Create CNAME for custom domain
         run: echo "prophetic.pw" > ./dist/CNAME
 
