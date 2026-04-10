@@ -63,6 +63,52 @@ function enhanceTitleForCTR(title: string): string {
   return withYear.slice(0, 67).replace(/\s+\S*$/, '') + '...';
 }
 
+// Robust JSON parser — handles truncation, extra text, unescaped characters
+function robustJsonParse(raw: string, context = 'json'): any {
+  // 1. Remove markdown fences
+  let s = raw.replace(/```json\n?|\n?```/g, '').trim();
+
+  // 2. Direct parse
+  try { return JSON.parse(s); } catch (_) {}
+
+  // 3. Extract the largest {...} block
+  const firstBrace = s.indexOf('{');
+  const lastBrace = s.lastIndexOf('}');
+  if (firstBrace !== -1 && lastBrace > firstBrace) {
+    const block = s.slice(firstBrace, lastBrace + 1);
+    try { return JSON.parse(block); } catch (_) {}
+
+    // 4. Fix common issues: unescaped newlines/tabs inside string values
+    const fixed = block
+      .replace(/([^\\])\n/g, '$1\\n')
+      .replace(/([^\\])\r/g, '$1\\r')
+      .replace(/([^\\])\t/g, '$1\\t');
+    try { return JSON.parse(fixed); } catch (_) {}
+
+    // 5. Last resort: extract individual fields with regex
+    const titleMatch = block.match(/"title"\s*:\s*"((?:[^"\\]|\\.)*?)"/);
+    const slugMatch  = block.match(/"slug"\s*:\s*"((?:[^"\\]|\\.)*?)"/);
+    const metaMatch  = block.match(/"meta_description"\s*:\s*"((?:[^"\\]|\\.)*?)"/);
+    const imgMatch   = block.match(/"image_query"\s*:\s*"((?:[^"\\]|\\.)*?)"/);
+    // For content, grab everything between "content": " ... " (greedy, handles escapes)
+    const contentMatch = block.match(/"content"\s*:\s*"((?:[\s\S]*?))",?\s*"image_query"/);
+
+    if (titleMatch && contentMatch) {
+      console.warn(`[${context}] Used regex fallback for JSON extraction`);
+      return {
+        title: titleMatch[1],
+        slug: slugMatch?.[1] || '',
+        meta_description: metaMatch?.[1] || '',
+        content: contentMatch[1].replace(/\\n/g, '\n').replace(/\\t/g, '\t'),
+        image_query: imgMatch?.[1] || 'technology news',
+      };
+    }
+  }
+
+  console.error(`[${context}] All JSON parse attempts failed. Raw snippet:`, raw.slice(0, 300));
+  throw new Error('Failed to parse article content');
+}
+
 function ensureUniqueSlug(slug: string, used: Set<string>) {
   let finalSlug = slug;
   while (used.has(finalSlug)) {
@@ -342,6 +388,7 @@ Return ONLY valid JSON:
       ],
       temperature: 0.6,
       max_tokens: 600,
+      response_format: { type: 'json_object' },
     }),
   });
 
@@ -353,7 +400,7 @@ Return ONLY valid JSON:
   const content = data.choices?.[0]?.message?.content;
 
   try {
-    const parsed = JSON.parse(content.replace(/```json\n?|\n?```/g, '').trim());
+    const parsed = robustJsonParse(content, 'keywords');
     return { keywords: parsed.keywords || [] };
   } catch (e) {
     console.error('Failed to parse keywords:', content);
@@ -500,10 +547,11 @@ FORMAT: Always respond with valid JSON only. Articles must be at least 2,000 wor
       temperature: 0.82,
       frequency_penalty: 0.5,
       presence_penalty: 0.35,
-      max_tokens: 10000,
+      max_tokens: 8000,
       stream: false,
+      response_format: { type: 'json_object' }, // Force valid JSON output
     }),
-    signal: AbortSignal.timeout(180000), // 3 min timeout for longer articles
+    signal: AbortSignal.timeout(120000), // 2 min timeout
   });
 
   if (!response.ok) {
@@ -519,12 +567,7 @@ FORMAT: Always respond with valid JSON only. Articles must be at least 2,000 wor
     throw new Error('No content received from DeepSeek');
   }
 
-  try {
-    return JSON.parse(content.replace(/```json\n?|\n?```/g, '').trim());
-  } catch (e) {
-    console.error('Failed to parse article JSON:', content);
-    throw new Error('Failed to parse article content');
-  }
+  return robustJsonParse(content, 'article');
 }
 
 async function notifyBingIndexNow(url: string) {

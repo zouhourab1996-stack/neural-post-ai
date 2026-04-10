@@ -65,6 +65,28 @@ jobs:
         with:
           path: "./dist"
 
+  deploy-supabase:
+    runs-on: ubuntu-latest
+    needs: build
+    # Only deploy Supabase functions when pushing to main (not on schedule trigger)
+    if: github.event_name == 'push'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Deploy Edge Functions to Supabase
+        run: |
+          supabase functions deploy generate-article --project-ref bltytefghazluwicnaii --no-verify-jwt
+          supabase functions deploy daily-automation --project-ref bltytefghazluwicnaii --no-verify-jwt
+          supabase functions deploy google-indexing --project-ref bltytefghazluwicnaii --no-verify-jwt
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
   deploy:
     environment:
       name: github-pages
