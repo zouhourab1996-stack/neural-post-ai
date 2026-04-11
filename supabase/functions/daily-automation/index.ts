@@ -85,14 +85,33 @@ serve(async (req) => {
       .delete()
       .lt('discovered_at', sevenDaysAgo.toISOString().split('T')[0]);
 
-    // Trigger Google Indexing for newly created articles
-    try {
-      const newSlugs = results
-        .filter((r: any) => r.success && r.slug)
-        .map((r: any) => `https://prophetic.pw/article/${r.slug}/`);
-      
-      if (newSlugs.length > 0) {
-        console.log(`Submitting ${newSlugs.length} new URL(s) to Google Indexing...`);
+    // Notify search engines for newly created articles
+    const newSlugs = results
+      .filter((r: any) => r.success && r.slug)
+      .map((r: any) => `https://prophetic.pw/article/${r.slug}/`);
+
+    if (newSlugs.length > 0) {
+      console.log(`Submitting ${newSlugs.length} new URL(s) to search engines...`);
+
+      // 1. Bing IndexNow (also notifies Yandex, Seznam, etc.)
+      try {
+        const indexNowRes = await fetch('https://api.indexnow.org/indexnow', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json; charset=utf-8' },
+          body: JSON.stringify({
+            host: 'prophetic.pw',
+            key: 'a0ed604574874b10b1d2245fd9eeaed8',
+            keyLocation: 'https://prophetic.pw/a0ed604574874b10b1d2245fd9eeaed8.txt',
+            urlList: newSlugs,
+          }),
+        });
+        console.log(`Bing IndexNow: HTTP ${indexNowRes.status}`);
+      } catch (e) {
+        console.error('Bing IndexNow failed (non-critical):', e);
+      }
+
+      // 2. Google Indexing API via Supabase function
+      try {
         await fetch(`${SUPABASE_URL}/functions/v1/google-indexing`, {
           method: 'POST',
           headers: {
@@ -101,9 +120,10 @@ serve(async (req) => {
           },
           body: JSON.stringify({ urls: newSlugs, action: 'URL_UPDATED' }),
         });
+        console.log('Google Indexing API notified');
+      } catch (indexError) {
+        console.error('Google indexing trigger failed (non-critical):', indexError);
       }
-    } catch (indexError) {
-      console.error('Google indexing trigger failed (non-critical):', indexError);
     }
 
     console.log(`[${new Date().toISOString()}] Daily automation completed`);
