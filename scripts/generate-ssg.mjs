@@ -589,7 +589,13 @@ function generateArticleSchema(article, articleUrl) {
     },
     datePublished: toIsoDate(article.created_at || article.updated_at),
     dateModified: toIsoDate(article.updated_at || article.created_at),
-    articleBody: articleBody ? articleBody.slice(0, 5000) : undefined,
+    // Limit to first 2 complete sentences only — prevents truncated JSON-LD
+    articleBody: articleBody
+      ? (() => {
+          const sentences = articleBody.match(/[^.!?]*[.!?]+/g) || [];
+          return sentences.slice(0, 2).join(' ').trim() || articleBody.slice(0, 400).trim();
+        })()
+      : undefined,
     wordCount: wordCount || undefined,
     keywords: keywords.length > 0 ? keywords.join(", ") : undefined,
     inLanguage: "en-US",
