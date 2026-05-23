@@ -336,7 +336,7 @@ async function fetchPexelsImage(query: string, apiKey: string): Promise<string |
 }
 
 // Enhanced keyword discovery with search-engine-focused SEO targeting
-async function discoverKeywords(headline: string, category: string, apiKey: string): Promise<{
+async function discoverKeywords(headline: string, category: string, aiApiKey: string): Promise<{
   keywords: { keyword: string; volume: string; competition: string }[];
 }> {
   const currentDate = getCurrentDate();
@@ -374,14 +374,14 @@ Return ONLY valid JSON:
   ]
 }`;
 
-  const response = await fetch('https://api.deepseek.com/chat/completions', {
+  const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${apiKey}`,
+      'Authorization': `Bearer ${aiApiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'deepseek-chat',
+      model: 'google/gemini-2.5-flash',
       messages: [
         { role: 'system', content: 'You are a search engine optimization expert who specializes in keyword research for news and prediction websites. Always respond with valid JSON only. Focus on keywords real users actually search for on Google.' },
         { role: 'user', content: keywordPrompt }
@@ -393,7 +393,7 @@ Return ONLY valid JSON:
   });
 
   if (!response.ok) {
-    throw new Error(`DeepSeek API error during keyword discovery: ${response.status}`);
+    throw new Error(`AI API error during keyword discovery: ${response.status}`);
   }
 
   const data = await response.json();
