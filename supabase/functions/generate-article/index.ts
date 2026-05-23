@@ -415,7 +415,7 @@ async function generateArticle(
   source: string,
   keywords: { keyword: string; volume: string; competition: string }[],
   category: string,
-  apiKey: string,
+  aiApiKey: string,
   existingTitles: string[] = [],
 ): Promise<any> {
   const currentDate = getCurrentDate();
@@ -441,14 +441,14 @@ ${avoidTitles ? `AVOID SIMILARITY to these recent articles:\n${avoidTitles}\n` :
 
 Write a complete investigative article about this topic following every rule in your system instructions. Return ONLY the JSON object.`;
 
-  const response = await fetch('https://api.deepseek.com/chat/completions', {
+  const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${apiKey}`,
+      'Authorization': `Bearer ${aiApiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'deepseek-chat',
+      model: 'google/gemini-2.5-pro',
       messages: [
         { 
           role: 'system', 
@@ -533,8 +533,8 @@ OUTPUT — return ONLY this exact JSON structure, nothing else:
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error('DeepSeek API error:', response.status, errorText);
-    throw new Error(`DeepSeek API error: ${response.status}`);
+    console.error('AI API error:', response.status, errorText);
+    throw new Error(`AI API error: ${response.status}`);
   }
 
   const data = await response.json();
