@@ -42,10 +42,15 @@ export default function App() {
                 <Route path="/article/:slug" element={<Article />} />
                 <Route path="/category/:category" element={<Category />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/editorial" element={<About />} />
+                <Route path="/ai-policy" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/disclaimer" element={<Disclaimer />} />
+                <Route path="/topics" element={<Index />} />
+                <Route path="/guides" element={<Index />} />
+                <Route path="/sitemap" element={<Index />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>
