@@ -46,7 +46,7 @@ serve(async (req) => {
       }),
     });
 
-    const result1 = await response1.json();
+    const result1 = await response1.json().catch(() => ({ success: false, error: `HTTP ${response1.status}` }));
     results.push({ category: category1, ...result1 });
     console.log(`Article 1 result: ${result1.success ? 'Success' : 'Failed'}`);
 
@@ -67,9 +67,14 @@ serve(async (req) => {
       }),
     });
 
-    const result2 = await response2.json();
+    const result2 = await response2.json().catch(() => ({ success: false, error: `HTTP ${response2.status}` }));
     results.push({ category: category2, ...result2 });
     console.log(`Article 2 result: ${result2.success ? 'Success' : 'Failed'}`);
+
+    const successfulResults = results.filter((r: any) => r.success && r.slug);
+    if (successfulResults.length === 0) {
+      throw new Error(`No articles were generated: ${results.map((r: any) => `${r.category}: ${r.error || 'unknown error'}`).join('; ')}`);
+    }
 
     // Clean up old keywords (keep last 7 days)
     const supabase = createClient(
