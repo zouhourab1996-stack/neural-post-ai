@@ -572,7 +572,7 @@ serve(async (req) => {
     const { category, autoPublish = false } = await req.json();
     
     const NEWSAPI_KEY = Deno.env.get('NEWSAPI_KEY');
-    const DEEPSEEK_API_KEY = Deno.env.get('DEEPSEEK_API_KEY');
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     const PEXELS_API_KEY = Deno.env.get('PEXELS_API_KEY');
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
@@ -581,8 +581,8 @@ serve(async (req) => {
       throw new Error('NEWSAPI_KEY is not configured');
     }
 
-    if (!DEEPSEEK_API_KEY) {
-      throw new Error('DEEPSEEK_API_KEY is not configured');
+    if (!LOVABLE_API_KEY) {
+      throw new Error('LOVABLE_API_KEY is not configured');
     }
 
     const validCategories = ['AI', 'Tech', 'Business', 'Science'];
@@ -609,7 +609,7 @@ serve(async (req) => {
     console.log(`Selected headline: ${selectedHeadline.title} (${selectedHeadline.source})`);
 
     // Phase 3: Discover high-value SEO keywords for this headline
-    const { keywords } = await discoverKeywords(selectedHeadline.title, selectedCategory, DEEPSEEK_API_KEY);
+    const { keywords } = await discoverKeywords(selectedHeadline.title, selectedCategory, LOVABLE_API_KEY);
     console.log(`Target keywords: ${keywords.map(k => k.keyword).join(', ')}`);
 
     // Phase 4: Get recent article titles to avoid repetition
@@ -624,14 +624,14 @@ serve(async (req) => {
       existingTitles = (recent || []).map((a: any) => a.title);
     }
 
-    // Phase 5: Generate article with DeepSeek — human-quality, SEO-optimized
+    // Phase 5: Generate article with Lovable AI — human-quality, SEO-optimized
     let article = await generateArticle(
       selectedHeadline.title, 
       selectedHeadline.description,
       selectedHeadline.source,
       keywords, 
       selectedCategory, 
-      DEEPSEEK_API_KEY,
+      LOVABLE_API_KEY,
       existingTitles,
     );
 
@@ -646,7 +646,7 @@ serve(async (req) => {
         selectedHeadline.source,
         keywords, 
         selectedCategory, 
-        DEEPSEEK_API_KEY,
+        LOVABLE_API_KEY,
         existingTitles,
       );
       wordCount = countWords(article.content);
