@@ -541,7 +541,7 @@ OUTPUT — return ONLY this exact JSON structure, nothing else:
   const content = data.choices?.[0]?.message?.content;
   
   if (!content) {
-    throw new Error('No content received from DeepSeek');
+    throw new Error('No content received from AI provider');
   }
 
   return robustJsonParse(content, 'article');
