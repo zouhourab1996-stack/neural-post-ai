@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import AdUnit from "@/components/AdUnit";
 
 const footerLinks = {
   company: [
@@ -25,14 +26,7 @@ export default function Footer() {
     <footer className="border-t border-border/60 mt-16 bg-card/50" role="contentinfo">
       {/* Ad strip */}
       <div className="container-main py-4">
-        <div className="ad-container">
-          <ins className="adsbygoogle"
-            style={{ display: 'block' }}
-            data-ad-client="ca-pub-3898992716389443"
-            data-ad-slot="auto"
-            data-ad-format="auto"
-            data-full-width-responsive="true" />
-        </div>
+        <AdUnit />
       </div>
 
       <div className="container-main py-10">
