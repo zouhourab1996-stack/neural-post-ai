@@ -8,6 +8,7 @@ import Sidebar from "@/components/Sidebar";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import SEOHead from "@/components/SEOHead";
+import AdUnit from "@/components/AdUnit";
 
 interface Article {
   id: string;
