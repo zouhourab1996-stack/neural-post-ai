@@ -8,6 +8,7 @@ import Sidebar from "@/components/Sidebar";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import SEOHead from "@/components/SEOHead";
+import AdUnit from "@/components/AdUnit";
 
 interface Article {
   id: string;
@@ -146,7 +147,7 @@ export default function Category() {
 
               {/* AdSense - In-Feed */}
               <div className="w-full mb-8 rounded-xl overflow-hidden">
-                <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client="ca-pub-3898992716389443" data-ad-slot="auto" data-ad-format="fluid" data-ad-layout-key="-6t+ed+2i-1n-4w" data-full-width-responsive="true"></ins>
+                <AdUnit format="fluid" layoutKey="-6t+ed+2i-1n-4w" />
               </div>
 
               {/* Pagination */}

@@ -29,15 +29,10 @@ const categoryConfig = [
   { name: "Science", color: "bg-emerald-500", badge: "badge-science" },
 ];
 
+import AdUnit from "@/components/AdUnit";
+
 const AdSlot = ({ className = '' }: { className?: string }) => (
-  <div className={`ad-container ${className}`}>
-    <ins className="adsbygoogle"
-      style={{ display: 'block' }}
-      data-ad-client="ca-pub-3898992716389443"
-      data-ad-slot="auto"
-      data-ad-format="auto"
-      data-full-width-responsive="true" />
-  </div>
+  <AdUnit className={className} />
 );
 
 export default function Sidebar({ trendingArticles, lastUpdated }: SidebarProps) {
