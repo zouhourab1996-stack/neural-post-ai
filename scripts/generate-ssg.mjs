@@ -1385,41 +1385,115 @@ Sitemap: ${SITE_URL}/atom.xml
   fs.writeFileSync(path.join(distDir, "robots.txt"), robotsTxt, "utf8");
   console.log("  ✓ /robots.txt");
 
-  // Inject noscript content into homepage for SEO
+  // Pre-render homepage content inside #root so Googlebot sees full HTML
+  // before JS executes. React's createRoot() replaces innerHTML on mount,
+  // so end users still get the SPA — but crawlers get real content.
   const homepageIndexPath = path.join(distDir, "index.html");
   if (fs.existsSync(homepageIndexPath)) {
     let homepageHtml = fs.readFileSync(homepageIndexPath, "utf8");
 
-    const latestArticlesHtml = safeArticles
-      .slice(0, 30)
-      .map(a => `<li><a href="${toAbsoluteUrl(`/article/${a.slug}`)}">${escapeHtml(a.title)}</a></li>`)
+    const featured = safeArticles.slice(0, 12);
+    const rest = safeArticles.slice(12, 40);
+
+    const featuredCards = featured
+      .map((a) => {
+        const url = toAbsoluteUrl(`/article/${a.slug}`);
+        const desc = normalizeDescription(a.meta_description || "", 80, 160);
+        const img = a.image_url || DEFAULT_IMAGE;
+        return `<article class="ssr-card">
+  <a href="${url}" class="ssr-card__link">
+    <img src="${escapeHtml(img)}" alt="${escapeHtml(a.title)}" loading="lazy" width="600" height="340" />
+    <span class="ssr-card__cat">${escapeHtml(a.category)}</span>
+    <h2>${escapeHtml(a.title)}</h2>
+    <p>${escapeHtml(desc)}</p>
+  </a>
+</article>`;
+      })
       .join("\n");
 
-    const noscriptBlock = `
-  <noscript>
-    <div style="padding:2rem;max-width:920px;margin:0 auto;font-family:sans-serif;background:#0a0f1e;color:#f1f5f9">
-      <h1>Prophetic — AI-Powered Tech News &amp; Analysis</h1>
-      <p>Daily AI predictions, tech forecasts, and market analysis.</p>
-      <h2>Categories</h2>
-      <ul>
-        ${categories.map(c => `<li><a href="${toAbsoluteUrl(`/category/${c}`)}" style="color:#60a5fa">${c}</a></li>`).join("\n")}
-      </ul>
-      <h2>Latest Articles</h2>
-      <ul>${latestArticlesHtml}</ul>
-      <p><a href="${SITE_URL}/sitemap/" style="color:#60a5fa">View Full Sitemap</a></p>
-    </div>
-  </noscript>`;
+    const restLinks = rest
+      .map((a) => `<li><a href="${toAbsoluteUrl(`/article/${a.slug}`)}">${escapeHtml(a.title)}</a></li>`)
+      .join("\n");
 
-    // Insert noscript block after <div id="root"></div>
+    const homeSchema = {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "@id": `${SITE_URL}/#collection`,
+      "url": `${SITE_URL}/`,
+      "name": `${SITE_NAME} — AI Predictions, Tech Forecasts & Market Analysis`,
+      "description": "Daily AI predictions, tech forecasts, and expert market analysis.",
+      "isPartOf": { "@type": "WebSite", "@id": `${SITE_URL}/#website`, "url": SITE_URL, "name": SITE_NAME },
+      "mainEntity": {
+        "@type": "ItemList",
+        "itemListElement": featured.map((a, i) => ({
+          "@type": "ListItem",
+          "position": i + 1,
+          "url": toAbsoluteUrl(`/article/${a.slug}`),
+          "name": a.title,
+        })),
+      },
+    };
+
+    const ssrBlock = `<div id="ssr-home" style="min-height:100vh;background:#0a0f1e;color:#f1f5f9;font-family:'Inter',-apple-system,sans-serif">
+  <header class="ssr-header" style="border-bottom:1px solid rgba(148,163,184,.12);background:rgba(10,15,30,.92)">
+    <div style="width:min(1200px,92vw);margin:0 auto;padding:1rem 0;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem">
+      <a href="${SITE_URL}/" style="color:#f1f5f9;font-weight:800;font-size:1.3rem;text-decoration:none">${SITE_NAME}</a>
+      <nav aria-label="Main navigation" style="display:flex;flex-wrap:wrap;gap:.5rem">
+        ${categories.map((c) => `<a href="${toAbsoluteUrl(`/category/${c}`)}" style="color:#94a3b8;padding:.4rem .75rem;border:1px solid rgba(148,163,184,.14);border-radius:6px;font-size:.88rem;text-decoration:none">${c}</a>`).join("\n        ")}
+        <a href="${SITE_URL}/about/" style="color:#94a3b8;padding:.4rem .75rem;border:1px solid rgba(148,163,184,.14);border-radius:6px;font-size:.88rem;text-decoration:none">About</a>
+      </nav>
+    </div>
+  </header>
+  <main style="width:min(1200px,92vw);margin:0 auto;padding:2rem 0">
+    <section style="margin-bottom:2rem">
+      <h1 style="font-size:clamp(1.8rem,3.8vw,2.6rem);margin:0 0 .5rem;letter-spacing:-.02em">Prophetic — AI Predictions, Tech Forecasts &amp; Market Analysis</h1>
+      <p style="color:#cbd5e1;font-size:1.05rem;margin:0;max-width:820px">Daily investigative coverage of AI breakthroughs, technology trends, financial forecasts, and science innovation — written for readers who want to see what happens next.</p>
+    </section>
+
+    <section aria-label="Featured articles">
+      <h2 style="font-size:1.35rem;margin:0 0 1rem">Latest Analysis</h2>
+      <div class="ssr-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem">
+        ${featuredCards}
+      </div>
+    </section>
+
+    ${restLinks ? `<section aria-label="More stories" style="margin-top:3rem">
+      <h2 style="font-size:1.2rem;margin:0 0 .8rem">More Recent Predictions</h2>
+      <ul style="columns:2;column-gap:2rem;padding-left:1.1rem;line-height:1.9">${restLinks}</ul>
+    </section>` : ""}
+
+    <section aria-label="Explore" style="margin-top:3rem;padding:1.5rem;border:1px solid rgba(148,163,184,.12);border-radius:8px;background:rgba(17,24,39,.5)">
+      <h2 style="margin:0 0 .8rem;font-size:1.15rem">Explore Prophetic</h2>
+      <p style="margin:0"><a href="${SITE_URL}/sitemap/" style="color:#60a5fa">Full Sitemap</a> · <a href="${SITE_URL}/topics/" style="color:#60a5fa">Top Topics</a> · <a href="${SITE_URL}/guides/" style="color:#60a5fa">Guides</a> · <a href="${SITE_URL}/rss.xml" style="color:#60a5fa">RSS Feed</a></p>
+    </section>
+  </main>
+  <footer class="ssr-footer" style="border-top:1px solid rgba(148,163,184,.12);margin-top:3rem;padding:2rem 0;color:#64748b;font-size:.88rem">
+    <div style="width:min(1200px,92vw);margin:0 auto">
+      <p style="margin:0 0 .5rem"><a href="${SITE_URL}/about/" style="color:#94a3b8">About</a> · <a href="${SITE_URL}/contact/" style="color:#94a3b8">Contact</a> · <a href="${SITE_URL}/privacy/" style="color:#94a3b8">Privacy</a> · <a href="${SITE_URL}/terms/" style="color:#94a3b8">Terms</a> · <a href="${SITE_URL}/editorial/" style="color:#94a3b8">Editorial Policy</a></p>
+      <p style="margin:0">© ${new Date().getFullYear()} ${SITE_NAME}. All rights reserved.</p>
+    </div>
+  </footer>
+</div>
+<style>
+.ssr-card{background:rgba(17,24,39,.6);border:1px solid rgba(148,163,184,.12);border-radius:10px;overflow:hidden;transition:border-color .15s}
+.ssr-card:hover{border-color:rgba(96,165,250,.4)}
+.ssr-card__link{display:block;color:inherit;text-decoration:none;padding:0}
+.ssr-card img{width:100%;height:180px;object-fit:cover;display:block}
+.ssr-card__cat{display:inline-block;margin:.9rem .9rem 0;padding:.2rem .55rem;font-size:.72rem;font-weight:600;color:#60a5fa;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.2);border-radius:999px;text-transform:uppercase;letter-spacing:.05em}
+.ssr-card h2{margin:.6rem .9rem .4rem;font-size:1.05rem;line-height:1.35;color:#f1f5f9}
+.ssr-card p{margin:0 .9rem 1rem;color:#94a3b8;font-size:.9rem;line-height:1.5}
+</style>
+<script type="application/ld+json">${JSON.stringify(homeSchema)}</script>`;
+
     if (homepageHtml.includes('<div id="root"></div>')) {
       homepageHtml = homepageHtml.replace(
         '<div id="root"></div>',
-        `<div id="root"></div>\n${noscriptBlock}`
+        `<div id="root">${ssrBlock}</div>`
       );
       fs.writeFileSync(homepageIndexPath, homepageHtml, "utf8");
-      console.log("\n✓ Injected noscript content into homepage");
+      console.log("\n✓ Pre-rendered homepage content injected into #root");
     } else {
-      console.log("\n⚠ Could not find <div id=\"root\"></div> in index.html — skipping noscript injection");
+      console.log("\n⚠ Could not find <div id=\"root\"></div> in index.html");
     }
   }
 
