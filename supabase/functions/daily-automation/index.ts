@@ -21,18 +21,15 @@ serve(async (req) => {
 
     console.log(`[${new Date().toISOString()}] Starting daily automation...`);
 
-    // Categories to generate articles for (2 articles/day, rotating)
+    // Generate ONE article every 2 days, rotating categories deterministically
     const categories = ['AI', 'Tech', 'Business', 'Science'];
     const today = new Date();
     const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
-    
-    // Pick 2 categories based on day rotation
-    const category1 = categories[dayOfYear % 4];
-    const category2 = categories[(dayOfYear + 1) % 4];
+    // Every 2 days => index advances by 1 each run
+    const category1 = categories[Math.floor(dayOfYear / 2) % categories.length];
 
     const results = [];
 
-    // Generate first article
     console.log(`Generating article for category: ${category1}`);
     const response1 = await fetch(`${SUPABASE_URL}/functions/v1/generate-article`, {
       method: 'POST',
@@ -48,28 +45,7 @@ serve(async (req) => {
 
     const result1 = await response1.json().catch(() => ({ success: false, error: `HTTP ${response1.status}` }));
     results.push({ category: category1, slug: result1.slug || result1.article?.slug, ...result1 });
-    console.log(`Article 1 result: ${result1.success ? 'Success' : 'Failed'}`);
-
-    // Wait between requests to avoid rate limiting and timeouts
-    await new Promise(resolve => setTimeout(resolve, 15000));
-
-    // Generate second article
-    console.log(`Generating article for category: ${category2}`);
-    const response2 = await fetch(`${SUPABASE_URL}/functions/v1/generate-article`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ 
-        category: category2,
-        autoPublish: true 
-      }),
-    });
-
-    const result2 = await response2.json().catch(() => ({ success: false, error: `HTTP ${response2.status}` }));
-    results.push({ category: category2, slug: result2.slug || result2.article?.slug, ...result2 });
-    console.log(`Article 2 result: ${result2.success ? 'Success' : 'Failed'}`);
+    console.log(`Article result: ${result1.success ? 'Success' : 'Failed'}`);
 
     const successfulResults = results.filter((r: any) => r.success && r.slug);
     if (successfulResults.length === 0) {
