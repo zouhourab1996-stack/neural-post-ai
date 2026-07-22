@@ -374,26 +374,29 @@ Return ONLY valid JSON:
   ]
 }`;
 
-  const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+  const response = await fetch('https://api.deepseek.com/chat/completions', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${aiApiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'google/gemini-2.5-flash',
+      model: 'deepseek-chat',
       messages: [
         { role: 'system', content: 'You are a search engine optimization expert who specializes in keyword research for news and prediction websites. Always respond with valid JSON only. Focus on keywords real users actually search for on Google.' },
         { role: 'user', content: keywordPrompt }
       ],
       temperature: 0.6,
-      max_tokens: 600,
+      max_tokens: 800,
       response_format: { type: 'json_object' },
     }),
+    signal: AbortSignal.timeout(60000),
   });
 
   if (!response.ok) {
-    throw new Error(`AI API error during keyword discovery: ${response.status}`);
+    const errText = await response.text();
+    console.error('DeepSeek keyword error:', response.status, errText);
+    throw new Error(`DeepSeek API error during keyword discovery: ${response.status}`);
   }
 
   const data = await response.json();
@@ -441,14 +444,14 @@ ${avoidTitles ? `AVOID SIMILARITY to these recent articles:\n${avoidTitles}\n` :
 
 Write a complete investigative article about this topic following every rule in your system instructions. Return ONLY the JSON object.`;
 
-  const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+  const response = await fetch('https://api.deepseek.com/chat/completions', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${aiApiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'google/gemini-2.5-pro',
+      model: 'deepseek-chat',
       messages: [
         { 
           role: 'system', 
@@ -462,86 +465,66 @@ ABSOLUTE RULES — NEVER BREAK:
 - NEVER start a sentence with: Additionally, However, Therefore, Thus, Hence, Importantly.
 - NEVER write generic filler. Every sentence must earn its place.
 - NEVER sound like AI. Write like a journalist who respects her readers.
+- NEVER duplicate a title from the AVOID list; if similar, rewrite the angle entirely.
 
 ARTICLE STRUCTURE — follow this exact order:
-
-1. HOOK (2-3 sentences): Open with a surprising fact, a specific real scenario, or a counter-intuitive angle. Never start with a definition of the topic.
-
-2. CONTEXT (3-4 sentences): Why this matters right now. Use specific dates, numbers, company names.
-
-3. MAIN BODY — 4 to 6 sections with H2 headers. Each section covers one specific angle with real examples, data points, and expert-level analysis. No padding.
-
-4. THE OTHER SIDE — one honest section presenting limitations, risks, or counter-arguments. This builds reader trust.
-
-5. EXPERT PERSPECTIVE — one section with realistic expert-level analysis. Label clearly as analysis, not direct quotes.
-
-6. WHAT THIS MEANS FOR YOU — practical, specific implications for the reader. Actionable.
-
-7. FAQ — 3 to 5 questions that people actually search for. Direct answers, 2-3 sentences each.
-
-8. CLOSING THOUGHT (2-3 sentences): An original observation or forward-looking prediction. Not a summary. Make it memorable.
+1. HOOK (2-3 sentences): surprising fact or specific real scenario.
+2. CONTEXT (3-4 sentences): why this matters now, with dates, numbers, company names.
+3. MAIN BODY — 4 to 6 H2 sections with real examples, data, expert analysis.
+4. THE OTHER SIDE — one honest section presenting limits/risks/counter-arguments.
+5. EXPERT PERSPECTIVE — realistic expert-level analysis (label as analysis, not quotes).
+6. WHAT THIS MEANS FOR YOU — practical, actionable implications.
+7. FAQ — 3 to 5 real search questions with 2-3 sentence direct answers.
+8. CLOSING THOUGHT (2-3 sentences): original observation or forward-looking prediction.
 
 WRITING STYLE:
-- Mix short punchy sentences with longer analytical ones for rhythm.
-- Use specific numbers: write "47%" not "nearly half", write "March 2026" not "recently".
-- Name specific companies, products, and real technologies.
-- Use analogies to make complex concepts click for a general audience.
-- Target 9th-grade readability with expert-level depth.
-- Always use active voice.
-- Keep paragraphs to 4 sentences maximum.
-- Use ## for H2 headers, **bold** for key terms on first mention, and > blockquote for one strong pull quote per article.
+- Mix short punchy sentences with longer analytical ones.
+- Specific numbers ("47%", "March 2026"), specific companies/products.
+- Active voice. Paragraphs max 4 sentences.
+- ## for H2, **bold** for key terms first mention, one > blockquote pull quote.
 
-SEO REQUIREMENTS — built naturally into the writing:
-- Primary keyword appears in: the first 100 words, at least one H2 header, and the closing paragraph.
-- 2-3 secondary keywords woven naturally throughout the body.
-- Each section flows logically into the next.
-- The title must be under 60 characters, specific, and include the year when relevant.
-- The meta description must be 140-155 characters and make someone want to click.
+SEO REQUIREMENTS built naturally in:
+- Primary keyword in first 100 words, in one H2, and in the closing.
+- 2-3 secondary keywords woven throughout.
+- Title under 60 characters, specific, with year when relevant.
+- Meta description 140-155 characters, clickable.
 
 OUTPUT — return ONLY this exact JSON structure, nothing else:
 {
   "title": "Specific compelling title under 60 characters",
   "slug": "url-friendly-slug-max-70-chars",
-  "meta_description": "One sentence 140-155 characters with primary keyword that makes people want to click",
-  "content": "Full article in Markdown. ## for H2 headers. **bold** key terms. > for one pull quote. Min 1800 words.",
-  "image_query": "Specific photo description for stock search, e.g. person using AI on laptop in office",
-  "key_takeaways": [
-    "Specific actionable takeaway",
-    "Specific data point or insight",
-    "Specific forward-looking point"
-  ],
-  "faq": [
-    { "question": "Real question people search", "answer": "Direct answer in 2-3 sentences" },
-    { "question": "Second real question", "answer": "Direct answer in 2-3 sentences" },
-    { "question": "Third real question", "answer": "Direct answer in 2-3 sentences" }
-  ],
+  "meta_description": "One sentence 140-155 chars with primary keyword",
+  "content": "Full article in Markdown, min 1800 words",
+  "image_query": "Specific photo description for stock search",
+  "key_takeaways": ["takeaway 1","takeaway 2","takeaway 3"],
+  "faq": [{"question":"Q","answer":"A"}],
   "reading_time": 9,
   "word_count": 1900
 }`
         },
         { role: 'user', content: articlePrompt }
       ],
-      temperature: 0.82,
+      temperature: 0.85,
       frequency_penalty: 0.5,
-      presence_penalty: 0.35,
+      presence_penalty: 0.4,
       max_tokens: 8000,
       stream: false,
-      response_format: { type: 'json_object' }, // Force valid JSON output
+      response_format: { type: 'json_object' },
     }),
-    signal: AbortSignal.timeout(120000), // 2 min timeout
+    signal: AbortSignal.timeout(180000),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error('AI API error:', response.status, errorText);
-    throw new Error(`AI API error: ${response.status}`);
+    console.error('DeepSeek API error:', response.status, errorText);
+    throw new Error(`DeepSeek API error: ${response.status} - ${errorText.slice(0, 200)}`);
   }
 
   const data = await response.json();
   const content = data.choices?.[0]?.message?.content;
   
   if (!content) {
-    throw new Error('No content received from AI provider');
+    throw new Error('No content received from DeepSeek');
   }
 
   return robustJsonParse(content, 'article');
@@ -572,7 +555,7 @@ serve(async (req) => {
     const { category, autoPublish = false } = await req.json();
     
     const NEWSAPI_KEY = Deno.env.get('NEWSAPI_KEY');
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    const DEEPSEEK_API_KEY = Deno.env.get('DEEPSEEK_API_KEY');
     const PEXELS_API_KEY = Deno.env.get('PEXELS_API_KEY');
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
@@ -581,8 +564,8 @@ serve(async (req) => {
       throw new Error('NEWSAPI_KEY is not configured');
     }
 
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY is not configured');
+    if (!DEEPSEEK_API_KEY) {
+      throw new Error('DEEPSEEK_API_KEY is not configured');
     }
 
     const validCategories = ['AI', 'Tech', 'Business', 'Science'];
@@ -609,7 +592,7 @@ serve(async (req) => {
     console.log(`Selected headline: ${selectedHeadline.title} (${selectedHeadline.source})`);
 
     // Phase 3: Discover high-value SEO keywords for this headline
-    const { keywords } = await discoverKeywords(selectedHeadline.title, selectedCategory, LOVABLE_API_KEY);
+    const { keywords } = await discoverKeywords(selectedHeadline.title, selectedCategory, DEEPSEEK_API_KEY);
     console.log(`Target keywords: ${keywords.map(k => k.keyword).join(', ')}`);
 
     // Phase 4: Get recent article titles to avoid repetition
@@ -620,33 +603,44 @@ serve(async (req) => {
         .from('articles')
         .select('title')
         .order('created_at', { ascending: false })
-        .limit(15);
+        .limit(30);
       existingTitles = (recent || []).map((a: any) => a.title);
     }
 
-    // Phase 5: Generate article with Lovable AI — human-quality, SEO-optimized
+    // Guard against duplicate title before spending tokens
+    const headlineKey = normalizeHeadlineKey(selectedHeadline.title);
+    const duplicateHeadline = existingTitles.some(t => normalizeHeadlineKey(t) === headlineKey);
+    if (duplicateHeadline) {
+      console.warn('Selected headline duplicates an existing title; proceeding with rewrite-only prompt.');
+    }
+
+    // Phase 5: Generate article with DeepSeek — human-quality, SEO-optimized
     let article = await generateArticle(
       selectedHeadline.title, 
       selectedHeadline.description,
       selectedHeadline.source,
       keywords, 
       selectedCategory, 
-      LOVABLE_API_KEY,
+      DEEPSEEK_API_KEY,
       existingTitles,
     );
 
     let wordCount = countWords(article.content);
     console.log(`First attempt: ${wordCount} words`);
 
-    if (wordCount < 1800) {
-      console.warn(`Article too short (${wordCount}). Retrying with expanded guidance.`);
+    // Verify uniqueness of the generated title
+    const generatedTitleKey = normalizeHeadlineKey(String(article.title || ''));
+    const titleClashes = existingTitles.some(t => normalizeHeadlineKey(t) === generatedTitleKey);
+
+    if (wordCount < 1800 || titleClashes) {
+      console.warn(`Retry needed. words=${wordCount} titleClash=${titleClashes}`);
       article = await generateArticle(
         selectedHeadline.title, 
         selectedHeadline.description,
         selectedHeadline.source,
         keywords, 
         selectedCategory, 
-        LOVABLE_API_KEY,
+        DEEPSEEK_API_KEY,
         existingTitles,
       );
       wordCount = countWords(article.content);
