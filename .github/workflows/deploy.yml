@@ -69,9 +69,6 @@ jobs:
             echo "IndexNow submission done"
           fi
 
-      - name: Create CNAME for custom domain
-        run: echo "prophetic.pw" > ./dist/CNAME
-
       - name: Ensure Bing IndexNow key file exists
         run: echo "a0ed604574874b10b1d2245fd9eeaed8" > ./dist/a0ed604574874b10b1d2245fd9eeaed8.txt
 
