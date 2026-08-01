@@ -1,18 +1,5 @@
 {
   "version": 2,
-  "redirects": [
-    {
-      "source": "/:path(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.prophetic.pw"
-        }
-      ],
-      "destination": "https://prophetic.pw/:path",
-      "permanent": true
-    }
-  ],
   "headers": [
     {
       "source": "/sitemap.xml",
