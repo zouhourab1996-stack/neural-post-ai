@@ -55,23 +55,6 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
 
-      - name: Submit new URLs to IndexNow (Bing)
-        run: |
-          # Extract the 10 most recent article slugs from the sitemap
-          URLS=$(grep -oP 'https://prophetic\.pw/article/[^<]+' ./dist/sitemap.xml 2>/dev/null | head -10 | tr '\n' ',' | sed 's/,$//')
-          if [ -n "$URLS" ]; then
-            # Build JSON array
-            URL_ARRAY=$(echo $URLS | sed 's/,/","/g' | sed 's/^/["/' | sed 's/$/"]/')
-            echo "Submitting to IndexNow: $URL_ARRAY"
-            curl -s -X POST "https://api.indexnow.org/indexnow" \
-              -H "Content-Type: application/json; charset=utf-8" \
-              -d "{\"host\":\"prophetic.pw\",\"key\":\"a0ed604574874b10b1d2245fd9eeaed8\",\"keyLocation\":\"https://prophetic.pw/a0ed604574874b10b1d2245fd9eeaed8.txt\",\"urlList\":$URL_ARRAY}"
-            echo "IndexNow submission done"
-          fi
-
-      - name: Ensure Bing IndexNow key file exists
-        run: echo "a0ed604574874b10b1d2245fd9eeaed8" > ./dist/a0ed604574874b10b1d2245fd9eeaed8.txt
-
       - name: Copy essential static assets to dist
         run: |
           cp public/manifest.json ./dist/manifest.json || true
