@@ -335,6 +335,66 @@ async function fetchPexelsImage(query: string, apiKey: string): Promise<string |
   }
 }
 
+// Google AI Studio (Gemini) call — returns raw text (JSON string)
+const GEMINI_MODELS = ['gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.0-flash'];
+
+async function callGemini(
+  apiKey: string,
+  systemInstruction: string,
+  userPrompt: string,
+  opts: { temperature?: number; maxOutputTokens?: number; timeoutMs?: number } = {},
+): Promise<string> {
+  const { temperature = 0.9, maxOutputTokens = 8192, timeoutMs = 180000 } = opts;
+  let lastError = '';
+
+  for (const model of GEMINI_MODELS) {
+    try {
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': apiKey,
+          },
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: systemInstruction }] },
+            contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
+            generationConfig: {
+              temperature,
+              maxOutputTokens,
+              responseMimeType: 'application/json',
+            },
+          }),
+          signal: AbortSignal.timeout(timeoutMs),
+        },
+      );
+
+      if (!res.ok) {
+        lastError = `${model}: HTTP ${res.status} ${(await res.text()).slice(0, 200)}`;
+        console.error('Google AI error:', lastError);
+        continue;
+      }
+
+      const data = await res.json();
+      const text = (data.candidates?.[0]?.content?.parts || [])
+        .map((p: any) => p.text || '')
+        .join('')
+        .trim();
+
+      if (text) return text;
+      lastError = `${model}: empty response`;
+      console.error('Google AI empty response:', JSON.stringify(data).slice(0, 300));
+    } catch (e) {
+      lastError = `${model}: ${e instanceof Error ? e.message : 'unknown error'}`;
+      console.error('Google AI request failed:', lastError);
+    }
+  }
+
+  throw new Error(`Google AI request failed - ${lastError}`);
+}
+
+
 // Enhanced keyword discovery with search-engine-focused SEO targeting
 async function discoverKeywords(headline: string, category: string, aiApiKey: string): Promise<{
   keywords: { keyword: string; volume: string; competition: string }[];
