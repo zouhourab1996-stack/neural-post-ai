@@ -374,33 +374,12 @@ Return ONLY valid JSON:
   ]
 }`;
 
-  const response = await fetch('https://api.deepseek.com/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${aiApiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'deepseek-chat',
-      messages: [
-        { role: 'system', content: 'You are a search engine optimization expert who specializes in keyword research for news and prediction websites. Always respond with valid JSON only. Focus on keywords real users actually search for on Google.' },
-        { role: 'user', content: keywordPrompt }
-      ],
-      temperature: 0.6,
-      max_tokens: 800,
-      response_format: { type: 'json_object' },
-    }),
-    signal: AbortSignal.timeout(60000),
-  });
-
-  if (!response.ok) {
-    const errText = await response.text();
-    console.error('DeepSeek keyword error:', response.status, errText);
-    throw new Error(`DeepSeek API error during keyword discovery: ${response.status}`);
-  }
-
-  const data = await response.json();
-  const content = data.choices?.[0]?.message?.content;
+  const content = await callGemini(
+    aiApiKey,
+    'You are a search engine optimization expert who specializes in keyword research for news and prediction websites. Always respond with valid JSON only. Focus on rising, fast-growing search queries real users type on Google right now.',
+    keywordPrompt,
+    { temperature: 0.6, maxOutputTokens: 1200, timeoutMs: 90000 },
+  );
 
   try {
     const parsed = robustJsonParse(content, 'keywords');
@@ -444,18 +423,7 @@ ${avoidTitles ? `AVOID SIMILARITY to these recent articles:\n${avoidTitles}\n` :
 
 Write a complete investigative article about this topic following every rule in your system instructions. Return ONLY the JSON object.`;
 
-  const response = await fetch('https://api.deepseek.com/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${aiApiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'deepseek-chat',
-      messages: [
-        { 
-          role: 'system', 
-          content: `You are Sarah Mitchell, an award-winning technology journalist with 18 years of experience at The New York Times, Wired, and MIT Technology Review. You hold a Master's in Computer Science and a journalism degree from Columbia University. You write with authority, precision, and a human voice that readers trust and Google rewards.
+  const systemInstruction = `You are Sarah Mitchell, an award-winning technology journalist with 18 years of experience at The New York Times, Wired, and MIT Technology Review. You hold a Master's in Computer Science and a journalism degree from Columbia University. You write with authority, precision, and a human voice that readers trust and Google rewards.
 
 You are writing in 2026. You have covered this beat for years, you remember what people got wrong in 2024 and 2025, and you write like someone who was in the room.
 
@@ -469,6 +437,10 @@ ABSOLUTE RULES — NEVER BREAK:
 - NEVER use the same sentence rhythm twice in a row. Vary length hard: a four-word sentence next to a thirty-word one.
 - NEVER write a symmetrical article: sections must differ in length, some two paragraphs, some six.
 - NEVER duplicate a title from the AVOID list; if similar, rewrite the angle entirely.
+
+RISING-TREND MANDATE:
+- Cover the story while it is still climbing, not after it peaks. Pick the angle competitors have not written yet.
+- Name what happens next in the next 30-90 days, with dates and conditions that can be checked.
 
 HOW A HUMAN EXPERT WRITES (this is what Google's reviewers look for):
 - Firsthand framing: "When I first tested this in January", "Two engineers I spoke with disagree on this point" — reporting texture, never fabricated named quotes from real people.
@@ -501,7 +473,6 @@ SEO REQUIREMENTS built naturally in:
 - Title under 60 characters, specific, news-desk style.
 - Meta description 140-155 characters, clickable and unique.
 
-
 OUTPUT — return ONLY this exact JSON structure, nothing else:
 {
   "title": "Specific compelling title under 60 characters",
@@ -513,31 +484,16 @@ OUTPUT — return ONLY this exact JSON structure, nothing else:
   "faq": [{"question":"Q","answer":"A"}],
   "reading_time": 9,
   "word_count": 1900
-}`
-        },
-        { role: 'user', content: articlePrompt }
-      ],
-      temperature: 0.85,
-      frequency_penalty: 0.5,
-      presence_penalty: 0.4,
-      max_tokens: 8000,
-      stream: false,
-      response_format: { type: 'json_object' },
-    }),
-    signal: AbortSignal.timeout(180000),
+}`;
+
+  const content = await callGemini(aiApiKey, systemInstruction, articlePrompt, {
+    temperature: 0.95,
+    maxOutputTokens: 16000,
+    timeoutMs: 300000,
   });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('DeepSeek API error:', response.status, errorText);
-    throw new Error(`DeepSeek API error: ${response.status} - ${errorText.slice(0, 200)}`);
-  }
-
-  const data = await response.json();
-  const content = data.choices?.[0]?.message?.content;
-  
   if (!content) {
-    throw new Error('No content received from DeepSeek');
+    throw new Error('No content received from Google AI');
   }
 
   return robustJsonParse(content, 'article');
