@@ -21,12 +21,11 @@ serve(async (req) => {
 
     console.log(`[${new Date().toISOString()}] Starting daily automation...`);
 
-    // Generate ONE article every 2 days, rotating categories deterministically
+    // Generate ONE article every day, rotating categories deterministically
     const categories = ['AI', 'Tech', 'Business', 'Science'];
     const today = new Date();
     const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
-    // Every 2 days => index advances by 1 each run
-    const category1 = categories[Math.floor(dayOfYear / 2) % categories.length];
+    const category1 = categories[dayOfYear % categories.length];
 
     const results = [];
 
