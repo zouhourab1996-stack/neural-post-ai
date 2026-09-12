@@ -549,7 +549,7 @@ OUTPUT — return ONLY this exact JSON structure, nothing else:
 
   const content = await callGemini(aiApiKey, systemInstruction, articlePrompt, {
     temperature: 0.95,
-    maxOutputTokens: 16000,
+    maxOutputTokens: 32000,
     timeoutMs: 300000,
   });
 
