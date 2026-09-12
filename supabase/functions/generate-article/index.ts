@@ -336,7 +336,7 @@ async function fetchPexelsImage(query: string, apiKey: string): Promise<string |
 }
 
 // Google AI Studio (Gemini) call — returns raw text (JSON string)
-const GEMINI_MODELS = ['gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.0-flash'];
+const GEMINI_MODELS = ['gemini-3.6-flash', 'gemini-flash-latest', 'gemini-2.5-flash'];
 
 async function callGemini(
   apiKey: string,
