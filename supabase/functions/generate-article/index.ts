@@ -364,6 +364,7 @@ async function callGemini(
               temperature,
               maxOutputTokens,
               responseMimeType: 'application/json',
+              thinkingConfig: { thinkingBudget: 0 },
             },
           }),
           signal: AbortSignal.timeout(timeoutMs),
