@@ -560,20 +560,36 @@ OUTPUT — return ONLY this exact JSON structure, nothing else:
   return robustJsonParse(content, 'article');
 }
 
-async function notifyBingIndexNow(url: string) {
-  try {
-    await fetch("https://api.indexnow.org/indexnow", {
-      method: "POST",
-      headers: { "Content-Type": "application/json; charset=utf-8" },
-      body: JSON.stringify({
-        host: "prophetic.pw",
-        key: "a0ed604574874b10b1d2245fd9eeaed8",
-        keyLocation: "https://prophetic.pw/a0ed604574874b10b1d2245fd9eeaed8.txt",
-        urlList: [url],
-      }),
-    });
-    console.log(`Bing IndexNow notified for: ${url}`);
-  } catch (e) { console.error("Bing IndexNow error:", e); }
+const INDEXNOW_KEY = "b00319baec734ccb90683521e219f02f";
+const INDEXNOW_ENDPOINTS = [
+  "https://www.bing.com/indexnow",
+  "https://api.indexnow.org/indexnow",
+];
+
+async function notifyBingIndexNow(urls: string | string[]) {
+  const urlList = Array.isArray(urls) ? urls : [urls];
+  if (urlList.length === 0) return;
+
+  const payload = JSON.stringify({
+    host: "prophetic.pw",
+    key: INDEXNOW_KEY,
+    keyLocation: `https://prophetic.pw/${INDEXNOW_KEY}.txt`,
+    urlList,
+  });
+
+  for (const endpoint of INDEXNOW_ENDPOINTS) {
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json; charset=utf-8" },
+        body: payload,
+      });
+      console.log(`IndexNow (${endpoint}): HTTP ${res.status} for ${urlList.length} URL(s)`);
+      if (res.ok) return;
+    } catch (e) {
+      console.error(`IndexNow error (${endpoint}):`, e);
+    }
+  }
 }
 
 serve(async (req) => {

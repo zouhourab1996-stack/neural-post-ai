@@ -74,20 +74,25 @@ serve(async (req) => {
       console.log(`Submitting ${newSlugs.length} new URL(s) to search engines...`);
 
       // 1. Bing IndexNow (also notifies Yandex, Seznam, etc.)
-      try {
-        const indexNowRes = await fetch('https://api.indexnow.org/indexnow', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json; charset=utf-8' },
-          body: JSON.stringify({
-            host: 'prophetic.pw',
-            key: 'a0ed604574874b10b1d2245fd9eeaed8',
-            keyLocation: 'https://prophetic.pw/a0ed604574874b10b1d2245fd9eeaed8.txt',
-            urlList: newSlugs,
-          }),
-        });
-        console.log(`Bing IndexNow: HTTP ${indexNowRes.status}`);
-      } catch (e) {
-        console.error('Bing IndexNow failed (non-critical):', e);
+      const INDEXNOW_KEY = 'b00319baec734ccb90683521e219f02f';
+      const indexNowPayload = JSON.stringify({
+        host: 'prophetic.pw',
+        key: INDEXNOW_KEY,
+        keyLocation: `https://prophetic.pw/${INDEXNOW_KEY}.txt`,
+        urlList: newSlugs,
+      });
+      for (const endpoint of ['https://www.bing.com/indexnow', 'https://api.indexnow.org/indexnow']) {
+        try {
+          const indexNowRes = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json; charset=utf-8' },
+            body: indexNowPayload,
+          });
+          console.log(`IndexNow (${endpoint}): HTTP ${indexNowRes.status}`);
+          if (indexNowRes.ok) break;
+        } catch (e) {
+          console.error(`IndexNow failed at ${endpoint} (non-critical):`, e);
+        }
       }
 
       // 2. Google Indexing API via Supabase function
