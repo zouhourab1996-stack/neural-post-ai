@@ -336,7 +336,7 @@ async function fetchPexelsImage(query: string, apiKey: string): Promise<string |
 }
 
 // Google AI Studio (Gemini) call — returns raw text (JSON string)
-const GEMINI_MODELS = ['gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.0-flash'];
+const GEMINI_MODELS = ['gemini-3.6-flash', 'gemini-flash-latest', 'gemini-2.5-flash'];
 
 async function callGemini(
   apiKey: string,
@@ -364,6 +364,7 @@ async function callGemini(
               temperature,
               maxOutputTokens,
               responseMimeType: 'application/json',
+              thinkingConfig: { thinkingLevel: 'low' },
             },
           }),
           signal: AbortSignal.timeout(timeoutMs),
@@ -548,7 +549,7 @@ OUTPUT — return ONLY this exact JSON structure, nothing else:
 
   const content = await callGemini(aiApiKey, systemInstruction, articlePrompt, {
     temperature: 0.95,
-    maxOutputTokens: 16000,
+    maxOutputTokens: 32000,
     timeoutMs: 300000,
   });
 
