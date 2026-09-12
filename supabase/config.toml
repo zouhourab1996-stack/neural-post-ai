@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.dynamic-sitemap]
 verify_jwt = false
+
+[functions.rewrite-articles]
+verify_jwt = false
