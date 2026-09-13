@@ -67,7 +67,6 @@ jobs:
           cp public/icon-192.png ./dist/icon-192.png || true
           cp public/icon-512.png ./dist/icon-512.png || true
           cp public/og-image.jpg ./dist/og-image.jpg || true
-          cp robots.txt ./dist/robots.txt
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
