@@ -1042,14 +1042,13 @@ function renderSitemapUrl(loc, lastmod = null, changefreq = null, priority = nul
 }
 
 function generateSitemapXml(articles) {
-  const now = new Date().toISOString().split("T")[0];
   const staticEntries = [
-    renderSitemapUrl(toAbsoluteUrl("/"), now, "hourly", "1.0"),
-    ...categories.map((category) => renderSitemapUrl(toAbsoluteUrl(`/category/${category}`), now, "daily", "0.9")),
-    ...staticPages.map((page) => renderSitemapUrl(toAbsoluteUrl(page.route), now, "monthly", "0.7")),
+    renderSitemapUrl(toAbsoluteUrl("/"), null, "daily", "1.0"),
+    ...categories.map((category) => renderSitemapUrl(toAbsoluteUrl(`/category/${category}`), null, "daily", "0.9")),
+    ...staticPages.map((page) => renderSitemapUrl(toAbsoluteUrl(page.route), null, "monthly", "0.7")),
   ];
   const articleEntries = articles.map((article) => {
-    const lastmod = (article.updated_at || article.created_at || "").split("T")[0] || now;
+    const lastmod = (article.updated_at || article.created_at || "").split("T")[0] || null;
     return renderSitemapUrl(toAbsoluteUrl(`/article/${article.slug}`), lastmod, "weekly", "0.8");
   });
 
@@ -1255,7 +1254,9 @@ async function main() {
     process.exit(1);
   }
 
-  const safeArticles = Array.isArray(articles) ? articles : [];
+  const safeArticles = Array.isArray(articles)
+    ? articles.filter((article) => article?.slug && article?.title && article?.content)
+    : [];
   console.log(`✅ Loaded ${safeArticles.length} article(s)\n`);
 
   const distDir = path.join(__dirname, "..", "dist");
@@ -1380,7 +1381,7 @@ User-agent: Bingbot
 Allow: /
 
 Sitemap: ${SITE_URL}/sitemap.xml
-Sitemap: ${SITE_URL}/atom.xml
+Sitemap: ${SITE_URL}/sitemap-news.xml
 `;
   fs.writeFileSync(path.join(distDir, "robots.txt"), robotsTxt, "utf8");
   console.log("  ✓ /robots.txt");
