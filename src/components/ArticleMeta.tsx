@@ -12,7 +12,7 @@ interface ArticleMetaProps {
 
 export function ArticleMeta({ title, description, slug, imageUrl, publishedAt, updatedAt, category }: ArticleMetaProps) {
   const base = 'https://prophetic.pw';
-  const url  = `${base}/article/${slug}`;
+  const url  = `${base}/article/${slug}/`;
   const desc = description.length > 155 ? description.substring(0, 152) + '...' : description;
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export function ArticleMeta({ title, description, slug, imageUrl, publishedAt, u
       "headline": title,
       "datePublished": publishedAt,
       "dateModified": updatedAt || publishedAt,
-      "author": { "@type": "Organization", "name": "Prophetic AI" },
+      "author": { "@type": "Person", "name": "Sarah Mitchell" },
       "publisher": {
         "@type": "Organization",
         "name": "Prophetic",

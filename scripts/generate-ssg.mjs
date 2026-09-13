@@ -1042,14 +1042,13 @@ function renderSitemapUrl(loc, lastmod = null, changefreq = null, priority = nul
 }
 
 function generateSitemapXml(articles) {
-  const now = new Date().toISOString().split("T")[0];
   const staticEntries = [
-    renderSitemapUrl(toAbsoluteUrl("/"), now, "hourly", "1.0"),
-    ...categories.map((category) => renderSitemapUrl(toAbsoluteUrl(`/category/${category}`), now, "daily", "0.9")),
-    ...staticPages.map((page) => renderSitemapUrl(toAbsoluteUrl(page.route), now, "monthly", "0.7")),
+    renderSitemapUrl(toAbsoluteUrl("/"), null, "daily", "1.0"),
+    ...categories.map((category) => renderSitemapUrl(toAbsoluteUrl(`/category/${category}`), null, "daily", "0.9")),
+    ...staticPages.map((page) => renderSitemapUrl(toAbsoluteUrl(page.route), null, "monthly", "0.7")),
   ];
   const articleEntries = articles.map((article) => {
-    const lastmod = (article.updated_at || article.created_at || "").split("T")[0] || now;
+    const lastmod = (article.updated_at || article.created_at || "").split("T")[0] || null;
     return renderSitemapUrl(toAbsoluteUrl(`/article/${article.slug}`), lastmod, "weekly", "0.8");
   });
 
@@ -1057,75 +1056,6 @@ function generateSitemapXml(articles) {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${[...staticEntries, ...articleEntries].join("\n")}
 </urlset>`;
-}
-
-// Flat sitemap (all URLs in one file) — kept as backup/fallback
-function generateSitemapXmlFlat(articles) {
-  return generateSitemapXml(articles);
-}
-
-// Paginated sitemaps: split articles into chunks of 200 for Google compatibility
-function generatePaginatedSitemaps(articles, chunkSize = 200) {
-  const now = new Date().toISOString().split("T")[0];
-  const sitemaps = [];
-  for (let i = 0; i < articles.length; i += chunkSize) {
-    const chunk = articles.slice(i, i + chunkSize);
-    const entries = chunk.map((article) => {
-      const lastmod = (article.updated_at || article.created_at || "").split("T")[0] || now;
-      return renderSitemapUrl(toAbsoluteUrl(`/article/${article.slug}`), lastmod, "weekly", "0.8");
-    });
-    sitemaps.push(`<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${entries.join("\n")}
-</urlset>`);
-  }
-  return sitemaps;
-}
-
-function generateArticlesSitemapXml(articles) {
-  const now = new Date().toISOString().split("T")[0];
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${articles.map((article) => {
-    const lastmod = (article.updated_at || article.created_at || "").split("T")[0] || now;
-    return renderSitemapUrl(toAbsoluteUrl(`/article/${article.slug}`), lastmod, "weekly", "0.8");
-  }).join("\n")}
-</urlset>`;
-}
-
-function generateStaticSitemapXml() {
-  const urls = [
-    `${SITE_URL}/`,
-    ...categories.map((category) => toAbsoluteUrl(`/category/${category}`)),
-    ...staticPages.map((page) => toAbsoluteUrl(page.route)),
-  ];
-
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map(renderSitemapUrl).join("\n")}
-</urlset>`;
-}
-
-function generateSitemapIndexXml(now, articleChunkCount = 1) {
-  let chunks = "";
-  for (let i = 0; i < articleChunkCount; i++) {
-    const suffix = articleChunkCount > 1 ? `-${i + 1}` : "";
-    chunks += `  <sitemap>
-    <loc>${SITE_URL}/sitemap-articles${suffix}.xml</loc>
-    <lastmod>${now}</lastmod>
-  </sitemap>\n`;
-  }
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <sitemap>
-    <loc>${SITE_URL}/sitemap-static.xml</loc>
-    <lastmod>${now}</lastmod>
-  </sitemap>
-${chunks}  <sitemap>
-    <loc>${SITE_URL}/sitemap-news.xml</loc>
-    <lastmod>${now}</lastmod>
-  </sitemap>
-</sitemapindex>`;
 }
 
 function generateSitemapTxt(articles) {
@@ -1255,7 +1185,9 @@ async function main() {
     process.exit(1);
   }
 
-  const safeArticles = Array.isArray(articles) ? articles : [];
+  const safeArticles = Array.isArray(articles)
+    ? articles.filter((article) => article?.slug && article?.title && article?.content)
+    : [];
   console.log(`✅ Loaded ${safeArticles.length} article(s)\n`);
 
   const distDir = path.join(__dirname, "..", "dist");
@@ -1380,7 +1312,7 @@ User-agent: Bingbot
 Allow: /
 
 Sitemap: ${SITE_URL}/sitemap.xml
-Sitemap: ${SITE_URL}/atom.xml
+Sitemap: ${SITE_URL}/sitemap-news.xml
 `;
   fs.writeFileSync(path.join(distDir, "robots.txt"), robotsTxt, "utf8");
   console.log("  ✓ /robots.txt");
