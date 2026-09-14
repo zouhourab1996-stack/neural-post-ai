@@ -342,58 +342,99 @@ async function callGemini(
   apiKey: string,
   systemInstruction: string,
   userPrompt: string,
-  opts: { temperature?: number; maxOutputTokens?: number; timeoutMs?: number } = {},
+  opts: { temperature?: number; maxOutputTokens?: number; timeoutMs?: number; grounded?: boolean } = {},
 ): Promise<string> {
-  const { temperature = 0.9, maxOutputTokens = 8192, timeoutMs = 180000 } = opts;
+  const { temperature = 0.9, maxOutputTokens = 8192, timeoutMs = 180000, grounded = false } = opts;
   let lastError = '';
 
-  for (const model of GEMINI_MODELS) {
-    try {
-      const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-goog-api-key': apiKey,
-          },
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: systemInstruction }] },
-            contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
-            generationConfig: {
-              temperature,
-              maxOutputTokens,
-              responseMimeType: 'application/json',
-              thinkingConfig: { thinkingLevel: 'low' },
+  // When grounding is enabled we try grounded first, then plain JSON mode as a fallback.
+  const passes = grounded ? [true, false] : [false];
+
+  for (const useSearch of passes) {
+    for (const model of GEMINI_MODELS) {
+      try {
+        const generationConfig: Record<string, unknown> = {
+          temperature,
+          maxOutputTokens,
+          thinkingConfig: { thinkingLevel: 'low' },
+        };
+        // responseMimeType JSON is not allowed together with the google_search tool
+        if (!useSearch) generationConfig.responseMimeType = 'application/json';
+
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-goog-api-key': apiKey,
             },
-          }),
-          signal: AbortSignal.timeout(timeoutMs),
-        },
-      );
+            body: JSON.stringify({
+              systemInstruction: { parts: [{ text: systemInstruction }] },
+              contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
+              ...(useSearch ? { tools: [{ google_search: {} }] } : {}),
+              generationConfig,
+            }),
+            signal: AbortSignal.timeout(timeoutMs),
+          },
+        );
 
-      if (!res.ok) {
-        lastError = `${model}: HTTP ${res.status} ${(await res.text()).slice(0, 200)}`;
-        console.error('Google AI error:', lastError);
-        continue;
+        if (!res.ok) {
+          lastError = `${model}${useSearch ? '+search' : ''}: HTTP ${res.status} ${(await res.text()).slice(0, 200)}`;
+          console.error('Google AI error:', lastError);
+          continue;
+        }
+
+        const data = await res.json();
+        const text = (data.candidates?.[0]?.content?.parts || [])
+          .map((p: any) => p.text || '')
+          .join('')
+          .trim();
+
+        if (text) {
+          if (useSearch) {
+            const chunks = data.candidates?.[0]?.groundingMetadata?.groundingChunks?.length || 0;
+            console.log(`Google Search grounding active (${model}), sources used: ${chunks}`);
+          }
+          return text;
+        }
+        lastError = `${model}: empty response`;
+        console.error('Google AI empty response:', JSON.stringify(data).slice(0, 300));
+      } catch (e) {
+        lastError = `${model}: ${e instanceof Error ? e.message : 'unknown error'}`;
+        console.error('Google AI request failed:', lastError);
       }
-
-      const data = await res.json();
-      const text = (data.candidates?.[0]?.content?.parts || [])
-        .map((p: any) => p.text || '')
-        .join('')
-        .trim();
-
-      if (text) return text;
-      lastError = `${model}: empty response`;
-      console.error('Google AI empty response:', JSON.stringify(data).slice(0, 300));
-    } catch (e) {
-      lastError = `${model}: ${e instanceof Error ? e.message : 'unknown error'}`;
-      console.error('Google AI request failed:', lastError);
     }
+    if (useSearch) console.warn('Grounded generation failed, falling back to ungrounded JSON mode.');
   }
 
   throw new Error(`Google AI request failed - ${lastError}`);
 }
+
+// ===== Local topic ledger (file on the function instance disk) =====
+const TOPIC_LEDGER_PATH = '/tmp/published-topics.json';
+
+async function readTopicLedger(): Promise<{ title: string; slug: string; date: string }[]> {
+  try {
+    const raw = await Deno.readTextFile(TOPIC_LEDGER_PATH);
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+async function appendTopicLedger(entry: { title: string; slug: string; date: string }) {
+  try {
+    const current = await readTopicLedger();
+    current.unshift(entry);
+    await Deno.writeTextFile(TOPIC_LEDGER_PATH, JSON.stringify(current.slice(0, 200), null, 2));
+    console.log(`Topic ledger updated (${current.length} entries).`);
+  } catch (e) {
+    console.error('Could not update topic ledger (non-critical):', e);
+  }
+}
+
 
 
 // Enhanced keyword discovery with search-engine-focused SEO targeting
@@ -551,7 +592,9 @@ OUTPUT — return ONLY this exact JSON structure, nothing else:
     temperature: 0.95,
     maxOutputTokens: 32000,
     timeoutMs: 300000,
+    grounded: true,
   });
+
 
   if (!content) {
     throw new Error('No content received from Google AI');
