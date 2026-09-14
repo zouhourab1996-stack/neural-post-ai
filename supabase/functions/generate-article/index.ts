@@ -592,7 +592,9 @@ OUTPUT — return ONLY this exact JSON structure, nothing else:
     temperature: 0.95,
     maxOutputTokens: 32000,
     timeoutMs: 300000,
+    grounded: true,
   });
+
 
   if (!content) {
     throw new Error('No content received from Google AI');
