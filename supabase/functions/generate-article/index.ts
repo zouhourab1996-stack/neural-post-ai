@@ -408,7 +408,48 @@ async function callGemini(
     if (useSearch) console.warn('Grounded generation failed, falling back to ungrounded JSON mode.');
   }
 
-  throw new Error(`Google AI request failed - ${lastError}`);
+  // Fallback: Lovable AI Gateway (used when the Google AI key is out of quota / models unavailable)
+  const gatewayKey = Deno.env.get('LOVABLE_API_KEY');
+  if (gatewayKey) {
+    for (const model of ['google/gemini-3-flash', 'google/gemini-2.5-flash']) {
+      try {
+        console.log(`Falling back to Lovable AI Gateway model: ${model}`);
+        const res = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${gatewayKey}`,
+          },
+          body: JSON.stringify({
+            model,
+            temperature,
+            max_tokens: maxOutputTokens,
+            messages: [
+              { role: 'system', content: systemInstruction },
+              { role: 'user', content: userPrompt },
+            ],
+          }),
+          signal: AbortSignal.timeout(timeoutMs),
+        });
+
+        if (!res.ok) {
+          lastError = `gateway ${model}: HTTP ${res.status} ${(await res.text()).slice(0, 200)}`;
+          console.error('Gateway error:', lastError);
+          continue;
+        }
+
+        const data = await res.json();
+        const text = String(data.choices?.[0]?.message?.content || '').trim();
+        if (text) return text;
+        lastError = `gateway ${model}: empty response`;
+      } catch (e) {
+        lastError = `gateway ${model}: ${e instanceof Error ? e.message : 'unknown error'}`;
+        console.error('Gateway request failed:', lastError);
+      }
+    }
+  }
+
+  throw new Error(`AI request failed - ${lastError}`);
 }
 
 // ===== Local topic ledger (file on the function instance disk) =====
