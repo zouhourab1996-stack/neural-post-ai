@@ -13,13 +13,21 @@ const NotFound = () => {
       robotsMeta.setAttribute("content", "noindex, nofollow");
     }
 
+    const canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) {
+      canonical.setAttribute("href", "https://prophetic.pw/404");
+    }
+
     document.title = "Page Not Found - Prophetic";
 
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);
 
     return () => {
       if (robotsMeta) {
-        robotsMeta.setAttribute("content", "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1");
+        robotsMeta.setAttribute(
+          "content",
+          "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+        );
       }
     };
   }, [location.pathname]);
@@ -38,18 +46,13 @@ const NotFound = () => {
           transition={{ delay: 0.2, duration: 0.5 }}
           className="mb-8"
         >
-          <span className="text-8xl md:text-9xl font-bold text-primary">
-            404
-          </span>
+          <span className="text-8xl md:text-9xl font-bold text-primary">404</span>
         </motion.div>
 
-        <h1 className="text-2xl md:text-3xl font-bold mb-4">
-          Page Not Found
-        </h1>
+        <h1 className="text-2xl md:text-3xl font-bold mb-4">Page Not Found</h1>
 
         <p className="text-muted-foreground mb-8 leading-relaxed">
-          The page you're looking for doesn't exist or has been moved.
-          Let's get you back to the latest AI predictions.
+          The page you're looking for doesn't exist or has been moved. Let's get you back to the latest AI predictions.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -76,7 +79,7 @@ const NotFound = () => {
         >
           <p className="text-sm text-muted-foreground mb-4">Popular Categories</p>
           <div className="flex flex-wrap gap-2 justify-center">
-            {["AI", "Tech", "Business", "Science"].map((category) => (
+            {['AI', 'Tech', 'Business', 'Science'].map((category) => (
               <Link
                 key={category}
                 to={`/category/${category}/`}
