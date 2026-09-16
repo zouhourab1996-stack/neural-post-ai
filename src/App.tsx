@@ -51,6 +51,7 @@ export default function App() {
                 <Route path="/topics" element={<Index />} />
                 <Route path="/guides" element={<Index />} />
                 <Route path="/sitemap" element={<Index />} />
+                <Route path="/404" element={<NotFound />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>
