@@ -38,7 +38,7 @@ if (!supabaseUrl || !supabaseKey) {
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const categories = ["AI", "Tech", "Business", "Science"];
+const categories = ["AI", "Tech", "Business", "Science", "World"];
 
 const staticPages = [
   {

@@ -30,6 +30,7 @@ const categoryDescriptions: Record<string, string> = {
   Tech: "Stay updated with cutting-edge tech forecasts, gadgets, and digital innovation predictions.",
   Business: "Market outlook, startup predictions, and business trend forecasts powered by AI analysis.",
   Science: "Discover scientific breakthroughs and innovation predictions shaping our future.",
+  World: "War, geopolitics, and defense technology analysis — how conflicts and AI reshape global power.",
 };
 
 export default function Category() {
@@ -67,7 +68,7 @@ export default function Category() {
     },
   });
 
-  const validCategories = ["AI", "Tech", "Business", "Science"];
+  const validCategories = ["AI", "Tech", "Business", "Science", "World"];
   const isValidCategory = category && validCategories.includes(category);
   const categorySeoDescription = isValidCategory
     ? `${categoryDescriptions[category] || `Latest ${category} predictions and analysis.`} Read trend forecasts and long-form analysis from Prophetic.`
