@@ -105,6 +105,37 @@ function robustJsonParse(raw: string, context = 'json'): any {
     }
   }
 
+  // 6. Truncated output (no closing brace / cut mid-content): salvage what we have
+  const tTitle = s.match(/"title"\s*:\s*"((?:[^"\\]|\\.)*?)"/);
+  const tSlug = s.match(/"slug"\s*:\s*"((?:[^"\\]|\\.)*?)"/);
+  const tMeta = s.match(/"meta_description"\s*:\s*"((?:[^"\\]|\\.)*?)"/);
+  const tImg = s.match(/"image_query"\s*:\s*"((?:[^"\\]|\\.)*?)"/);
+  const cStart = s.indexOf('"content"');
+  if (tTitle && cStart !== -1) {
+    let body = s.slice(s.indexOf('"', s.indexOf(':', cStart)) + 1);
+    const endMarkers = ['","image_query"', '", "image_query"', '","key_takeaways"', '", "key_takeaways"'];
+    for (const marker of endMarkers) {
+      const idx = body.indexOf(marker);
+      if (idx !== -1) body = body.slice(0, idx);
+    }
+    body = body
+      .replace(/"\s*,?\s*$/, '')
+      .replace(/\\n/g, '\n')
+      .replace(/\\t/g, '\t')
+      .replace(/\\"/g, '"')
+      .trim();
+    if (countWords(body) > 900) {
+      console.warn(`[${context}] Salvaged truncated JSON output`);
+      return {
+        title: tTitle[1],
+        slug: tSlug?.[1] || '',
+        meta_description: tMeta?.[1] || '',
+        content: body,
+        image_query: tImg?.[1] || 'technology news',
+      };
+    }
+  }
+
   console.error(`[${context}] All JSON parse attempts failed. Raw snippet:`, raw.slice(0, 300));
   throw new Error('Failed to parse article content');
 }
@@ -253,58 +284,103 @@ async function selectFreshHeadline(
   }
 }
 
-// Fetch trending headlines from NewsAPI
+// Fetch trending headlines from NewsAPI (top headlines + rising-trend search queries)
+const CATEGORY_NEWS_CONFIG: Record<string, { topic: string; queries: string[] }> = {
+  AI: {
+    topic: 'technology',
+    queries: [
+      '("artificial intelligence" OR "AI model" OR "AI chip") AND (launch OR breakthrough OR lawsuit OR regulation)',
+      '("AI warfare" OR "military AI" OR "autonomous drone" OR "defense AI")',
+    ],
+  },
+  Tech: {
+    topic: 'technology',
+    queries: [
+      '(semiconductor OR cybersecurity OR "data center" OR chips) AND (2026 OR outage OR export OR breach)',
+      '("cyberattack" OR "cyber warfare" OR "critical infrastructure")',
+    ],
+  },
+  Business: {
+    topic: 'business',
+    queries: [
+      '("AI spending" OR "chip export" OR sanctions OR "defense budget") AND (market OR stocks OR investors)',
+      '("war economy" OR "oil prices" OR "supply chain") AND (conflict OR sanctions)',
+    ],
+  },
+  Science: {
+    topic: 'science',
+    queries: [
+      '(space OR satellite OR quantum OR biotech) AND (launch OR discovery OR milestone)',
+      '("satellite intelligence" OR "space defense" OR "missile test")',
+    ],
+  },
+  World: {
+    topic: 'general',
+    queries: [
+      '(war OR conflict OR ceasefire OR offensive OR strikes) AND (Ukraine OR "Middle East" OR Taiwan OR Sudan)',
+      '(drones OR "AI targeting" OR "electronic warfare" OR "defense tech") AND (war OR military)',
+    ],
+  },
+};
+
+type Headline = { title: string; source: string; url: string; description: string };
+
+function mapNewsArticles(articles: any[]): Headline[] {
+  return (articles || [])
+    .filter((a: any) =>
+      a?.title &&
+      a.title !== '[Removed]' &&
+      a.title.length > 20 &&
+      !a.title.includes('...')
+    )
+    .map((a: any) => ({
+      title: a.title.replace(/ - [^-]+$/, '').trim(),
+      source: a.source?.name || 'Unknown',
+      url: a.url || '',
+      description: a.description || '',
+    }));
+}
+
 async function fetchNewsAPIHeadlines(category: string, apiKey: string): Promise<{
-  headlines: { title: string; source: string; url: string; description: string }[];
+  headlines: Headline[];
 }> {
-  try {
-    const categoryMap: Record<string, string> = {
-      'AI': 'technology',
-      'Tech': 'technology',
-      'Business': 'business',
-      'Science': 'science',
-      'Markets': 'business',
-    };
-    
-    const newsCategory = categoryMap[category] || 'technology';
-    
-    // Fetch top headlines
-    const response = await fetch(
-      `https://newsapi.org/v2/top-headlines?category=${newsCategory}&language=en&pageSize=15&apiKey=${apiKey}`
-    );
+  const config = CATEGORY_NEWS_CONFIG[category] || CATEGORY_NEWS_CONFIG.Tech;
+  const collected: Headline[] = [];
 
-    if (!response.ok) {
-      console.error('NewsAPI error:', response.status);
-      return { headlines: [] };
-    }
+  const from = new Date(Date.now() - 3 * 86400000).toISOString().split('T')[0];
 
-    const data = await response.json();
-    
-    if (data.articles && data.articles.length > 0) {
-      const headlines = data.articles
-        .filter((article: any) => 
-          article.title && 
-          article.title !== '[Removed]' &&
-          article.title.length > 20 &&
-          !article.title.includes('...')  // Skip truncated titles
-        )
-        .slice(0, 8)
-        .map((article: any) => ({
-          title: article.title.replace(/ - [^-]+$/, '').trim(), // Remove source suffix
-          source: article.source?.name || 'Unknown',
-          url: article.url || '',
-          description: article.description || ''
-        }));
-      
-      console.log(`Fetched ${headlines.length} headlines from NewsAPI for ${category}`);
-      return { headlines };
+  const endpoints = [
+    `https://newsapi.org/v2/top-headlines?category=${config.topic}&language=en&pageSize=15&apiKey=${apiKey}`,
+    ...config.queries.map(q =>
+      `https://newsapi.org/v2/everything?q=${encodeURIComponent(q)}&language=en&sortBy=publishedAt&from=${from}&pageSize=15&apiKey=${apiKey}`
+    ),
+  ];
+
+  for (const endpoint of endpoints) {
+    try {
+      const response = await fetch(endpoint);
+      if (!response.ok) {
+        console.error('NewsAPI error:', response.status, endpoint.split('?')[0]);
+        continue;
+      }
+      const data = await response.json();
+      collected.push(...mapNewsArticles(data.articles));
+    } catch (error) {
+      console.error('Error fetching NewsAPI headlines:', error);
     }
-    
-    return { headlines: [] };
-  } catch (error) {
-    console.error('Error fetching NewsAPI headlines:', error);
-    return { headlines: [] };
   }
+
+  // Deduplicate by normalized title, keep search results interleaved with top headlines
+  const seen = new Set<string>();
+  const headlines = collected.filter(h => {
+    const key = h.title.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).slice(0, 14);
+
+  console.log(`Fetched ${headlines.length} candidate headlines for ${category}`);
+  return { headlines };
 }
 
 // Fetch image from Pexels API
@@ -584,6 +660,11 @@ ABSOLUTE RULES — NEVER BREAK:
 RISING-TREND MANDATE:
 - Cover the story while it is still climbing, not after it peaks. Pick the angle competitors have not written yet.
 - Name what happens next in the next 30-90 days, with dates and conditions that can be checked.
+- You have live Google Search results available. Ground every date, number, and name in what the search results actually show; if the search results contradict the brief, trust the search results and say so. Never invent an event, figure, or quote.
+- WAR, CONFLICT AND DEFENSE COVERAGE: when the topic touches war, geopolitics, sanctions, drones, cyber operations, or defense technology, write it as a technology-and-power analyst, not a wire reporter. Explain the systems involved (drones, jamming, satellite intelligence, AI targeting, chip and energy supply lines), the economic consequences, and the second-order effects on AI and tech markets. Stay factual and neutral, never take a partisan side, never glorify violence, avoid graphic detail, and attribute contested claims to their source.
+- SEARCH-DEMAND ANGLE: choose the angle people are actively searching for right now (what happened, why, what it costs, what is next), and answer it in the first 150 words.
+
+
 
 HOW A HUMAN EXPERT WRITES (this is what Google's reviewers look for):
 - Firsthand framing: "When I first tested this in January", "Two engineers I spoke with disagree on this point" — reporting texture, never fabricated named quotes from real people.
@@ -698,7 +779,7 @@ serve(async (req) => {
       throw new Error('GOOGLE_AI_API_KEY is not configured');
     }
 
-    const validCategories = ['AI', 'Tech', 'Business', 'Science'];
+    const validCategories = ['AI', 'Tech', 'Business', 'Science', 'World'];
     const selectedCategory = validCategories.includes(category) ? category : 'AI';
 
     console.log(`[${new Date().toISOString()}] Starting article generation for: ${selectedCategory}`);

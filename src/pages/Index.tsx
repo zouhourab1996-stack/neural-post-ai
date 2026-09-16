@@ -42,6 +42,7 @@ const categories = [
   { name: "Tech", path: "/category/Tech/" },
   { name: "Business", path: "/category/Business/" },
   { name: "Science", path: "/category/Science/" },
+  { name: "World", path: "/category/World/" },
 ];
 
 export default function Index() {
