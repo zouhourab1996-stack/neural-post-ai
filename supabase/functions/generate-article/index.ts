@@ -105,6 +105,37 @@ function robustJsonParse(raw: string, context = 'json'): any {
     }
   }
 
+  // 6. Truncated output (no closing brace / cut mid-content): salvage what we have
+  const tTitle = s.match(/"title"\s*:\s*"((?:[^"\\]|\\.)*?)"/);
+  const tSlug = s.match(/"slug"\s*:\s*"((?:[^"\\]|\\.)*?)"/);
+  const tMeta = s.match(/"meta_description"\s*:\s*"((?:[^"\\]|\\.)*?)"/);
+  const tImg = s.match(/"image_query"\s*:\s*"((?:[^"\\]|\\.)*?)"/);
+  const cStart = s.indexOf('"content"');
+  if (tTitle && cStart !== -1) {
+    let body = s.slice(s.indexOf('"', s.indexOf(':', cStart)) + 1);
+    const endMarkers = ['","image_query"', '", "image_query"', '","key_takeaways"', '", "key_takeaways"'];
+    for (const marker of endMarkers) {
+      const idx = body.indexOf(marker);
+      if (idx !== -1) body = body.slice(0, idx);
+    }
+    body = body
+      .replace(/"\s*,?\s*$/, '')
+      .replace(/\\n/g, '\n')
+      .replace(/\\t/g, '\t')
+      .replace(/\\"/g, '"')
+      .trim();
+    if (countWords(body) > 900) {
+      console.warn(`[${context}] Salvaged truncated JSON output`);
+      return {
+        title: tTitle[1],
+        slug: tSlug?.[1] || '',
+        meta_description: tMeta?.[1] || '',
+        content: body,
+        image_query: tImg?.[1] || 'technology news',
+      };
+    }
+  }
+
   console.error(`[${context}] All JSON parse attempts failed. Raw snippet:`, raw.slice(0, 300));
   throw new Error('Failed to parse article content');
 }
