@@ -6,7 +6,8 @@ on:
       - main
   workflow_dispatch:
   schedule:
-    - cron: "25 8,18 * * *"
+    - cron: "25 8 * * *"
+    - cron: "25 18 * * *"
 
 permissions:
   contents: read
@@ -29,10 +30,11 @@ jobs:
         with:
           node-version: "22"
 
-      # On schedule trigger: generate fresh articles BEFORE building SSG
-      # so the new articles appear in the sitemap immediately
-      - name: Generate daily articles (scheduled runs only)
-        if: github.event_name == 'schedule'
+      # Morning scheduled run only: generate the daily article BEFORE building SSG
+      # so the new article is part of the static build and the sitemap.
+      # (The evening run only rebuilds; it does not create a second article.)
+      - name: Generate daily article (morning scheduled run only)
+        if: github.event_name == 'schedule' && github.event.schedule == '25 8 * * *'
         run: |
           echo "Triggering daily-automation..."
           RESULT=$(curl -s -w "\nHTTP:%{http_code}" -X POST \
@@ -41,8 +43,8 @@ jobs:
             -H "Authorization: Bearer $VITE_SUPABASE_KEY" \
             -d '{}')
           echo "$RESULT"
-          echo "Waiting 30s for articles to be saved..."
-          sleep 30
+          echo "Waiting 60s for articles to be saved..."
+          sleep 60
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
@@ -108,3 +110,36 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      # Submit fresh URLs to search engines ONLY after they are live,
+      # otherwise Search Console inspects them and reports 404.
+      - name: Submit new URLs to IndexNow (after they are live)
+        run: |
+          set -e
+          KEY=b00319baec734ccb90683521e219f02f
+          SINCE=$(date -u -d '30 hours ago' +%Y-%m-%dT%H:%M:%SZ)
+          SLUGS=$(curl -s "$VITE_SUPABASE_URL/rest/v1/articles?select=slug&created_at=gte.$SINCE" \
+            -H "apikey: $VITE_SUPABASE_KEY" -H "Authorization: Bearer $VITE_SUPABASE_KEY" \
+            | grep -o '"slug":"[^"]*"' | cut -d'"' -f4)
+          LIVE=""
+          for s in $SLUGS; do
+            URL="https://prophetic.pw/article/$s/"
+            CODE=$(curl -s -o /dev/null -w '%{http_code}' "$URL")
+            if [ "$CODE" = "200" ]; then
+              LIVE="$LIVE\"$URL\","
+              echo "live: $URL"
+            else
+              echo "skipped (HTTP $CODE): $URL"
+            fi
+          done
+          if [ -z "$LIVE" ]; then echo "No new live URLs to submit."; exit 0; fi
+          BODY="{\"host\":\"prophetic.pw\",\"key\":\"$KEY\",\"keyLocation\":\"https://prophetic.pw/$KEY.txt\",\"urlList\":[${LIVE%,}]}"
+          for EP in https://www.bing.com/indexnow https://api.indexnow.org/indexnow; do
+            STATUS=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$EP" \
+              -H "Content-Type: application/json; charset=utf-8" -d "$BODY")
+            echo "IndexNow $EP -> HTTP $STATUS"
+            [ "$STATUS" = "200" ] && break
+          done
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
