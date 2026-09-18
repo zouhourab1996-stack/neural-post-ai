@@ -108,3 +108,36 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      # Submit fresh URLs to search engines ONLY after they are live,
+      # otherwise Search Console inspects them and reports 404.
+      - name: Submit new URLs to IndexNow (after they are live)
+        run: |
+          set -e
+          KEY=b00319baec734ccb90683521e219f02f
+          SINCE=$(date -u -d '30 hours ago' +%Y-%m-%dT%H:%M:%SZ)
+          SLUGS=$(curl -s "$VITE_SUPABASE_URL/rest/v1/articles?select=slug&created_at=gte.$SINCE" \
+            -H "apikey: $VITE_SUPABASE_KEY" -H "Authorization: Bearer $VITE_SUPABASE_KEY" \
+            | grep -o '"slug":"[^"]*"' | cut -d'"' -f4)
+          LIVE=""
+          for s in $SLUGS; do
+            URL="https://prophetic.pw/article/$s/"
+            CODE=$(curl -s -o /dev/null -w '%{http_code}' "$URL")
+            if [ "$CODE" = "200" ]; then
+              LIVE="$LIVE\"$URL\","
+              echo "live: $URL"
+            else
+              echo "skipped (HTTP $CODE): $URL"
+            fi
+          done
+          if [ -z "$LIVE" ]; then echo "No new live URLs to submit."; exit 0; fi
+          BODY="{\"host\":\"prophetic.pw\",\"key\":\"$KEY\",\"keyLocation\":\"https://prophetic.pw/$KEY.txt\",\"urlList\":[${LIVE%,}]}"
+          for EP in https://www.bing.com/indexnow https://api.indexnow.org/indexnow; do
+            STATUS=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$EP" \
+              -H "Content-Type: application/json; charset=utf-8" -d "$BODY")
+            echo "IndexNow $EP -> HTTP $STATUS"
+            [ "$STATUS" = "200" ] && break
+          done
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
