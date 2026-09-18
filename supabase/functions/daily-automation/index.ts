@@ -65,50 +65,15 @@ serve(async (req) => {
       .delete()
       .lt('discovered_at', sevenDaysAgo.toISOString().split('T')[0]);
 
-    // Notify search engines for newly created articles
+    // Search engines are notified only AFTER the static site is rebuilt,
+    // by the post-deploy step in .github/workflows/deploy.yml. Submitting a URL
+    // before the page is live makes Google report "Not found (404)".
     const newSlugs = results
       .filter((r: any) => r.success && r.slug)
       .map((r: any) => `https://prophetic.pw/article/${r.slug}/`);
 
     if (newSlugs.length > 0) {
-      console.log(`Submitting ${newSlugs.length} new URL(s) to search engines...`);
-
-      // 1. Bing IndexNow (also notifies Yandex, Seznam, etc.)
-      const INDEXNOW_KEY = 'b00319baec734ccb90683521e219f02f';
-      const indexNowPayload = JSON.stringify({
-        host: 'prophetic.pw',
-        key: INDEXNOW_KEY,
-        keyLocation: `https://prophetic.pw/${INDEXNOW_KEY}.txt`,
-        urlList: newSlugs,
-      });
-      for (const endpoint of ['https://www.bing.com/indexnow', 'https://api.indexnow.org/indexnow']) {
-        try {
-          const indexNowRes = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json; charset=utf-8' },
-            body: indexNowPayload,
-          });
-          console.log(`IndexNow (${endpoint}): HTTP ${indexNowRes.status}`);
-          if (indexNowRes.ok) break;
-        } catch (e) {
-          console.error(`IndexNow failed at ${endpoint} (non-critical):`, e);
-        }
-      }
-
-      // 2. Google Indexing API via Supabase function
-      try {
-        await fetch(`${SUPABASE_URL}/functions/v1/google-indexing`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ urls: newSlugs, action: 'URL_UPDATED' }),
-        });
-        console.log('Google Indexing API notified');
-      } catch (indexError) {
-        console.error('Google indexing trigger failed (non-critical):', indexError);
-      }
+      console.log(`Pending index submission after next deploy: ${newSlugs.join(', ')}`);
     }
 
     console.log(`[${new Date().toISOString()}] Daily automation completed`);
