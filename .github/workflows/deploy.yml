@@ -29,10 +29,11 @@ jobs:
         with:
           node-version: "22"
 
-      # On schedule trigger: generate fresh articles BEFORE building SSG
-      # so the new articles appear in the sitemap immediately
-      - name: Generate daily articles (scheduled runs only)
-        if: github.event_name == 'schedule'
+      # Morning scheduled run only: generate the daily article BEFORE building SSG
+      # so the new article is part of the static build and the sitemap.
+      # (The evening run only rebuilds; it does not create a second article.)
+      - name: Generate daily article (morning scheduled run only)
+        if: github.event_name == 'schedule' && github.event.schedule == '25 8 * * *'
         run: |
           echo "Triggering daily-automation..."
           RESULT=$(curl -s -w "\nHTTP:%{http_code}" -X POST \
@@ -41,8 +42,8 @@ jobs:
             -H "Authorization: Bearer $VITE_SUPABASE_KEY" \
             -d '{}')
           echo "$RESULT"
-          echo "Waiting 30s for articles to be saved..."
-          sleep 30
+          echo "Waiting 60s for articles to be saved..."
+          sleep 60
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
