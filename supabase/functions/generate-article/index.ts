@@ -975,9 +975,11 @@ serve(async (req) => {
 
       console.log(`✅ Published: "${savedArticle.title}" (${wordCount} words)`);
 
-      // Notify Bing IndexNow
+      // NOTE: search engines are notified AFTER the static site is rebuilt
+      // (post-deploy step in .github/workflows/deploy.yml). Pinging here would
+      // send crawlers to a URL that does not exist yet -> "Not found (404)".
       const articleUrl = `https://prophetic.pw/article/${savedArticle.slug}/`;
-      await notifyBingIndexNow(articleUrl);
+      console.log(`Pending index submission after next deploy: ${articleUrl}`);
 
       return new Response(JSON.stringify({ 
         success: true, 
