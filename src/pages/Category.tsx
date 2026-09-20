@@ -26,11 +26,7 @@ interface Article {
 }
 
 const categoryDescriptions: Record<string, string> = {
-  Transits: "Understand planetary movements, retrogrades, ingresses, and the themes they invite you to notice.",
-  "Moon Phases": "Follow New Moons, Full Moons, eclipses, and the reflective rhythms of the lunar cycle.",
-  Numerology: "Explore angel numbers, life path numbers, and the symbolic patterns people find meaningful.",
-  Zodiac: "Find sign-specific guidance, compatibility perspectives, and practical ways to work with your chart.",
-  Rituals: "Discover grounded practices for reflection, manifestation, seasonal observances, and renewal.",
+  Spirituality: "Explore grounded spiritual reflections, seasonal rituals, lunar wisdom, and meaningful practices for inner growth.",
 };
 
 export default function Category() {
@@ -68,7 +64,7 @@ export default function Category() {
     },
   });
 
-  const validCategories = ["Transits", "Moon Phases", "Numerology", "Zodiac", "Rituals"];
+  const validCategories = ["Spirituality"];
   const isValidCategory = category && validCategories.includes(category);
   const categorySeoDescription = isValidCategory
     ? `${categoryDescriptions[category] || `Latest ${category} predictions and analysis.`} Read trend forecasts and long-form analysis from Prophetic.`
