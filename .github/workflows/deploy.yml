@@ -117,16 +117,15 @@ jobs:
         run: |
           set -e
           KEY=b00319baec734ccb90683521e219f02f
-          SINCE=$(date -u -d '30 hours ago' +%Y-%m-%dT%H:%M:%SZ)
-          SLUGS=$(curl -s "$VITE_SUPABASE_URL/rest/v1/articles?select=slug&created_at=gte.$SINCE" \
-            -H "apikey: $VITE_SUPABASE_KEY" -H "Authorization: Bearer $VITE_SUPABASE_KEY" \
-            | grep -o '"slug":"[^"]*"' | cut -d'"' -f4)
+          URLS=$(curl -fsSL https://prophetic.pw/sitemap.xml \
+            | grep -o '<loc>[^<]*</loc>' \
+            | sed 's#<loc>##; s#</loc>##' \
+            | sort -u)
           LIVE=""
-          for s in $SLUGS; do
-            URL="https://prophetic.pw/article/$s/"
+          for URL in $URLS; do
             CODE=$(curl -s -o /dev/null -w '%{http_code}' "$URL")
             if [ "$CODE" = "200" ]; then
-              LIVE="$LIVE\"$URL\","
+              LIVE="$LIVE\"$URL\"," 
               echo "live: $URL"
             else
               echo "skipped (HTTP $CODE): $URL"
