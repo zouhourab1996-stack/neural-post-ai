@@ -27,7 +27,7 @@ export const generateSchema = (data: object) => {
  */
 export const calculateReadingTime = (text: string) => {
     const wordsPerMinute = 200; // Average reading speed
-    const words = text.split(/\\\\s+/).length;
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
     const minutes = Math.ceil(words / wordsPerMinute);
     return minutes;
 };
