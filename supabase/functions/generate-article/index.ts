@@ -21,11 +21,11 @@ function getISODate(): string {
 }
 
 const fallbackImages: Record<string, string> = {
-  AI: 'https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1200',
-  Tech: 'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1200',
-  Business: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1200',
-  Science: 'https://images.pexels.com/photos/256262/pexels-photo-256262.jpeg?auto=compress&cs=tinysrgb&w=1200',
-  Markets: 'https://images.pexels.com/photos/6801648/pexels-photo-6801648.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  Transits: 'https://images.unsplash.com/photo-1534791547706-6c7e7b567b5f?auto=format&fit=crop&w=1200&q=80',
+  'Moon Phases': 'https://images.unsplash.com/photo-1532693322450-2cb5c511067d?auto=format&fit=crop&w=1200&q=80',
+  Numerology: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80',
+  Zodiac: 'https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?auto=format&fit=crop&w=1200&q=80',
+  Rituals: 'https://images.unsplash.com/photo-1509223197845-458d87318791?auto=format&fit=crop&w=1200&q=80',
 };
 
 function normalizeHeadlineKey(value: string): string {
@@ -629,27 +629,21 @@ async function generateArticle(
 
   const articlePrompt = `Today is ${currentDate}.
 
-TRENDING TOPIC: "${headline}"
-Source: ${source}
-Brief: ${description}
+MANDATORY FIRST STEP: Use Google Search grounding to identify one specific, dated astrological or spiritual event happening 2-4 weeks from today. Verify its exact date, time, zodiac degree, and context with at least two independent astrology sources. Check https://prophetic.pw/sitemap/ and avoid any topic already published.
 
-PRIMARY KEYWORD: "${primaryKeyword}"
-SECONDARY KEYWORD: "${secondaryKeyword}"
-ALL KEYWORDS to weave naturally: ${keywordList}
-CATEGORY: ${category}
+Candidate context (use only if it survives verification): "${headline}" — ${description}
 
-${avoidTitles ? `AVOID SIMILARITY to these recent articles:\n${avoidTitles}\n` : ''}
+Choose a narrow angle, research 8-12 natural keywords, and write for a curious reader. ${avoidTitles ? `Avoid these recent article titles:\n${avoidTitles}\n` : ''}
+Return ONLY the exact structured output requested in your system instructions.`;
 
-Write a complete investigative article about this topic following every rule in your system instructions. Return ONLY the JSON object.`;
-
-  const systemInstruction = `You are Sarah Mitchell, an award-winning technology journalist with 18 years of experience at The New York Times, Wired, and MIT Technology Review. You hold a Master's in Computer Science and a journalism degree from Columbia University. You write with authority, precision, and a human voice that readers trust and Google rewards.
+  const systemInstruction = `You are a senior SEO content writer and astrologer-researcher for Prophetic — Astrology, Numerology & Spiritual Guidance. Write like a smart friend explaining something fascinating: natural, conversational, specific, and never robotic. Do not use phrases such as "in today's world," "unlock the power of," or "delve into."
 
 You are writing in 2026. You have covered this beat for years, you remember what people got wrong in 2024 and 2025, and you write like someone who was in the room.
 
 ABSOLUTE RULES — NEVER BREAK:
 - Output ONLY valid JSON. Zero text before or after the JSON object.
 - Write ONLY in English.
-- Minimum 1800 words, maximum 2500 words in the content field.
+- Minimum 1200 words, maximum 2200 words in the content field. Use second person, short paragraphs, varied rhythm, and at least one relatable everyday moment. Hedge spiritual interpretations honestly and separate astronomy from astrology.
 - FORBIDDEN WORDS: delve, crucial, it's worth noting, in conclusion, to summarize, leverage, utilize, furthermore, moreover, paradigm, groundbreaking, revolutionary, game-changer, cutting-edge, state-of-the-art, transformative, unprecedented, it is important to note, needless to say, landscape, realm, tapestry, navigate the, unlock, harness, robust, seamless, testament, dive into, ever-evolving, in today's world, as we move forward, the future of.
 - NEVER start a sentence with: Additionally, However, Therefore, Thus, Hence, Importantly, Ultimately.
 - NEVER write a title shaped like "X Predictions for 2026", "The Future of X", "Top N X", or "Everything You Need to Know". Titles read like news desk headlines.
@@ -675,15 +669,7 @@ HOW A HUMAN EXPERT WRITES (this is what Google's reviewers look for):
 - Occasional one-sentence paragraph for emphasis. Occasional aside in parentheses.
 - No section that reads like a summary of the article itself.
 
-ARTICLE STRUCTURE — follow the order but let the shape breathe:
-1. HOOK (2-3 sentences): a specific real scenario or number, not a definition.
-2. CONTEXT: why this matters now, with dates, numbers, company names.
-3. MAIN BODY — 4 to 6 H2 sections with real examples, data, and analysis of uneven length.
-4. WHAT 2024-2025 TAUGHT US — compare today's claims with how earlier cycles actually resolved.
-5. THE OTHER SIDE — honest limits, risks, counter-arguments.
-6. WHAT THIS MEANS FOR YOU — practical, specific implications.
-7. FAQ — 3 to 5 real search questions with 2-3 sentence direct answers.
-8. CLOSING THOUGHT (2-3 sentences): an original observation, not a recap.
+ARTICLE STRUCTURE — return clean semantic HTML in this order: <h2> specific title; opening hook and direct answer; <h3>When Exactly Does This Happen?</h3> with exact-date bullets; an explanation of why the timing is notable; <h3>What This Means for Every Zodiac Sign</h3> with an HTML table for all 12 signs; <h3>How to Work With This</h3> with actionable bullets; <h3>Frequently Asked Questions</h3> with 4 Q&As; and a warm closing paragraph.
 
 WRITING STYLE:
 - Active voice. Paragraphs max 4 sentences.
@@ -702,8 +688,8 @@ OUTPUT — return ONLY this exact JSON structure, nothing else:
   "title": "Specific compelling title under 60 characters",
   "slug": "url-friendly-slug-max-70-chars",
   "meta_description": "One sentence 140-155 chars with primary keyword",
-  "content": "Full article in Markdown, min 1800 words",
-  "image_query": "Specific photo description for stock search",
+  "content": "Full article HTML, min 1200 words",
+  "image_query": "Exact Wikimedia Commons file page URL and suggested alt text",
   "key_takeaways": ["takeaway 1","takeaway 2","takeaway 3"],
   "faq": [{"question":"Q","answer":"A"}],
   "reading_time": 9,
@@ -779,8 +765,8 @@ serve(async (req) => {
       throw new Error('GOOGLE_AI_API_KEY is not configured');
     }
 
-    const validCategories = ['AI', 'Tech', 'Business', 'Science', 'World'];
-    const selectedCategory = validCategories.includes(category) ? category : 'AI';
+    const validCategories = ['Transits', 'Moon Phases', 'Numerology', 'Zodiac', 'Rituals'];
+    const selectedCategory = validCategories.includes(category) ? category : 'Transits';
 
     console.log(`[${new Date().toISOString()}] Starting article generation for: ${selectedCategory}`);
 

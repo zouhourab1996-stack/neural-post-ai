@@ -38,11 +38,11 @@ const getCurrentDate = () => {
 
 const categories = [
   { name: "All", path: "/" },
-  { name: "AI", path: "/category/AI/" },
-  { name: "Tech", path: "/category/Tech/" },
-  { name: "Business", path: "/category/Business/" },
-  { name: "Science", path: "/category/Science/" },
-  { name: "World", path: "/category/World/" },
+  { name: "Transits", path: "/category/Transits/" },
+  { name: "Moon Phases", path: "/category/Moon%20Phases/" },
+  { name: "Numerology", path: "/category/Numerology/" },
+  { name: "Zodiac", path: "/category/Zodiac/" },
+  { name: "Rituals", path: "/category/Rituals/" },
 ];
 
 export default function Index() {
@@ -70,7 +70,7 @@ export default function Index() {
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 6);
   const lastUpdated = articles?.[0]?.created_at || new Date().toISOString();
-  const homepageDescription = `AI and technology predictions for ${today}. Daily coverage of AI breakthroughs, tech forecasts, market predictions, and science innovations from Prophetic.`;
+  const homepageDescription = "Daily astrology transits, numerology insights, and spiritual guidance. Expert coverage of zodiac transits, moon phases, angel numbers, and cosmic events.";
 
   const heroArticle = featuredArticles[0] || latestArticles[0];
   const secondaryHeroArticles = featuredArticles.length > 1
@@ -98,7 +98,7 @@ export default function Index() {
   return (
     <>
       <SEOHead
-        title="AI & Tech Predictions — Daily Forecasts & Analysis"
+        title="Prophetic — Astrology, Numerology & Spiritual Guidance"
         description={homepageDescription}
         canonical="https://prophetic.pw/"
       />
@@ -206,7 +206,7 @@ export default function Index() {
         <div className="grid lg:grid-cols-3 gap-8">
           <section className="lg:col-span-2" aria-labelledby="latest-heading">
             <div className="flex items-center justify-between mb-5">
-              <h2 id="latest-heading" className="font-display text-xl font-bold">Latest Predictions</h2>
+              <h2 id="latest-heading" className="font-display text-xl font-bold">Latest Guidance</h2>
             </div>
 
             {isLoading ? (
