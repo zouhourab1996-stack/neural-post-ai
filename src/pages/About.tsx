@@ -15,9 +15,7 @@ export default function About() {
           About <span className="text-primary">Prophetic</span>
         </h1>
         <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-          We're pioneering the future of intelligence by leveraging cutting-edge AI technology
-          to deliver accurate, forward-looking predictions across technology, markets,
-          geopolitics, and science.
+          Prophetic is a space for astrology, numerology, and reflective practice — a daily guide to the patterns in the sky and the questions they invite you to ask.
         </p>
       </motion.section>
 
@@ -31,22 +29,17 @@ export default function About() {
         <div>
           <h2 className="font-display text-3xl font-bold mb-4">Our Mission</h2>
           <p className="text-muted-foreground mb-4">
-            At Prophetic, we believe that everyone deserves access to data-driven foresight.
-            Our mission is to democratize future intelligence by using advanced AI systems
-            to analyze trends, synthesize data, and present compelling predictions
-            in an accessible and engaging format.
+            At Prophetic, we believe spiritual guidance should feel grounded, curious, and personal. Our mission is to make planetary transits, moon phases, numerology, zodiac symbolism, and ritual practices easier to understand and bring into everyday reflection.
           </p>
           <p className="text-muted-foreground">
-            We're committed to accuracy, transparency, and continuous improvement.
-            Our AI-powered editorial system is constantly learning and evolving to
-            provide you with the most relevant and trustworthy forecasts possible.
+            We distinguish astronomy from spiritual interpretation and write with care: no prediction is a substitute for your own judgment. Every piece is an invitation to notice, reflect, and choose what resonates.
           </p>
         </div>
         <div className="relative">
           <div className="aspect-square rounded-2xl overflow-hidden">
             <img
-              src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&q=80"
-              alt="AI Future Technology"
+              src="https://images.unsplash.com/photo-1534791547706-6c7e7b567b5f?w=600&q=80"
+              alt="A starry night sky"
               className="w-full h-full object-cover"
             />
           </div>
@@ -71,7 +64,7 @@ export default function About() {
             </div>
             <h3 className="font-display text-xl font-semibold mb-3">Accuracy</h3>
             <p className="text-muted-foreground">
-              We prioritize factual accuracy and thorough verification in every prediction we publish.
+              We verify dates and distinguish observable sky events from symbolic interpretation.
             </p>
           </div>
           <div className="bg-card rounded-xl border border-border/60 p-8 text-center card-hover">
@@ -80,7 +73,7 @@ export default function About() {
             </div>
             <h3 className="font-display text-xl font-semibold mb-3">Accessibility</h3>
             <p className="text-muted-foreground">
-              Making complex future trends understandable and accessible to readers of all backgrounds.
+              Making astrology and numerology welcoming, clear, and useful for readers at every level.
             </p>
           </div>
           <div className="bg-card rounded-xl border border-border/60 p-8 text-center card-hover">
@@ -89,7 +82,7 @@ export default function About() {
             </div>
             <h3 className="font-display text-xl font-semibold mb-3">Excellence</h3>
             <p className="text-muted-foreground">
-              Striving for excellence in AI forecasting through continuous improvement and innovation.
+              Offering thoughtful guidance that leaves room for nuance, agency, and personal meaning.
             </p>
           </div>
         </div>
