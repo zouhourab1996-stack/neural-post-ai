@@ -23,11 +23,8 @@ const FALLBACK_SUPABASE_URL = `https://${FALLBACK_PROJECT_ID}.supabase.co`;
 const FALLBACK_PUBLISHABLE_KEY =
   "sb_publishable_bA2L5OCvyK32LrvVJRM3MQ_53EIKnUn";
 
-const supabaseUrl =
-  process.env.VITE_SUPABASE_URL ||
-  (process.env.VITE_SUPABASE_PROJECT_ID
-    ? `https://${process.env.VITE_SUPABASE_PROJECT_ID}.supabase.co`
-    : FALLBACK_SUPABASE_URL);
+// The deploy workflow may still expose legacy Supabase secrets; the article database lives in this project.
+const supabaseUrl = FALLBACK_SUPABASE_URL;
 
 const supabaseKey =
   process.env.VITE_SUPABASE_PUBLISHABLE_KEY || FALLBACK_PUBLISHABLE_KEY;
