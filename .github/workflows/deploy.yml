@@ -46,7 +46,7 @@ jobs:
           echo "Waiting 60s for articles to be saved..."
           sleep 60
         env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_URL: https://vqngfykdlbtoenfggemk.supabase.co
           VITE_SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
 
       - name: Install dependencies and build
@@ -54,7 +54,7 @@ jobs:
           npm install
           npm run build
         env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_URL: https://vqngfykdlbtoenfggemk.supabase.co
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
 
       - name: Copy essential static assets to dist
@@ -141,5 +141,5 @@ jobs:
             [ "$STATUS" = "200" ] && break
           done
         env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_URL: https://vqngfykdlbtoenfggemk.supabase.co
           VITE_SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
