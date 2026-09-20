@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 const categories = [
-  { name: "AI", path: "/category/AI/" },
-  { name: "Tech", path: "/category/Tech/" },
-  { name: "Business", path: "/category/Business/" },
-  { name: "Science", path: "/category/Science/" },
-  { name: "World", path: "/category/World/" },
+  { name: "Transits", path: "/category/Transits/" },
+  { name: "Moon Phases", path: "/category/Moon%20Phases/" },
+  { name: "Numerology", path: "/category/Numerology/" },
+  { name: "Zodiac", path: "/category/Zodiac/" },
+  { name: "Rituals", path: "/category/Rituals/" },
 ];
 
 const PropheticLogo = ({ size = 28 }: { size?: number }) => (
