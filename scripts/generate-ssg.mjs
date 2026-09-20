@@ -17,10 +17,11 @@ const SITE_NAME = "Prophetic";
 const DEFAULT_IMAGE =
   "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1200";
 
-const FALLBACK_PROJECT_ID = "bltytefghazluwicnaii";
+// Keep the static build aligned with the connected Supabase project when CI secrets are unavailable.
+const FALLBACK_PROJECT_ID = "vqngfykdlbtoenfggemk";
 const FALLBACK_SUPABASE_URL = `https://${FALLBACK_PROJECT_ID}.supabase.co`;
 const FALLBACK_PUBLISHABLE_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJsdHl0ZWZnaGF6bHV3aWNuYWlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg2NzY5MzksImV4cCI6MjA4NDI1MjkzOX0.LfH0E7PQ5kD9NpNDK0zSGSNSU3mnGvImeytOF5gqt3w";
+  "sb_publishable_bA2L5OCvyK32LrvVJRM3MQ_53EIKnUn";
 
 const supabaseUrl =
   process.env.VITE_SUPABASE_URL ||
