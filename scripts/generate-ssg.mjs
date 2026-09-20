@@ -1177,8 +1177,7 @@ async function main() {
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error("❌ Failed to fetch articles:", error.message);
-    process.exit(1);
+    console.warn("⚠️ Failed to fetch articles; continuing with an empty article list:", error.message);
   }
 
   const excludedArticlePattern = /digital legacy|digital time capsule|vip digital ghost|fiverr/i;
@@ -1312,7 +1311,7 @@ Sitemap: ${SITE_URL}/sitemap.xml
 Sitemap: ${SITE_URL}/sitemap-news.xml
 `;
   fs.writeFileSync(path.join(distDir, "robots.txt"), robotsTxt, "utf8");
-  console.log("  ✓ /robots.txt");
+  console.log("  ��� /robots.txt");
 
   // Pre-render homepage content inside #root so Googlebot sees full HTML
   // before JS executes. React's createRoot() replaces innerHTML on mount,
