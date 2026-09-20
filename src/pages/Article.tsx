@@ -57,7 +57,7 @@ const buildDocumentTitle = (title: string) => {
 };
 
 function estimateReadingTime(content: string): number {
-  const words = content.replace(/[#*_`\[\]()]/g, '').split(/\s+/).length;
+  const words = content.replace(/[#*_`()\x5b\x5d]/g, '').split(/\s+/).length;
   return Math.max(1, Math.ceil(words / 230));
 }
 
