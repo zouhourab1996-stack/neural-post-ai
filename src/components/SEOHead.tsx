@@ -30,7 +30,7 @@ export default function SEOHead({
   tags = [],
 }: SEOHeadProps) {
   useEffect(() => {
-    document.title = `${title} | ${SITE_NAME}`;
+    document.title = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
 
     const setMeta = (property: string, content: string, isProperty = false) => {
       const attr = isProperty ? "property" : "name";
