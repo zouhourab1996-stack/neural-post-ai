@@ -15,4 +15,3 @@ User-agent: Bingbot
 Allow: /
 
 Sitemap: https://prophetic.pw/sitemap.xml
-Sitemap: https://prophetic.pw/sitemap-news.xml

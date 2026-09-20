@@ -112,30 +112,6 @@
   ],
   "rewrites": [
     {
-      "source": "/sitemap.xml",
-      "destination": "/sitemap.xml"
-    },
-    {
-      "source": "/robots.txt",
-      "destination": "/robots.txt"
-    },
-    {
-      "source": "/atom.xml",
-      "destination": "/atom.xml"
-    },
-    {
-      "source": "/rss.xml",
-      "destination": "/rss.xml"
-    },
-    {
-      "source": "/llms.txt",
-      "destination": "/llms.txt"
-    },
-    {
-      "source": "/BingSiteAuth.xml",
-      "destination": "/BingSiteAuth.xml"
-    },
-    {
       "source": "/((?!api|assets|favicon|sitemap\\.xml|sitemap-news\\.xml|robots\\.txt|atom\\.xml|rss\\.xml|llms\\.txt|BingSiteAuth\\.xml|manifest\\.json|_next|icon-|og-image|logo\\.).*)",
       "destination": "/index.html"
     }

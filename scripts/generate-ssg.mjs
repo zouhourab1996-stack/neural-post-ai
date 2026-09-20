@@ -38,17 +38,17 @@ if (!supabaseUrl || !supabaseKey) {
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const categories = ["AI", "Tech", "Business", "Science", "World"];
+const categories = ["Transits", "Moon Phases", "Numerology", "Zodiac", "Rituals"];
 
 const staticPages = [
   {
     route: "/about",
     title: "About Prophetic",
     description:
-      "Learn about Prophetic and our mission to provide AI-powered future predictions and trend analysis.",
+      "Learn about Prophetic and our mission to provide astrology insights, numerology guidance, and thoughtful spiritual reflection.",
     heading: "About Prophetic",
     content:
-      "Prophetic is a digital guide to astrology, numerology, moon phases, zodiac symbolism, and spiritual reflection.",
+      "Prophetic is a digital guide to astrology transits, numerology, moon phases, zodiac symbolism, and spiritual reflection.",
   },
   {
     route: "/contact",
@@ -339,9 +339,7 @@ function shellTemplate({ head, heading, body }) {
     })),
     { href: `${SITE_URL}/about/`, label: "About" },
     { href: `${SITE_URL}/contact/`, label: "Contact" },
-    { href: `${SITE_URL}/sitemap/`, label: "Sitemap" },
-    { href: `${SITE_URL}/topics/`, label: "Top Topics" },
-    { href: `${SITE_URL}/guides/`, label: "Top Guides" },
+  { href: `${SITE_URL}/sitemap/`, label: "Sitemap" },
   ]
     .map((item) => `<a href="${item.href}">${item.label}</a>`)
     .join("\n");
@@ -837,7 +835,7 @@ function generateSitemapHtml(articles) {
   const url = toAbsoluteUrl("/sitemap");
   const head = baseHead({
     title: `Sitemap | ${SITE_NAME}`,
-    description: "Browse categories and the latest predictions from Prophetic.",
+    description: "Browse astrology categories and the latest spiritual guidance from Prophetic.",
     canonical: url,
   });
 
