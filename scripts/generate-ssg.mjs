@@ -36,14 +36,14 @@ if (!supabaseUrl || !supabaseKey) {
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const categories = ["Transits", "Moon Phases", "Numerology", "Zodiac", "Rituals"];
+const categories = ["Spirituality"];
 
 const staticPages = [
   {
     route: "/about",
     title: "About Prophetic",
     description:
-      "Learn about Prophetic and our mission to provide astrology insights, numerology guidance, and thoughtful spiritual reflection.",
+      "Learn about Prophetic and our mission to provide thoughtful spiritual reflection, seasonal rituals, lunar wisdom, and grounded inner-growth guidance.",
     heading: "About Prophetic",
     content:
       "Prophetic is a digital guide to astrology transits, numerology, moon phases, zodiac symbolism, and spiritual reflection.",
