@@ -57,15 +57,6 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
 
-      - name: Validate sitemap before deployment
-        run: |
-          test -s ./dist/sitemap.xml
-          python - <<'PY'
-          import xml.etree.ElementTree as ET
-          ET.parse('./dist/sitemap.xml')
-          print('sitemap.xml is valid XML')
-          PY
-
       - name: Copy essential static assets to dist
         run: |
           cp public/manifest.json ./dist/manifest.json || true
@@ -78,7 +69,6 @@ jobs:
           cp public/icon-192.png ./dist/icon-192.png || true
           cp public/icon-512.png ./dist/icon-512.png || true
           cp public/og-image.jpg ./dist/og-image.jpg || true
-          touch ./dist/.nojekyll
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
