@@ -23,10 +23,7 @@ interface SidebarProps {
 }
 
 const categoryConfig = [
-  { name: "AI", color: "bg-violet-500", badge: "badge-ai" },
-  { name: "Tech", color: "bg-cyan-500", badge: "badge-tech" },
-  { name: "Business", color: "bg-amber-500", badge: "badge-business" },
-  { name: "Science", color: "bg-emerald-500", badge: "badge-science" },
+  { name: "Spirituality", color: "bg-violet-500", badge: "badge-spirituality" },
 ];
 
 import AdUnit from "@/components/AdUnit";

@@ -5,11 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 const categories = [
-  { name: "Transits", path: "/category/Transits/" },
-  { name: "Moon Phases", path: "/category/Moon%20Phases/" },
-  { name: "Numerology", path: "/category/Numerology/" },
-  { name: "Zodiac", path: "/category/Zodiac/" },
-  { name: "Rituals", path: "/category/Rituals/" },
+  { name: "Spirituality", path: "/category/Spirituality/" },
 ];
 
 const PropheticLogo = ({ size = 28 }: { size?: number }) => (
