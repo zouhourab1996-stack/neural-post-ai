@@ -14,11 +14,7 @@ const footerLinks = {
     { name: "Disclaimer", path: "/disclaimer/" },
   ],
   categories: [
-    { name: "AI", path: "/category/AI/" },
-    { name: "Tech", path: "/category/Tech/" },
-    { name: "Business", path: "/category/Business/" },
-    { name: "Science", path: "/category/Science/" },
-    { name: "World", path: "/category/World/" },
+    { name: "Spirituality", path: "/category/Spirituality/" },
   ],
 };
 
@@ -40,7 +36,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Daily AI and technology predictions. Expert analysis of emerging trends in AI, tech, business, and science.
+              Spiritual reflections, seasonal rituals, lunar wisdom, and grounded guidance for inner growth.
             </p>
           </div>
 
