@@ -26,8 +26,8 @@ const FALLBACK_PUBLISHABLE_KEY =
 // The deploy workflow may still expose legacy Supabase secrets; the article database lives in this project.
 const supabaseUrl = FALLBACK_SUPABASE_URL;
 
-const supabaseKey =
-  process.env.VITE_SUPABASE_PUBLISHABLE_KEY || FALLBACK_PUBLISHABLE_KEY;
+// Use the key paired with the article database; the CI secret may belong to the retired project.
+const supabaseKey = FALLBACK_PUBLISHABLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
   console.error("❌ Missing database credentials for SSG.");
