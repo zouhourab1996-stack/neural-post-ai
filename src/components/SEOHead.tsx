@@ -87,7 +87,7 @@ export default function SEOHead({
     }
 
     return () => {
-      document.title = `${SITE_NAME} — AI Predictions, Tech Forecasts & Market Analysis`;
+      document.title = `${SITE_NAME} — Astrology, Numerology & Spiritual Guidance`;
     };
   }, [title, description, canonical, image, type, publishedTime, modifiedTime, author, section, tags]);
 

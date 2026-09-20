@@ -26,6 +26,11 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://prophetic.pw/category/World/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://prophetic.pw/about/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -76,6 +81,72 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://prophetic.pw/article/quaoar-ring-system-changes-2026-stellar-occultation-data-2026-09-20/</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://prophetic.pw/article/warren-buffett-resigns-berkshire-hathaway-succession-impact-2026-09-19/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://prophetic.pw/article/capcom-tgs-2026-switch-2-announcements-analysis-2026-09-18/</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://prophetic.pw/article/heart-machine-layoffs-hyper-light-drifter-studio-crisis-2026-2026-09-17/</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://prophetic.pw/article/iphone-18-pro-camera-specs-variable-aperture-analysis-2026-09-17/</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://prophetic.pw/article/boox-palma-3-stylus-support-features-2026-review-2026-09-17/</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://prophetic.pw/article/kash-patel-senate-testimony-2026-fbi-oversight-2026-09-16/</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://prophetic.pw/article/siberian-permafrost-wolf-head-discovery-2026-analysis-2026-09-16/</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://prophetic.pw/article/carowinds-fury-325-safety-inspection-2026-analysis-2026-09-16/</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://prophetic.pw/article/trump-bombardier-ban-impact-kansas-aerospace-2026-2026-09-15/</loc>
+    <lastmod>2026-09-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://prophetic.pw/article/amazon-21-air-suspension-impact-miami-crash-2026-2026-09-15/</loc>
+    <lastmod>2026-09-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://prophetic.pw/article/gta-6-open-world-features-ai-prediction-2026-2026-09-13/</loc>
     <lastmod>2026-09-13</lastmod>
     <changefreq>weekly</changefreq>
@@ -94,18 +165,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://prophetic.pw/article/vip-digital-legacy-museum-fiverr-family-history-2026/</loc>
-    <lastmod>2026-07-14</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://prophetic.pw/article/digital-time-capsule-fiverr-send-messages-to-the-future-2026/</loc>
-    <lastmod>2026-07-14</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://prophetic.pw/article/hire-google-indexing-expert-fiverr-fix-crawled-not-indexed-2026/</loc>
     <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
@@ -119,6 +178,18 @@
   </url>
   <url>
     <loc>https://prophetic.pw/article/vip-digital-ghost-anti-seo-specialist-fiverr-erase-footprint-2026/</loc>
+    <lastmod>2026-07-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://prophetic.pw/article/vip-digital-legacy-museum-fiverr-family-history-2026/</loc>
+    <lastmod>2026-07-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://prophetic.pw/article/digital-time-capsule-fiverr-send-messages-to-the-future-2026/</loc>
     <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

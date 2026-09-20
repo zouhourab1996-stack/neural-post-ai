@@ -48,7 +48,7 @@ const staticPages = [
       "Learn about Prophetic and our mission to provide AI-powered future predictions and trend analysis.",
     heading: "About Prophetic",
     content:
-      "Prophetic is a digital publication focused on AI predictions, future intelligence, and trend forecasting across technology, markets, and science.",
+      "Prophetic is a digital guide to astrology, numerology, moon phases, zodiac symbolism, and spiritual reflection.",
   },
   {
     route: "/contact",
@@ -1098,7 +1098,7 @@ function generateRssXml(articles) {
   <channel>
     <title>${SITE_NAME}</title>
     <link>${SITE_URL}/</link>
-    <description>Latest AI, tech, business, and science news from ${SITE_NAME}</description>
+    <description>Latest astrology, numerology, and spiritual guidance from ${SITE_NAME}</description>
     <language>en-us</language>
     <lastBuildDate>${lastBuildDate}</lastBuildDate>
     ${items}
@@ -1185,8 +1185,9 @@ async function main() {
     process.exit(1);
   }
 
+  const excludedArticlePattern = /digital legacy|digital time capsule|vip digital ghost|fiverr/i;
   const safeArticles = Array.isArray(articles)
-    ? articles.filter((article) => article?.slug && article?.title && article?.content)
+    ? articles.filter((article) => article?.slug && article?.title && article?.content && !excludedArticlePattern.test(`${article.title} ${article.slug}`))
     : [];
   console.log(`✅ Loaded ${safeArticles.length} article(s)\n`);
 
