@@ -36,7 +36,7 @@ if (!supabaseUrl || !supabaseKey) {
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const categories = ["Spirituality"];
+const categories = ["Spirituality", "Moon Phases"];
 
 const staticPages = [
   {
