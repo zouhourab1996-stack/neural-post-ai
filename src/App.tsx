@@ -4,10 +4,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import Layout from "@/components/Layout";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import Category from "@/pages/Category";
 
 const Index = lazy(() => import("@/pages/Index"));
 const Article = lazy(() => import("@/pages/Article"));
-const Category = lazy(() => import("@/pages/Category"));
 const About = lazy(() => import("@/pages/About"));
 const Contact = lazy(() => import("@/pages/Contact"));
 const Privacy = lazy(() => import("@/pages/Privacy"));
