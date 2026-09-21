@@ -38,11 +38,7 @@ const getCurrentDate = () => {
 
 const categories = [
   { name: "All", path: "/" },
-  { name: "Transits", path: "/category/Transits/" },
-  { name: "Moon Phases", path: "/category/Moon%20Phases/" },
-  { name: "Numerology", path: "/category/Numerology/" },
-  { name: "Zodiac", path: "/category/Zodiac/" },
-  { name: "Rituals", path: "/category/Rituals/" },
+  { name: "Spirituality", path: "/category/Spirituality/" },
 ];
 
 export default function Index() {
@@ -64,13 +60,13 @@ export default function Index() {
 
   const featuredArticles = articles?.filter((a) => a.is_featured) || [];
   const trendingArticles = articles?.filter((a) => a.is_trending) || [];
-  const latestArticles = articles?.slice(0, 12) || [];
+  const latestArticles = articles || [];
   const topArticles = (articles || [])
     .filter((a) => (a.views || 0) > 0)
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 6);
   const lastUpdated = articles?.[0]?.created_at || new Date().toISOString();
-  const homepageDescription = "Daily astrology transits, numerology insights, and spiritual guidance. Expert coverage of zodiac transits, moon phases, angel numbers, and cosmic events.";
+  const homepageDescription = "Spiritual reflections, lunar wisdom, seasonal rituals, and grounded guidance for inner growth.";
 
   const heroArticle = featuredArticles[0] || latestArticles[0];
   const secondaryHeroArticles = featuredArticles.length > 1
