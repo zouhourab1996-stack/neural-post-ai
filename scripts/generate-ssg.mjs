@@ -1209,7 +1209,9 @@ async function main() {
 
   console.log("\n📝 Generating category pages...");
   for (const category of categories) {
-    const categoryArticles = safeArticles.filter((article) => article.category === category);
+    const categoryArticles = safeArticles.filter(
+      (article) => String(article.category || "").trim().toLowerCase() === category.toLowerCase(),
+    );
     writeRouteIndex(distDir, `/category/${category}`, generateCategoryHtml(category, categoryArticles));
     console.log(`  ✓ /category/${category}/`);
   }
