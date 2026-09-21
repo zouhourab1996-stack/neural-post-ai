@@ -16,6 +16,7 @@ import ArticleCard from "@/components/ArticleCard";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow, format } from "date-fns";
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 import { toast } from "sonner";
 import { useEffect, useMemo } from "react";
 import { generateArticleSchema, generateBreadcrumbSchema } from "@/components/SEOHead";
@@ -83,13 +84,13 @@ function ArticleContentWithAds({ content }: { content: string }) {
   
   return (
     <>
-      <ReactMarkdown>{beforeAd}</ReactMarkdown>
+      <ReactMarkdown rehypePlugins={[rehypeRaw]}>{beforeAd}</ReactMarkdown>
       
       {sections.length > 3 && (
         <AdSlot className="my-8" />
       )}
       
-      {afterAd && <ReactMarkdown>{afterAd}</ReactMarkdown>}
+      {afterAd && <ReactMarkdown rehypePlugins={[rehypeRaw]}>{afterAd}</ReactMarkdown>}
     </>
   );
 }
