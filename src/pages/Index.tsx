@@ -45,7 +45,9 @@ export default function Index() {
   const today = getCurrentDate();
 
   const { data: articles, isLoading, error } = useQuery({
-    queryKey: ["articles"],
+    queryKey: ["articles", "homepage-latest"],
+    staleTime: 0,
+    refetchOnMount: "always",
     queryFn: async () => {
       const { data, error } = await supabase
         .from("articles")
@@ -60,8 +62,10 @@ export default function Index() {
 
   const featuredArticles = articles?.filter((a) => a.is_featured) || [];
   const trendingArticles = articles?.filter((a) => a.is_trending) || [];
-  const latestArticles = articles || [];
-  const topArticles = (articles || [])
+  const latestArticles = [...(articles || [])].sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+  );
+  const topArticles = [...(articles || [])]
     .filter((a) => (a.views || 0) > 0)
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 6);
