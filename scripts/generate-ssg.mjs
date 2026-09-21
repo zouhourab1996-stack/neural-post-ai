@@ -206,7 +206,15 @@ function toIsoDate(value) {
 }
 
 function markdownToHtml(markdown = "") {
-  const blocks = markdown
+  const source = String(markdown || "").trim();
+
+  // Article content is stored as trusted editor HTML. Preserve its semantic tags
+  // for the static page instead of escaping them as visible text.
+  if (/<(?:h[1-6]|p|ul|ol|li|table|thead|tbody|tr|th|td|blockquote|strong|em|br)\b/i.test(source)) {
+    return source.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
+  }
+
+  const blocks = source
     .split(/\n{2,}/)
     .map((block) => block.trim())
     .filter(Boolean);
