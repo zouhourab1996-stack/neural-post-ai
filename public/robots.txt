@@ -2,22 +2,16 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-User-agent: GPTBot
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
-
 User-agent: Googlebot
 Allow: /
 
 User-agent: Bingbot
 Allow: /
 
-User-agent: Google-Extended
+User-agent: GPTBot
 Allow: /
 
-User-agent: GPTBot
+User-agent: Google-Extended
 Allow: /
 
 User-agent: CCBot
@@ -33,4 +27,3 @@ User-agent: PerplexityBot
 Allow: /
 
 Sitemap: https://prophetic.pw/sitemap.xml
-Sitemap: https://prophetic.pw/sitemap-news.xml
