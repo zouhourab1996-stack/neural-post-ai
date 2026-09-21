@@ -128,7 +128,7 @@ function normalizeRoute(route) {
 
 function toAbsoluteUrl(route) {
   if (!route || route === "/") return `${SITE_URL}/`;
-  return `${SITE_URL}${normalizeRoute(route)}`;
+  return `${SITE_URL}${encodeURI(normalizeRoute(route))}`;
 }
 
 function ensureDir(targetDir) {
@@ -321,6 +321,7 @@ function baseHead({
 
   <link rel="alternate" type="application/rss+xml" title="${SITE_NAME} RSS Feed" href="${SITE_URL}/rss.xml" />
   <link rel="alternate" type="application/atom+xml" title="${SITE_NAME} Atom Feed" href="${SITE_URL}/atom.xml" />
+  <link rel="sitemap" type="application/xml" title="${SITE_NAME} Sitemap" href="${SITE_URL}/sitemap.xml" />
 
   <meta name="google-site-verification" content="LinTLA24lUQNkp3-Jnmx63UIro3uY1tF8Y9fN-XMrmk" />
   <meta name="msvalidate.01" content="DF3557B334AD60DC263293F8F0967114" />
@@ -1318,10 +1319,10 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 
-User-agent: Google-Extended
+User-agent: GPTBot
 Allow: /
 
-User-agent: GPTBot
+User-agent: Google-Extended
 Allow: /
 
 User-agent: CCBot
@@ -1337,7 +1338,6 @@ User-agent: PerplexityBot
 Allow: /
 
 Sitemap: ${SITE_URL}/sitemap.xml
-Sitemap: ${SITE_URL}/sitemap-news.xml
 `;
   fs.writeFileSync(path.join(distDir, "robots.txt"), robotsTxt, "utf8");
   console.log("  ��� /robots.txt");
