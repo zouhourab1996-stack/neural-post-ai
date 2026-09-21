@@ -30,7 +30,8 @@ const categoryDescriptions: Record<string, string> = {
 };
 
 export default function Category() {
-  const { category } = useParams<{ category: string }>();
+  const { category: rawCategory } = useParams<{ category: string }>();
+  const category = rawCategory ? decodeURIComponent(rawCategory).trim() : "";
   const [page, setPage] = useState(1);
   const perPage = 9;
 
