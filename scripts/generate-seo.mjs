@@ -99,7 +99,7 @@ function html(url,title,description,body,scriptSrc,json) {
     '<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="' + esc(title) + '">' +
     '<meta name="twitter:description" content="' + esc(d) + '"><meta name="twitter:image" content="' + SITE + '/og-image.jpg">' +
     '<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="manifest" href="/manifest.json">' +
-    schemaTag + '</head><body><div id="root">' + body + '</div>' +
+    styles + schemaTag + '</head><body><div id="root">' + body + '</div>' +
     '<script type="module" crossorigin src="' + scriptSrc + '"></script></body></html>';
 }
 
@@ -114,6 +114,8 @@ fs.mkdirSync(dist,{recursive:true});
 var built = fs.readFileSync(path.join(dist,"index.html"),"utf8");
 var match = built.match(/<script[^>]*type="module"[^>]*src="([^"]+)"[^>]*><\/script>/i);
 var scriptSrc = match ? match[1] : "/assets/index.js";
+var styleLinks = Array.from(built.matchAll(/<link[^>]+rel=["']stylesheet["'][^>]+href=["']([^"']+)["'][^>]*>/gi)).map(function(m){ return m[1]; });
+var styles = styleLinks.map(function(href){ return '<link rel="stylesheet" href="' + href + '">'; }).join("");
 var articles = await getArticles();
 
 var urls = staticPages.concat(reviewPages).map(function(p){ return p[0]; });
