@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/generate-ssg.mjs",
-    "build:dev": "vite build --mode development && node scripts/generate-ssg.mjs",
+    "build": "vite build && node scripts/generate-platform.mjs",
+    "build:dev": "vite build --mode development && node scripts/generate-platform.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
