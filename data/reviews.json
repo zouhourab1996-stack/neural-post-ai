@@ -1,0 +1,16 @@
+[
+  {
+    "slug": "notion",
+    "name": "Notion",
+    "category": "B2B SaaS",
+    "tagline": "The connected workspace for modern teams.",
+    "description": "A flexible workspace that brings docs, projects, wikis, and AI together.",
+    "score": 9.4,
+    "bestFor": "Cross-functional teams",
+    "pros": ["Exceptional flexibility", "Excellent collaboration", "Powerful templates"],
+    "cons": ["Can feel overwhelming", "Advanced permissions cost more"],
+    "features": ["Docs & wikis", "Projects", "AI assistant", "Real-time collaboration"],
+    "affiliateUrl": "https://www.notion.so/product",
+    "updated": "2026-09-01"
+  }
+]
