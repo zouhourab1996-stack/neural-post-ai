@@ -1,25 +1,41 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Page Not Found – Prophetic</title>
-    <meta name="robots" content="noindex, follow">
-    <style>
-      body { margin:0; background:#050514; color:#e6e6f0; font-family: "DM Sans", system-ui, sans-serif;
-             min-height:100vh; display:flex; align-items:center; justify-content:center; text-align:center; padding:24px; }
-      h1 { font-size:2rem; margin:0 0 12px; }
-      p { color:#a1a1b5; margin:0 0 24px; }
-      a { color:#7c3aed; text-decoration:none; font-weight:600; margin:0 10px; }
-      a:hover { text-decoration:underline; }
-    </style>
-  </head>
-  <body>
-    <div>
-      <h1>404 — Page not found</h1>
-      <p>This page no longer exists or has moved.</p>
-      <a href="/">Home</a>
-      <a href="/sitemap/">All articles</a>
-    </div>
-  </body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Loading…</title>
+</head>
+<body>
+<script>
+(function () {
+  var originalUrl = location.pathname + location.search + location.hash;
+  var indexUrl = new URL('/index.html', location.origin);
+
+  function saveOriginal() {
+    try {
+      sessionStorage.setItem('spa-original-url', originalUrl);
+    } catch (_) {}
+  }
+
+  fetch(indexUrl.href, { cache: 'no-store' })
+    .then(function (response) {
+      if (!response.ok) throw new Error('index.html not found');
+      return response.text();
+    })
+    .then(function (html) {
+      if (!/<base\s/i.test(html)) {
+        html = html.replace(/<head([^>]*)>/i, '<head$1><base href="/">');
+      }
+      saveOriginal();
+      document.open();
+      document.write(html);
+      document.close();
+    })
+    .catch(function () {
+      saveOriginal();
+      location.replace(indexUrl.href);
+    });
+})();
+</script>
+</body>
 </html>
