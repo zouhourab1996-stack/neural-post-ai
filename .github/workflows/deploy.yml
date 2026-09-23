@@ -70,6 +70,27 @@ jobs:
           cp public/icon-512.png ./dist/icon-512.png || true
           cp public/og-image.jpg ./dist/og-image.jpg || true
 
+      - name: Validate SEO files before deployment
+        run: |
+          set -euo pipefail
+          test -s ./dist/sitemap.xml
+          test -s ./dist/robots.txt
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+          ET.parse("./dist/sitemap.xml")
+          root = ET.parse("./dist/sitemap.xml").getroot()
+          assert root.tag.endswith("urlset"), root.tag
+          urls = root.findall("{http://www.sitemaps.org/schemas/sitemap/0.9}url")
+          assert urls, "Sitemap contains no URLs"
+          for u in urls:
+              loc = u.find("{http://www.sitemaps.org/schemas/sitemap/0.9}loc")
+              assert loc is not None and loc.text and loc.text.startswith("https://prophetic.pw/"), loc.text if loc is not None else "missing loc"
+          print("Sitemap XML valid:", len(urls), "URLs")
+          PY
+          grep -Fq "Sitemap: https://prophetic.pw/sitemap.xml" ./dist/robots.txt
+          grep -Fq 'meta name="robots"' ./dist/index.html
+          echo "robots.txt and sitemap.xml validation passed."
+
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
 
