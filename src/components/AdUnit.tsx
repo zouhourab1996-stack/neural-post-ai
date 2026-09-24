@@ -54,7 +54,7 @@ export default function AdUnit({
         className="adsbygoogle"
         style={{ display: "block", ...style }}
         data-ad-client="ca-pub-3898992716389443"
-        data-ad-slot={slot}
+        {...(slot !== "auto" ? { "data-ad-slot": slot } : {})}
         data-ad-format={format}
         {...(layoutKey ? { "data-ad-layout-key": layoutKey } : {})}
         data-full-width-responsive={responsive ? "true" : "false"}

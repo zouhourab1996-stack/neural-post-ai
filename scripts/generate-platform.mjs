@@ -17,6 +17,9 @@ const routes = [
   "/review/wise-business",
   "/review/joiin",
   "/review/volza",
+  "/review/parallel-ai",
+  "/review/ahaslides",
+  "/review/salestarget-ai",
 ];
 const now = new Date().toISOString().slice(0, 10);
 const index = path.join(dist, "index.html");

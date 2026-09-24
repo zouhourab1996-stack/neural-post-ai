@@ -27,7 +27,10 @@ const reviewPages = [
   ["/review/hubspot/", "HubSpot Review | Prophetic", "Independent review of HubSpot's CRM, marketing, sales, and service platform."],
   ["/review/wise-business/", "Wise Business Review | Prophetic", "Independent review of Wise Business for international payments and multi-currency operations."],
   ["/review/joiin/", "Joiin Review | Prophetic", "Independent review of Joiin for financial reporting and consolidation."],
-  ["/review/volza/", "Volza Review | Prophetic", "Independent review of Volza for global trade intelligence."]
+  ["/review/volza/", "Volza Review | Prophetic", "Independent review of Volza for global trade intelligence."],
+  ["/review/parallel-ai/", "Parallel AI Review | Prophetic", "Independent review of Parallel AI for AI-powered business growth."],
+  ["/review/ahaslides/", "AhaSlides Review | Prophetic", "Independent review of AhaSlides for interactive presentations and audience engagement."],
+  ["/review/salestarget-ai/", "SalesTarget.ai Review | Prophetic", "Independent review of SalesTarget.ai for B2B outbound sales and lead intelligence."]
 ];
 
 function esc(v) {
@@ -103,7 +106,7 @@ function html(url,title,description,body,scriptSrc,json) {
     '<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="' + esc(title) + '">' +
     '<meta name="twitter:description" content="' + esc(d) + '"><meta name="twitter:image" content="' + SITE + '/og-image.jpg">' +
     '<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="manifest" href="/manifest.json">' +
-    styles + schemaTag + '</head><body><div id="root">' + body + '</div>' +
+    styles + '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3898992716389443" crossorigin="anonymous"></script>' + '<script async src="https://www.googletagmanager.com/gtag/js?id=G-1W7PC1JDKH"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){window.dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-1W7PC1JDKH");</script>' + schemaTag + '</head><body><div id="root">' + body + '</div>' +
     '<script type="module" crossorigin src="' + scriptSrc + '"></script></body></html>';
 }
 
