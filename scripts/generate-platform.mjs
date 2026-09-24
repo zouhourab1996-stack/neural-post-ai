@@ -46,7 +46,11 @@ fs.writeFileSync(
 for (const route of routes.filter(Boolean)) {
   const routeDir = path.join(dist, route.slice(1));
   fs.mkdirSync(routeDir, { recursive: true });
-  fs.copyFileSync(index, path.join(routeDir, "index.html"));
+  const routeIndex = path.join(routeDir, "index.html");
+  let routeHtml = fs.readFileSync(index, "utf8");
+  const monetizationScripts = '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3898992716389443" crossorigin="anonymous"></script><script async src="https://www.googletagmanager.com/gtag/js?id=G-1W7PC1JDKH"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){window.dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-1W7PC1JDKH");</script>';
+  routeHtml = routeHtml.replace("</head>", `${monetizationScripts}</head>`);
+  fs.writeFileSync(routeIndex, routeHtml);
 }
 
 // Keep the browser fallback for unknown routes. Known public routes above are
