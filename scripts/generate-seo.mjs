@@ -3,8 +3,8 @@ import path from "node:path";
 
 const dist = path.resolve("dist");
 const SITE = "https://prophetic.pw";
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL || "https://bltytefghazluwicnaii.supabase.co";
-const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_KEY || "sb_publishable_bA2L5OCvyK32LrvVJRM3MQ_53EIKnUn";
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
+const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_KEY;
 
 const staticPages = [
   ["/", "Prophetic — Independent Software & Business Reviews", "Clear, independent reviews of software, financial products, and digital tools for modern business."],
@@ -47,6 +47,10 @@ function markdown(text) {
 }
 
 async function getArticles() {
+  if (!SUPABASE_URL || !SUPABASE_KEY) {
+    console.warn("Supabase SEO source is not configured; generating static routes only.");
+    return [];
+  }
   var rows = [];
   for (var offset = 0; offset < 50000; offset += 1000) {
     var url = new URL("/rest/v1/articles", SUPABASE_URL);

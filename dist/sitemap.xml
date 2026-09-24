@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://prophetic.pw/</loc><lastmod>2026-09-23</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://prophetic.pw/compare</loc><lastmod>2026-09-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://prophetic.pw/about</loc><lastmod>2026-09-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://prophetic.pw/contact</loc><lastmod>2026-09-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://prophetic.pw/privacy</loc><lastmod>2026-09-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://prophetic.pw/terms</loc><lastmod>2026-09-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://prophetic.pw/disclaimer</loc><lastmod>2026-09-23</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://prophetic.pw/review/notion</loc><lastmod>2026-09-23</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://prophetic.pw/review/linear</loc><lastmod>2026-09-23</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://prophetic.pw/review/hubspot</loc><lastmod>2026-09-23</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://prophetic.pw/review/wise-business</loc><lastmod>2026-09-23</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://prophetic.pw/review/joiin</loc><lastmod>2026-09-23</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://prophetic.pw/review/volza</loc><lastmod>2026-09-23</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://prophetic.pw/</loc></url>
+  <url><loc>https://prophetic.pw/compare/</loc></url>
+  <url><loc>https://prophetic.pw/about/</loc></url>
+  <url><loc>https://prophetic.pw/contact/</loc></url>
+  <url><loc>https://prophetic.pw/privacy/</loc></url>
+  <url><loc>https://prophetic.pw/terms/</loc></url>
+  <url><loc>https://prophetic.pw/disclaimer/</loc></url>
+  <url><loc>https://prophetic.pw/editorial/</loc></url>
+  <url><loc>https://prophetic.pw/ai-policy/</loc></url>
+  <url><loc>https://prophetic.pw/sitemap/</loc></url>
+  <url><loc>https://prophetic.pw/topics/</loc></url>
+  <url><loc>https://prophetic.pw/guides/</loc></url>
+  <url><loc>https://prophetic.pw/review/notion/</loc></url>
+  <url><loc>https://prophetic.pw/review/linear/</loc></url>
+  <url><loc>https://prophetic.pw/review/hubspot/</loc></url>
+  <url><loc>https://prophetic.pw/review/wise-business/</loc></url>
+  <url><loc>https://prophetic.pw/review/joiin/</loc></url>
+  <url><loc>https://prophetic.pw/review/volza/</loc></url>
 </urlset>
