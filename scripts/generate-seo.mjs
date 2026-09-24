@@ -30,7 +30,8 @@ const reviewPages = [
   ["/review/volza/", "Volza Review | Prophetic", "Independent review of Volza for global trade intelligence."],
   ["/review/parallel-ai/", "Parallel AI Review | Prophetic", "Independent review of Parallel AI for AI-powered business growth."],
   ["/review/ahaslides/", "AhaSlides Review | Prophetic", "Independent review of AhaSlides for interactive presentations and audience engagement."],
-  ["/review/salestarget-ai/", "SalesTarget.ai Review | Prophetic", "Independent review of SalesTarget.ai for B2B outbound sales and lead intelligence."]
+  ["/review/salestarget-ai/", "SalesTarget.ai Review | Prophetic", "Independent review of SalesTarget.ai for B2B outbound sales and lead intelligence."],
+  ["/review/babylovegrowth/", "BabyLoveGrowth.ai Review | Prophetic", "Independent review of BabyLoveGrowth.ai for automated SEO content and organic growth."]
 ];
 
 function esc(v) {
