@@ -22,6 +22,7 @@ const routes = [
   "/review/salestarget-ai",
   "/review/babylovegrowth",
   "/review/woodpecker",
+  "/review/reditus",
 ];
 const now = new Date().toISOString().slice(0, 10);
 const index = path.join(dist, "index.html");
