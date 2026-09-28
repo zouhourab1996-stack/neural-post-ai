@@ -14,7 +14,8 @@ Prophetic (prophetic.pw) is an independent digital news platform delivering dail
 - Terms of Service: https://prophetic.pw/terms
 
 ## Guides
-- Saturn Return in Aries 2026–2028 (exact dates + free calculator): https://prophetic.pw/saturn-return-in-aries-2026/
+- Blog index (all long-form guides, RSS at /blog/feed.xml, machine-readable list at /blog/manifest.json): https://prophetic.pw/blog/
+- Saturn Return in Aries 2026–2028 (exact dates + free calculator): https://prophetic.pw/blog/saturn-return-in-aries-2026/
 
 ## Content Feed
 - RSS Feed: https://prophetic.pw/rss.xml
