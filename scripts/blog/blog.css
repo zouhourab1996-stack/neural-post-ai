@@ -34,7 +34,7 @@ code,kbd,pre,.mono{font-family:"DM Mono",ui-monospace,SFMono-Regular,Menlo,monos
 /* footer */
 .pb-footer{border-top:1px solid hsl(var(--border));background:hsl(var(--card));margin-top:80px}
 .pb-footgrid{display:grid;gap:40px;padding:56px 0}
-@media(min-width:640px){.pb-footgrid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:640px){.pb-footgrid{grid-template-columns:repeat(2,1fr)}}@media(min-width:960px){.pb-footgrid{grid-template-columns:1.4fr 1fr 1fr 1fr}}
 .pb-footgrid p{margin:16px 0 0;max-width:320px;font-size:14px;line-height:1.6;color:hsl(var(--muted-foreground))}
 .pb-footgrid .col{display:flex;flex-direction:column;align-items:flex-start;gap:12px;font-size:14px;color:hsl(var(--muted-foreground))}
 .pb-footgrid strong{margin-bottom:8px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:hsl(var(--foreground))}
@@ -172,3 +172,14 @@ details>summary.toggle{cursor:pointer;font-weight:700;color:#a3e635}
 @media print{.pb-header,.pb-announce,.pb-footer,.pb-share,.pb-related,.pb-prevnext,.calc button{display:none}}
 .checklist li.done:before{content:"☑"}
 .checklist li.done{text-decoration:line-through;opacity:.7}
+/* network buttons */
+.pb-network{margin:44px 0 0;padding:26px 24px;border:1px solid hsl(var(--border));border-radius:18px;background:hsl(var(--card))}
+.pb-network h2{margin:10px 0 4px;font-size:1.25rem;letter-spacing:-.02em;border:0;padding:0}
+.pb-network>p{margin:0 0 16px;font-size:14px;color:hsl(var(--muted-foreground))}
+.pb-netbtns{display:grid;gap:12px}
+@media(min-width:640px){.pb-netbtns{grid-template-columns:repeat(3,1fr)}}
+.netbtn{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border-radius:12px;border:1px solid hsl(var(--border));background:hsl(var(--background));color:hsl(var(--foreground));transition:.15s}
+.netbtn strong{font-size:14px}.netbtn span{font-size:12px;line-height:1.5;color:hsl(var(--muted-foreground))}
+.netbtn:hover{border-color:#a3e635;text-decoration:none;transform:translateY(-2px);box-shadow:var(--shadow)}
+.netbtn:hover strong{color:#a3e635}
+main.pb-container>.pb-network{margin-top:56px}

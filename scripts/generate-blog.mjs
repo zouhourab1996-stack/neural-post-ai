@@ -19,6 +19,12 @@ const BLOG_TITLE = "Prophetic Blog";
 const BLOG_DESCRIPTION = "Long-form guides, data-checked forecasts and deep dives from the Prophetic editorial team.";
 const DEFAULT_AUTHOR = "Prophetic Editorial Team";
 const DEFAULT_IMAGE = SITE + "/og-image.jpg";
+const NETWORK = [
+  { name: "Pro Reviewer", url: "https://www.pro-reviewer.cyou/", title: "Pro Reviewer — honest, in-depth product reviews", blurb: "Honest, in-depth reviews of digital and physical products." },
+  { name: "Prophetic Guidance 2026", url: "https://propheticguidance2026.blogspot.com/", title: "Prophetic Guidance 2026 — spiritual reflection and mindfulness", blurb: "Grounded spiritual reflection, mindfulness and practical ancient wisdom." },
+  { name: "BmrCalc", url: "https://www.bmrcalc.bond/", title: "BmrCalc — free BMR and daily calorie calculator", blurb: "Free BMR and daily-calorie calculator (Mifflin-St Jeor)." },
+];
+const networkBlock = () => `<aside class="pb-network" aria-label="Our other websites"><span class="eyebrow accent">Our network</span><h2>More from the people behind Prophetic</h2><p>Independent sites, same standards.</p><div class="pb-netbtns">${NETWORK.map((n) => `<a class="netbtn" href="${n.url}" target="_blank" rel="noopener" title="${esc(n.title)}"><strong>${esc(n.name)} ↗</strong><span>${esc(n.blurb)}</span></a>`).join("")}</div></aside>`;
 const POSTS_PER_PAGE = 12;
 const WORDS_PER_MINUTE = 200;
 
@@ -195,7 +201,7 @@ function loadPosts() {
     const image = meta.image ? (meta.image.startsWith("http") ? meta.image : SITE + meta.image) : DEFAULT_IMAGE;
     posts.push({
       slug, file, html, styles, ld, words,
-      title: String(meta.title), description: String(meta.description || "").slice(0, 300),
+      title: String(meta.title), seoTitle: String(meta.seoTitle || meta.title), description: String(meta.description || "").slice(0, 300),
       date: String(meta.date), updated: String(meta.updated || meta.date),
       author: String(meta.author || DEFAULT_AUTHOR),
       tags: uniq(meta.tags.map(String)), category: String(meta.category || meta.tags[0] || "Guides"),
@@ -230,6 +236,7 @@ function chrome(active) {
  <div><a href="/" class="pb-brand"><span class="pb-mark">P</span><span>prophetic<span class="dot">.</span>pw <small>/ signal</small></span></a><p>Independent research, long-form guides and data-checked forecasts.</p></div>
  <div class="col"><strong>Explore</strong><a href="/blog/">Blog</a><a href="/">Latest reviews</a><a href="/compare">Comparisons</a><a href="/blog/feed.xml">RSS feed</a></div>
  <div class="col"><strong>Company</strong><a href="/about">About Prophetic</a><a href="/contact">Contact us</a><a href="/disclaimer">Disclaimer</a><a href="/privacy">Privacy policy</a><a href="/terms">Terms</a></div>
+ <div class="col"><strong>Our network</strong>${NETWORK.map((n) => `<a href="${n.url}" target="_blank" rel="noopener" title="${esc(n.title)}">${esc(n.name)} ↗</a>`).join("")}</div>
 </div><div class="pb-container pb-footbottom"><span>© ${new Date().getUTCFullYear()} ${SITE_NAME}. Built for better decisions.</span><span>We research. You decide.</span></div></footer>${TOGGLE_SCRIPT}`,
   };
 }
@@ -307,12 +314,13 @@ function renderPost(p, all) {
 ${p.html}
  </div>
  <div class="pb-share"><span>Share:</span><a href="https://twitter.com/intent/tweet?url=${share}&text=${shareT}" rel="noopener" target="_blank">X / Twitter</a><a href="https://www.facebook.com/sharer/sharer.php?u=${share}" rel="noopener" target="_blank">Facebook</a><a href="https://www.linkedin.com/sharing/share-offsite/?url=${share}" rel="noopener" target="_blank">LinkedIn</a><a href="https://www.reddit.com/submit?url=${share}&title=${shareT}" rel="noopener" target="_blank">Reddit</a><a href="mailto:?subject=${shareT}&body=${share}">Email</a></div>
+ ${networkBlock()}
  <aside class="pb-author"><div class="av">${esc(p.author.slice(0, 1))}</div><div><strong>${esc(p.author)}</strong><p>We publish data-checked guides: every date and figure is computed or sourced, not copied. Found an error? <a href="/contact">Tell us</a> and we will fix it and credit you. Last review: ${fmtDate(p.updated)}.</p></div></aside>
  ${prev || next ? `<nav class="pb-prevnext" aria-label="More posts">${prev ? `<a href="/blog/${prev.slug}/"><span>← Older</span>${esc(prev.title)}</a>` : "<span></span>"}${next ? `<a class="next" href="/blog/${next.slug}/"><span>Newer →</span>${esc(next.title)}</a>` : ""}</nav>` : ""}
  ${related.length ? `<section class="pb-related"><h2>Related guides</h2><div class="pb-grid">${related.map((r) => card(r)).join("")}</div></section>` : ""}
  <a class="pb-back" href="/blog/">← All posts</a>
 </article></main>`;
-  return page({ title: `${p.title} | ${SITE_NAME}`, description: p.description, url: p.canonical, body, active: "blog", ld: [schema, crumbs, ...p.ld], extraCss: p.styles, image: p.image, type: "article", noindex: p.noindex, published: isoDate(p.date), modified: isoDate(p.updated), lang: p.lang });
+  return page({ title: `${p.seoTitle} | ${SITE_NAME}`, description: p.description, url: p.canonical, body, active: "blog", ld: [schema, crumbs, ...p.ld], extraCss: p.styles, image: p.image, type: "article", noindex: p.noindex, published: isoDate(p.date), modified: isoDate(p.updated), lang: p.lang });
 }
 
 function renderList_(posts, { title, heading, description, url, base, pageNo, pages, tag, allTags }) {
@@ -320,7 +328,7 @@ function renderList_(posts, { title, heading, description, url, base, pageNo, pa
   const tagBar = `<div class="pb-tags"><a class="pill${!tag ? " active" : ""}" href="/blog/">All posts</a>${allTags.map((t) => `<a class="pill${tag === t ? " active" : ""}" href="/blog/tag/${slugify(t)}/">${esc(t)}</a>`).join("")}</div>`;
   const grid = posts.length ? `<div class="pb-grid">${posts.map((p, k) => card(p, pageNo === 1 && k === 0 && !tag)).join("")}</div>` : `<p class="pb-empty">No posts yet.</p>`;
   const body = `<section class="pb-hero"><div class="pb-container"><span class="eyebrow accent">${tag ? "Topic" : "The Prophetic Blog"}</span><h1>${heading}</h1><p>${esc(description)}</p>${tagBar}</div></section>
-<main class="pb-container">${grid}${pager}</main>`;
+<main class="pb-container">${grid}${pager}${networkBlock()}</main>`;
   const ld = [{ "@context": "https://schema.org", "@type": tag ? "CollectionPage" : "Blog", "@id": tag ? url : SITE + "/blog/#blog", name: title, description, url,
     blogPost: posts.map((p) => ({ "@type": "BlogPosting", headline: p.title, url: p.url, datePublished: isoDate(p.date) })) },
     { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [ { "@type": "ListItem", position: 1, name: "Home", item: SITE + "/" }, { "@type": "ListItem", position: 2, name: "Blog", item: SITE + "/blog/" }, ...(tag ? [{ "@type": "ListItem", position: 3, name: tag, item: url }] : []) ] }];
