@@ -12,6 +12,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
+import { TRACKING_HEAD } from "./head-tags.mjs";
 
 const SITE = "https://prophetic.pw";
 const SITE_NAME = "Prophetic";
@@ -260,6 +261,7 @@ ${published ? `<meta property="article:published_time" content="${published}"><m
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@PropheticAI"><meta name="twitter:title" content="${esc(title)}"><meta name="twitter:description" content="${esc(description)}"><meta name="twitter:image" content="${esc(image)}">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="apple-touch-icon" href="/icon-192.png"><link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#0a0f1e">
+${TRACKING_HEAD}
 ${feed ? `<link rel="alternate" type="application/rss+xml" title="${BLOG_TITLE}" href="${SITE}/blog/feed.xml">` : ""}
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap">
