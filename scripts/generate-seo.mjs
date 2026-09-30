@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { TRACKING_HEAD } from "./head-tags.mjs";
 
 const dist = path.resolve("dist");
 const SITE = "https://prophetic.pw";
@@ -103,7 +104,7 @@ function html(url,title,description,body,scriptSrc,json) {
     '<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="' + esc(title) + '">' +
     '<meta name="twitter:description" content="' + esc(d) + '"><meta name="twitter:image" content="' + SITE + '/og-image.jpg">' +
     '<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="manifest" href="/manifest.json">' +
-    styles + schemaTag + '</head><body><div id="root">' + body + '</div>' +
+    TRACKING_HEAD + styles + schemaTag + '</head><body><div id="root">' + body + '</div>' +
     '<script type="module" crossorigin src="' + scriptSrc + '"></script></body></html>';
 }
 
