@@ -29,7 +29,8 @@ const reviewPages = [
   ["/review/wise-business/", "Wise Business Review | Prophetic", "Independent review of Wise Business for international payments and multi-currency operations."],
   ["/review/joiin/", "Joiin Review | Prophetic", "Independent review of Joiin for financial reporting and consolidation."],
   ["/review/volza/", "Volza Review | Prophetic", "Independent review of Volza for global trade intelligence."],
-  ["/review/mera-work/", "Mera Work Review | Prophetic", "Independent review of Mera Work (formerly Mera Monitor): live screen streaming, stealth mode, AI productivity reports and attendance tracking from $3 per user per month, with pricing versus Hubstaff, Time Doctor and Teramind."]
+  ["/review/mera-work/", "Mera Work Review | Prophetic", "Independent review of Mera Work (formerly Mera Monitor): live screen streaming, stealth mode, AI productivity reports and attendance tracking from $3 per user per month, with pricing versus Hubstaff, Time Doctor and Teramind."],
+  ["/review/involve-me/", "involve.me Review | Prophetic", "Independent review of involve.me: quiz funnels, calculators, lead scoring, AI funnel builder and email automation from $29/month with unlimited responses — current 2026 pricing versus Typeform, Paperform and Jotform."]
 ];
 
 function esc(v) {
