@@ -31,7 +31,8 @@ const reviewPages = [
   ["/review/volza/", "Volza Review | Prophetic", "Independent review of Volza for global trade intelligence."],
   ["/review/mera-work/", "Mera Work Review | Prophetic", "Independent review of Mera Work (formerly Mera Monitor): live screen streaming, stealth mode, AI productivity reports and attendance tracking from $3 per user per month, with pricing versus Hubstaff, Time Doctor and Teramind."],
   ["/review/involve-me/", "involve.me Review | Prophetic", "Independent review of involve.me: quiz funnels, calculators, lead scoring, AI funnel builder and email automation from $29/month with unlimited responses — current 2026 pricing versus Typeform, Paperform and Jotform."],
-  ["/review/pocket-option/", "Pocket Option Review | Prophetic", "Honest review of Pocket Option: a fast binary options platform with $5 deposits and payouts up to 92% — but licensed only offshore, on the CFTC RED List, and banned for retail traders in the EU, UK, Canada and Australia. The risk math explained."]
+  ["/review/pocket-option/", "Pocket Option Review | Prophetic", "Honest review of Pocket Option: a fast binary options platform with $5 deposits and payouts up to 92% — but licensed only offshore, on the CFTC RED List, and banned for retail traders in the EU, UK, Canada and Australia. The risk math explained."],
+  ["/review/convert/", "Convert.com Review | Prophetic", "Convert.com review: transparent A/B testing from $299/mo, dual stats engines, 90+ integrations, SOC 2 and HIPAA compliance — with honest limits vs VWO."]
 ];
 
 function esc(v) {
