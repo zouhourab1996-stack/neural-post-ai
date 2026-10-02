@@ -9,6 +9,8 @@ export const ADSENSE_CLIENT = "ca-pub-3898992716389443";
 export const GA_ID = "G-1W7PC1JDKH";
 
 export const TRACKING_HEAD = [
+  `<!-- Awin -->`,
+  `<meta name="awin-site-verification" content="Awin">`,
   `<meta name="google-adsense-account" content="${ADSENSE_CLIENT}">`,
   `<link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>`,
   `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}" crossorigin="anonymous"></script>`,
