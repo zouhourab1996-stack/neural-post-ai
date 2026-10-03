@@ -25,6 +25,7 @@ const NETWORK = [
   { name: "Prophetic Guidance 2026", url: "https://propheticguidance2026.blogspot.com/", title: "Prophetic Guidance 2026 — spiritual reflection and mindfulness", blurb: "Grounded spiritual reflection, mindfulness and practical ancient wisdom." },
   { name: "BmrCalc", url: "https://www.bmrcalc.bond/", title: "BmrCalc — free BMR and daily calorie calculator", blurb: "Free BMR and daily-calorie calculator (Mifflin-St Jeor)." },
   { name: "daysuntil.bond", url: "https://daysuntil.bond/", title: "daysuntil.bond — live countdowns to the events the world is waiting for", blurb: "Live countdowns: holidays, eclipses, full moons, retrogrades, gaming & sport." },
+  { name: "TrustScore", url: "https://trustscore.bond/", title: "TrustScore — honest digital product reviews with a 1-10 score", blurb: "Independent reviews: soulmate readings, numerology, astrology, manifestation." },
 ];
 const networkBlock = () => `<aside class="pb-network" aria-label="Our other websites"><span class="eyebrow accent">Our network</span><h2>More from the people behind Prophetic</h2><p>Independent sites, same standards.</p><div class="pb-netbtns">${NETWORK.map((n) => `<a class="netbtn" href="${n.url}" target="_blank" rel="noopener" title="${esc(n.title)}"><strong>${esc(n.name)} ↗</strong><span>${esc(n.blurb)}</span></a>`).join("")}</div></aside>`;
 const POSTS_PER_PAGE = 12;
