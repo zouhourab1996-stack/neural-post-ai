@@ -147,6 +147,11 @@
   ],
   "redirects": [
     {
+      "source": "/review/:slug",
+      "destination": "/review/:slug/",
+      "permanent": true
+    },
+    {
       "source": "/saturn-return-in-aries-2026",
       "destination": "/blog/saturn-return-in-aries-2026/",
       "permanent": true
@@ -161,4 +166,5 @@
       "destination": "/blog/",
       "permanent": true
     }
-  ]}
+  ]
+}
