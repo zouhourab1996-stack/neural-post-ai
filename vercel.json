@@ -190,6 +190,111 @@
       "source": "/blog",
       "destination": "/blog/",
       "permanent": true
+    },
+    {
+      "source": "/:year(\\d{4})/:month(\\d{2})",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
+      "source": "/:year(\\d{4})/:month(\\d{2})/",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
+      "source": "/:year(\\d{4})",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
+      "source": "/:year(\\d{4})/",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
+      "source": "/search/label/:label*",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
+      "source": "/search",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
+      "source": "/search/",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
+      "source": "/feeds/:path*",
+      "destination": "/blog/feed.xml",
+      "permanent": true
+    },
+    {
+      "source": "/atom.xml",
+      "destination": "/blog/feed.xml",
+      "permanent": true
+    },
+    {
+      "source": "/rss.xml",
+      "destination": "/blog/feed.xml",
+      "permanent": true
+    },
+    {
+      "source": "/p/about.html",
+      "destination": "/about/",
+      "permanent": true
+    },
+    {
+      "source": "/p/about-us.html",
+      "destination": "/about/",
+      "permanent": true
+    },
+    {
+      "source": "/p/contact.html",
+      "destination": "/contact/",
+      "permanent": true
+    },
+    {
+      "source": "/p/contact-us.html",
+      "destination": "/contact/",
+      "permanent": true
+    },
+    {
+      "source": "/p/privacy-policy.html",
+      "destination": "/privacy/",
+      "permanent": true
+    },
+    {
+      "source": "/p/privacy.html",
+      "destination": "/privacy/",
+      "permanent": true
+    },
+    {
+      "source": "/p/terms.html",
+      "destination": "/terms/",
+      "permanent": true
+    },
+    {
+      "source": "/p/terms-of-service.html",
+      "destination": "/terms/",
+      "permanent": true
+    },
+    {
+      "source": "/p/terms-and-conditions.html",
+      "destination": "/terms/",
+      "permanent": true
+    },
+    {
+      "source": "/p/disclaimer.html",
+      "destination": "/disclaimer/",
+      "permanent": true
+    },
+    {
+      "source": "/p/:slug*",
+      "destination": "/",
+      "permanent": true
     }
   ]
 }
