@@ -147,6 +147,31 @@
   ],
   "redirects": [
     {
+      "source": "/2026/09/total-solar-eclipse-august-2027-leo-century.html",
+      "destination": "https://daysuntil.bond/total-solar-eclipse-august-2027/",
+      "permanent": true
+    },
+    {
+      "source": "/2026/09/new-moon-cancer-july-2027-mercury-direct.html",
+      "destination": "https://daysuntil.bond/new-moon-july-2027/",
+      "permanent": true
+    },
+    {
+      "source": "/2026/09/mercury-retrograde-june-2027-cancer-gemini.html",
+      "destination": "https://daysuntil.bond/mercury-retrograde-june-2027/",
+      "permanent": true
+    },
+    {
+      "source": "/2026/09/flower-moon-scorpio-may-2027-rare.html",
+      "destination": "https://propheticguidance2026.blogspot.com/2026/09/flower-moon-scorpio-may-2027-rare.html",
+      "permanent": true
+    },
+    {
+      "source": "/:year(\\d{4})/:month(\\d{2})/:slug",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
       "source": "/review/:slug",
       "destination": "/review/:slug/",
       "permanent": true
