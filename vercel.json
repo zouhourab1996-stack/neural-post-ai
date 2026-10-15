@@ -295,6 +295,26 @@
       "source": "/p/:slug*",
       "destination": "/",
       "permanent": true
+    },
+    {
+      "source": "/sitemap_index.xml",
+      "destination": "/sitemap.xml",
+      "permanent": true
+    },
+    {
+      "source": "/blog/sitemap.xml",
+      "destination": "/sitemap.xml",
+      "permanent": true
+    },
+    {
+      "source": "/wp-sitemap.xml",
+      "destination": "/sitemap.xml",
+      "permanent": true
+    },
+    {
+      "source": "/sitemap1.xml",
+      "destination": "/sitemap.xml",
+      "permanent": true
     }
   ]
 }
