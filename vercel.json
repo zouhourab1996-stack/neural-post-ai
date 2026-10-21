@@ -315,6 +315,11 @@
       "source": "/sitemap1.xml",
       "destination": "/sitemap.xml",
       "permanent": true
+    },
+    {
+      "source": "/review/pocket-option",
+      "destination": "/blog/",
+      "permanent": true
     }
   ]
 }

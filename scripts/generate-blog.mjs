@@ -20,14 +20,6 @@ const BLOG_TITLE = "Prophetic Blog";
 const BLOG_DESCRIPTION = "Long-form guides, data-checked forecasts and deep dives from the Prophetic editorial team.";
 const DEFAULT_AUTHOR = "Prophetic Editorial Team";
 const DEFAULT_IMAGE = SITE + "/og-image.jpg";
-const NETWORK = [
-  { name: "Pro Reviewer", url: "https://www.pro-reviewer.cyou/", title: "Pro Reviewer — honest, in-depth product reviews", blurb: "Honest, in-depth reviews of digital and physical products." },
-  { name: "Prophetic Guidance 2026", url: "https://propheticguidance2026.blogspot.com/", title: "Prophetic Guidance 2026 — spiritual reflection and mindfulness", blurb: "Grounded spiritual reflection, mindfulness and practical ancient wisdom." },
-  { name: "BmrCalc", url: "https://www.bmrcalc.bond/", title: "BmrCalc — free BMR and daily calorie calculator", blurb: "Free BMR and daily-calorie calculator (Mifflin-St Jeor)." },
-  { name: "daysuntil.bond", url: "https://daysuntil.bond/", title: "daysuntil.bond — live countdowns to the events the world is waiting for", blurb: "Live countdowns: holidays, eclipses, full moons, retrogrades, gaming & sport." },
-  { name: "TrustScore", url: "https://trustscore.bond/", title: "TrustScore — honest digital product reviews with a 1-10 score", blurb: "Independent reviews: soulmate readings, numerology, astrology, manifestation." },
-];
-const networkBlock = () => `<aside class="pb-network" aria-label="Our other websites"><span class="eyebrow accent">Our network</span><h2>More from the people behind Prophetic</h2><p>Independent sites, same standards.</p><div class="pb-netbtns">${NETWORK.map((n) => `<a class="netbtn" href="${n.url}" target="_blank" rel="noopener" title="${esc(n.title)}"><strong>${esc(n.name)} ↗</strong><span>${esc(n.blurb)}</span></a>`).join("")}</div></aside>`;
 const POSTS_PER_PAGE = 12;
 const WORDS_PER_MINUTE = 200;
 
@@ -236,10 +228,9 @@ function chrome(active) {
  <div class="pb-actions"><a href="/blog/feed.xml" class="pb-iconbtn" aria-label="RSS feed" title="RSS feed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg></a><button id="pb-theme" class="pb-iconbtn" aria-label="Toggle theme" type="button">${SUN}${MOON}</button></div>
 </div></header>`,
     footer: `<footer class="pb-footer"><div class="pb-container pb-footgrid">
- <div><a href="/" class="pb-brand"><span class="pb-mark">P</span><span>prophetic<span class="dot">.</span>pw <small>/ signal</small></span></a><p>Independent research, long-form guides and data-checked forecasts.</p></div>
- <div class="col"><strong>Explore</strong><a href="/blog/">Blog</a><a href="/">Latest reviews</a><a href="/compare">Comparisons</a><a href="/blog/feed.xml">RSS feed</a></div>
+ <div><a href="/" class="pb-brand"><span class="pb-mark">P</span><span>prophetic<span class="dot">.</span>pw <small>/ signal</small></span></a><p>Astrology guides with dates computed to the minute.</p></div>
+ <div class="col"><strong>Explore</strong><a href="/blog/">All guides</a><a href="/about">About Prophetic</a><a href="/editorial">Editorial policy</a><a href="/blog/feed.xml">RSS feed</a></div>
  <div class="col"><strong>Company</strong><a href="/about">About Prophetic</a><a href="/contact">Contact us</a><a href="/disclaimer">Disclaimer</a><a href="/privacy">Privacy policy</a><a href="/terms">Terms</a></div>
- <div class="col"><strong>Our network</strong>${NETWORK.map((n) => `<a href="${n.url}" target="_blank" rel="noopener" title="${esc(n.title)}">${esc(n.name)} ↗</a>`).join("")}</div>
 </div><div class="pb-container pb-footbottom"><span>© ${new Date().getUTCFullYear()} ${SITE_NAME}. Built for better decisions.</span><span>We research. You decide.</span></div></footer>${TOGGLE_SCRIPT}`,
   };
 }
@@ -318,7 +309,6 @@ function renderPost(p, all) {
 ${p.html}
  </div>
  <div class="pb-share"><span>Share:</span><a href="https://twitter.com/intent/tweet?url=${share}&text=${shareT}" rel="noopener" target="_blank">X / Twitter</a><a href="https://www.facebook.com/sharer/sharer.php?u=${share}" rel="noopener" target="_blank">Facebook</a><a href="https://www.linkedin.com/sharing/share-offsite/?url=${share}" rel="noopener" target="_blank">LinkedIn</a><a href="https://www.reddit.com/submit?url=${share}&title=${shareT}" rel="noopener" target="_blank">Reddit</a><a href="mailto:?subject=${shareT}&body=${share}">Email</a></div>
- ${networkBlock()}
  <aside class="pb-author"><div class="av">${esc(p.author.slice(0, 1))}</div><div><strong>${esc(p.author)}</strong><p>We publish data-checked guides: every date and figure is computed or sourced, not copied. Found an error? <a href="/contact">Tell us</a> and we will fix it and credit you. Last review: ${fmtDate(p.updated)}.</p></div></aside>
  ${prev || next ? `<nav class="pb-prevnext" aria-label="More posts">${prev ? `<a href="/blog/${prev.slug}/"><span>← Older</span>${esc(prev.title)}</a>` : "<span></span>"}${next ? `<a class="next" href="/blog/${next.slug}/"><span>Newer →</span>${esc(next.title)}</a>` : ""}</nav>` : ""}
  ${related.length ? `<section class="pb-related"><h2>Related guides</h2><div class="pb-grid">${related.map((r) => card(r)).join("")}</div></section>` : ""}
@@ -327,16 +317,16 @@ ${p.html}
   return page({ title: `${p.seoTitle} | ${SITE_NAME}`, description: p.description, url: p.canonical, body, active: "blog", ld: [schema, crumbs, ...p.ld], extraCss: p.styles, image: p.image, type: "article", noindex: p.noindex, published: isoDate(p.date), modified: isoDate(p.updated), lang: p.lang });
 }
 
-function renderList_(posts, { title, heading, description, url, base, pageNo, pages, tag, allTags }) {
+function renderList_(posts, { title, heading, description, url, base, pageNo, pages, tag, allTags, noindex: tagNoindex = false }) {
   const pager = pages > 1 ? `<nav class="pb-pager" aria-label="Pagination">${Array.from({ length: pages }, (_, k) => k + 1).map((n) => n === pageNo ? `<span class="current">${n}</span>` : `<a href="${n === 1 ? base : `${base}page/${n}/`}">${n}</a>`).join("")}</nav>` : "";
   const tagBar = `<div class="pb-tags"><a class="pill${!tag ? " active" : ""}" href="/blog/">All posts</a>${allTags.map((t) => `<a class="pill${tag === t ? " active" : ""}" href="/blog/tag/${slugify(t)}/">${esc(t)}</a>`).join("")}</div>`;
   const grid = posts.length ? `<div class="pb-grid">${posts.map((p, k) => card(p, pageNo === 1 && k === 0 && !tag)).join("")}</div>` : `<p class="pb-empty">No posts yet.</p>`;
   const body = `<section class="pb-hero"><div class="pb-container"><span class="eyebrow accent">${tag ? "Topic" : "The Prophetic Blog"}</span><h1>${heading}</h1><p>${esc(description)}</p>${tagBar}</div></section>
-<main class="pb-container">${grid}${pager}${networkBlock()}</main>`;
+<main class="pb-container">${grid}${pager}</main>`;
   const ld = [{ "@context": "https://schema.org", "@type": tag ? "CollectionPage" : "Blog", "@id": tag ? url : SITE + "/blog/#blog", name: title, description, url,
     blogPost: posts.map((p) => ({ "@type": "BlogPosting", headline: p.title, url: p.url, datePublished: isoDate(p.date) })) },
     { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [ { "@type": "ListItem", position: 1, name: "Home", item: SITE + "/" }, { "@type": "ListItem", position: 2, name: "Blog", item: SITE + "/blog/" }, ...(tag ? [{ "@type": "ListItem", position: 3, name: tag, item: url }] : []) ] }];
-  return page({ title, description, url, body, active: "blog", ld, noindex: pageNo > 1 });
+  return page({ title, description, url, body, active: "blog", ld, noindex: pageNo > 1 || tagNoindex });
 }
 
 function renderFeed(posts) {
@@ -377,15 +367,19 @@ for (let n = 1; n <= pages; n++) {
   const url = n === 1 ? `${SITE}/blog/` : `${SITE}/blog/page/${n}/`;
   writeFile(rel, renderList_(slice, { title: n === 1 ? `${BLOG_TITLE} — Guides, Forecasts & Deep Dives` : `${BLOG_TITLE} — Page ${n}`, heading: `Guides, forecasts<br><em>and deep dives.</em>`, description: BLOG_DESCRIPTION, url, base: "/blog/", pageNo: n, pages, tag: null, allTags }));
 }
+// Thin-content guard: a tag archive with only one or two posts is a doorway page,
+// not a useful hub. Those are kept reachable (and followed) but kept out of the index.
+const MIN_TAG_POSTS = 3;
+const isThinTag = (t) => posts.filter((p) => p.tags.includes(t)).length < MIN_TAG_POSTS;
 allTags.forEach((t) => {
   const slice = posts.filter((p) => p.tags.includes(t));
-  writeFile(`blog/tag/${slugify(t)}/index.html`, renderList_(slice, { title: `${t} — ${BLOG_TITLE}`, heading: `${esc(t)}`, description: `${slice.length} post${slice.length === 1 ? "" : "s"} about ${t} from the Prophetic editorial team.`, url: `${SITE}/blog/tag/${slugify(t)}/`, base: `/blog/tag/${slugify(t)}/`, pageNo: 1, pages: 1, tag: t, allTags }));
+  writeFile(`blog/tag/${slugify(t)}/index.html`, renderList_(slice, { title: `${t} — ${BLOG_TITLE}`, heading: `${esc(t)}`, description: `${slice.length} post${slice.length === 1 ? "" : "s"} about ${t} from the Prophetic editorial team.`, url: `${SITE}/blog/tag/${slugify(t)}/`, base: `/blog/tag/${slugify(t)}/`, pageNo: 1, pages: 1, tag: t, allTags, noindex: isThinTag(t) }));
 });
 writeFile("blog/feed.xml", renderFeed(posts));
 writeFile("blog/manifest.json", JSON.stringify({
   generatedAt: new Date().toISOString(),
   index: `${SITE}/blog/`,
-  tags: allTags.map((t) => ({ name: t, url: `${SITE}/blog/tag/${slugify(t)}/`, count: posts.filter((p) => p.tags.includes(t)).length })),
+  tags: allTags.map((t) => ({ name: t, url: `${SITE}/blog/tag/${slugify(t)}/`, count: posts.filter((p) => p.tags.includes(t)).length, thin: isThinTag(t) })),
   pages: Array.from({ length: pages }, (_, k) => k === 0 ? `${SITE}/blog/` : `${SITE}/blog/page/${k + 1}/`),
   posts: posts.map((p) => ({ slug: p.slug, url: p.url, title: p.title, description: p.description, date: p.date, updated: p.updated, tags: p.tags, category: p.category, readingTime: p.readingTime, image: p.image })),
 }, null, 2));
