@@ -42,6 +42,7 @@ export default function About() {
         <h2>Fixed in place, in public.</h2>
         <p>Some guides carry affiliate links, always labelled at the point of the link and marked with <code>rel="sponsored"</code>. They fund the site. They never change a date, a price we quote, or a conclusion, and no seller has ever paid for coverage.</p>
         <p>Errors are corrected in the article they affect, with the correction noted on the page and the date of the change — not quietly replaced. Read the full <Link to="/editorial">editorial policy</Link> and the <Link to="/ai-policy">AI content policy</Link>.</p>
+        <p>Every guide is edited and signed off by <Link to="/author/hedi-touati">Hedi Touati</Link>, the founder and editor, who computes the dates and owns the corrections.</p>
       </div>
     </section>
 

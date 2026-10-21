@@ -147,6 +147,106 @@
   ],
   "redirects": [
     {
+      "source": "/review/joiin",
+      "destination": "https://trustscore.bond/reviews/joiin-review/",
+      "permanent": true
+    },
+    {
+      "source": "/review/joiin/",
+      "destination": "https://trustscore.bond/reviews/joiin-review/",
+      "permanent": true
+    },
+    {
+      "source": "/review/volza",
+      "destination": "https://trustscore.bond/reviews/volza-review/",
+      "permanent": true
+    },
+    {
+      "source": "/review/volza/",
+      "destination": "https://trustscore.bond/reviews/volza-review/",
+      "permanent": true
+    },
+    {
+      "source": "/review/involve-me",
+      "destination": "https://trustscore.bond/reviews/involveme-review/",
+      "permanent": true
+    },
+    {
+      "source": "/review/involve-me/",
+      "destination": "https://trustscore.bond/reviews/involveme-review/",
+      "permanent": true
+    },
+    {
+      "source": "/review/convert",
+      "destination": "https://trustscore.bond/reviews/convert-review/",
+      "permanent": true
+    },
+    {
+      "source": "/review/convert/",
+      "destination": "https://trustscore.bond/reviews/convert-review/",
+      "permanent": true
+    },
+    {
+      "source": "/review/mera-work",
+      "destination": "https://trustscore.bond/reviews/mera-review/",
+      "permanent": true
+    },
+    {
+      "source": "/review/mera-work/",
+      "destination": "https://trustscore.bond/reviews/mera-review/",
+      "permanent": true
+    },
+    {
+      "source": "/review/notion",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
+      "source": "/review/notion/",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
+      "source": "/review/linear",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
+      "source": "/review/linear/",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
+      "source": "/review/hubspot",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
+      "source": "/review/hubspot/",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
+      "source": "/review/wise-business",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
+      "source": "/review/wise-business/",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
+      "source": "/review/pocket-option",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
+      "source": "/review/pocket-option/",
+      "destination": "/blog/",
+      "permanent": true
+    },
+    {
       "source": "/2026/09/total-solar-eclipse-august-2027-leo-century.html",
       "destination": "https://daysuntil.bond/total-solar-eclipse-august-2027/",
       "permanent": true
@@ -314,11 +414,6 @@
     {
       "source": "/sitemap1.xml",
       "destination": "/sitemap.xml",
-      "permanent": true
-    },
-    {
-      "source": "/review/pocket-option",
-      "destination": "/blog/",
       "permanent": true
     }
   ]

@@ -31,6 +31,12 @@ export default function Editorial() {
 
     <section className="about-grid">
       <div>
+        <span className="eyebrow">WHO IS ACCOUNTABLE</span>
+        <h2>Edited by Hedi Touati.</h2>
+        <p>Every guide on Prophetic is edited and signed off by <Link to="/author/hedi-touati">Hedi Touati</Link>, the site's founder and editor. He computes the dates from ephemeris data, checks the prices quoted in the service guides against each seller's own terms, and owns the corrections. No article is published unreviewed, and no byline on this site is a pseudonym or a generated persona.</p>
+        <p>That accountability is the reason each guide carries the date it was last checked. If a figure is wrong, the person who published it is named on the page.</p>
+      </div>
+      <div>
         <span className="eyebrow">CORRECTIONS</span>
         <h2>Errors are fixed in place.</h2>
         <p>When a date, a price or a claim is wrong, we correct the article rather than quietly publishing a replacement. The correction is noted at the foot of the article it affects, with the date of the change, so the public record stays intact.</p>

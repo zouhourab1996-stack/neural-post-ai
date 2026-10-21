@@ -19,7 +19,8 @@ const staticPages = [
   ["/ai-policy/", "AI Content Policy | Prophetic", "How Prophetic uses AI-assisted tools in research and content production."],
   ["/sitemap/", "HTML Sitemap | Prophetic", "Browse public pages and articles published by Prophetic."],
   ["/topics/", "Topics | Prophetic", "Browse Prophetic topics across AI, technology, business, science, and world news."],
-  ["/guides/", "Guides | Prophetic", "Browse practical guides and explainers from Prophetic."]
+  ["/guides/", "Guides | Prophetic", "Browse practical guides and explainers from Prophetic."],
+  ["/author/hedi-touati/", "Hedi Touati — Founder & Editor of Prophetic", "Hedi Touati is the founder and editor of Prophetic: he computes the site's astrology dates from ephemeris data and edits every guide before publication."]
 ];
 
 const reviewPages = [
@@ -86,7 +87,7 @@ function schema(article) {
     "description":article.meta_description,
     "datePublished":article.created_at,
     "dateModified":article.updated_at || article.created_at,
-    "author":{"@type":"Organization","name":"Prophetic Editorial Team"},
+    "author":{"@type":"Person","@id":SITE + "/author/hedi-touati/#person","name":"Hedi Touati","url":SITE + "/author/hedi-touati/","jobTitle":"Founder & Editor"},
     "publisher":{"@type":"Organization","name":"Prophetic","url":SITE,"logo":{"@type":"ImageObject","url":SITE + "/logo.svg"}},
     "mainEntityOfPage":{"@type":"WebPage","@id":url},
     "url":url,
@@ -103,7 +104,7 @@ function html(url,title,description,body,scriptSrc,json,robots) {
     '<title>' + esc(title) + '</title>' +
     '<meta name="description" content="' + esc(d) + '">' +
     '<meta name="robots" content="' + (robots || "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1") + '">' +
-    '<meta name="author" content="Prophetic Editorial Team">' +
+    '<meta name="author" content="Hedi Touati">' +
     '<link rel="canonical" href="' + url + '">' +
     '<link rel="alternate" hreflang="en" href="' + url + '">' +
     '<link rel="alternate" hreflang="x-default" href="' + url + '">' +
@@ -177,6 +178,11 @@ var PAGE_INTRO = {
  "/privacy/": '<p>Prophetic is a static website: no accounts, no comment forms, minimal analytics. This page describes exactly what little data is collected and by whom.</p>',
  "/terms/": '<p>The plain-language terms that apply when you use prophetic.pw.</p>',
  "/disclaimer/": '<p>Astrology is a symbolic, reflective practice — not a prediction engine and not professional advice. Our reviews contain affiliate links, disclosed at the point of the link. This page details both.</p>',
+ "/author/hedi-touati/": '<p>Hedi Touati is the founder and editor of Prophetic. He is responsible for every guide published here: computing the astrology dates from ephemeris data, checking the prices quoted in the service guides against sellers’ own terms, and editing each piece before it goes live.</p>'
+   + '<h2>What he does here</h2><p>Retrograde stations, eclipses, moon phases and meteor-shower peaks are calculated rather than copied, which is why Prophetic’s times sometimes differ by a few hours from other astrology sites. Each guide carries the date it was last checked, and corrections are made in place rather than quietly replaced.</p>'
+   + '<h2>Background</h2><p>Prophetic began as a set of private notes on retrograde dates — the kind of table you build when you are tired of websites that disagree with each other by a day. It is now a public reference for people who want to check the sky for themselves: what is happening, when exactly, and what it means for a chart.</p>'
+   + '<h2>Standards and independence</h2><p>Some guides carry affiliate links, disclosed at the point of the link. They fund the site and never change a date, a quoted price or a conclusion. Corrections are published on the article they affect, with the date of the change. The full standards are in the <a href="/editorial/">editorial policy</a>.</p>'
+   + '<h2>Contact</h2><p>Corrections, questions and pitches: <a href="mailto:anistouati74@gmail.com">anistouati74@gmail.com</a>. Everything is read, and verified corrections are published with the next update of the article.</p>',
  "/review/notion/": '<p>Notion remains the most flexible all-in-one workspace, and the one most teams adopt enthusiastically and then drown in. Our review covers where it genuinely shines — docs, wikis, linked databases — and where it costs you: speed at scale, the mobile app, and per-seat pricing that compounds.</p>',
  "/review/linear/": '<p>Linear is the issue tracker that product and engineering teams actually enjoy using — opinionated, fast, and built around cycles rather than ticket churn. Our review covers where that opinionation helps and where it fights your process.</p>',
  "/review/hubspot/": '<p>HubSpot bundles CRM, marketing, sales and service hubs into one platform — powerful, and priced accordingly. Our review covers which hubs earn their cost, where the free tier is genuinely usable, and where the pricing staircase bites.</p>',
@@ -220,6 +226,15 @@ fs.writeFileSync(path.join(dist,"sitemap.xml"),
 fs.writeFileSync(path.join(dist,"robots.txt"),
   "User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: " + SITE + "/sitemap.xml\n","utf8");
 
+var AUTHOR_SCHEMA = {
+  "@context":"https://schema.org","@type":"Person","@id":SITE + "/author/hedi-touati/#person",
+  name:"Hedi Touati", url:SITE + "/author/hedi-touati/", jobTitle:"Founder & Editor",
+  description:"Founder and editor of Prophetic. Computes the site\u2019s astrology dates from ephemeris data and edits every guide before publication.",
+  worksFor:{"@type":"Organization","name":"Prophetic","url":SITE + "/"},
+  knowsAbout:["Astrology","Birth charts","Planetary transits","Retrograde motion","Moon phases"],
+  email:"mailto:anistouati74@gmail.com"
+};
+
 staticPages.concat(reviewPages).forEach(function(p){
   var heading = p[1].replace(" | Prophetic","").replace("Prophetic — ","");
   var body;
@@ -233,7 +248,8 @@ staticPages.concat(reviewPages).forEach(function(p){
          + "<h3>Explore</h3>"+EXPLORE_LIST
          + "</section></main>";
   }
-  writeRoute(p[0],html(SITE+p[0],p[1],p[2],body,scriptSrc,null,
+  writeRoute(p[0],html(SITE+p[0],p[1],p[2],body,scriptSrc,
+    p[0] === "/author/hedi-touati/" ? AUTHOR_SCHEMA : null,
     isNoindex(p[0]) ? "noindex,follow" : null));
 });
 

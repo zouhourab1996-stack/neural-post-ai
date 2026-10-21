@@ -17,8 +17,22 @@ import { TRACKING_HEAD } from "./head-tags.mjs";
 const SITE = "https://prophetic.pw";
 const SITE_NAME = "Prophetic";
 const BLOG_TITLE = "Prophetic Blog";
-const BLOG_DESCRIPTION = "Long-form guides, data-checked forecasts and deep dives from the Prophetic editorial team.";
-const DEFAULT_AUTHOR = "Prophetic Editorial Team";
+const BLOG_DESCRIPTION = "Long-form astrology guides with dates computed to the minute — retrogrades, moon phases and chart explainers — edited by Hedi Touati.";
+const DEFAULT_AUTHOR = "Hedi Touati";
+const AUTHOR_SLUG = "/author/hedi-touati/";
+const AUTHOR_TITLE = "Founder & Editor";
+const AUTHOR_BIO = "Hedi Touati is the founder and editor of Prophetic. He computes the site's astrology dates from ephemeris data rather than copying them, and edits every guide before it is published.";
+// E-E-A-T: a named, linkable Person author, not an unnamed editorial team.
+const AUTHOR_PERSON = {
+  "@type": "Person",
+  "@id": SITE + AUTHOR_SLUG + "#person",
+  name: DEFAULT_AUTHOR,
+  url: SITE + AUTHOR_SLUG,
+  jobTitle: AUTHOR_TITLE,
+  description: AUTHOR_BIO,
+  worksFor: { "@type": "Organization", name: SITE_NAME, url: SITE + "/" },
+  knowsAbout: ["Astrology", "Birth charts", "Planetary transits", "Retrograde motion", "Moon phases", "Numerology"],
+};
 const DEFAULT_IMAGE = SITE + "/og-image.jpg";
 const POSTS_PER_PAGE = 12;
 const WORDS_PER_MINUTE = 200;
@@ -285,7 +299,7 @@ function renderPost(p, all) {
     "@context": "https://schema.org", "@type": "BlogPosting",
     headline: p.title, description: p.description, image: [p.image],
     datePublished: isoDate(p.date), dateModified: isoDate(p.updated),
-    author: { "@type": "Organization", name: p.author, url: SITE + "/about/" },
+    author: AUTHOR_PERSON,
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE, logo: { "@type": "ImageObject", url: SITE + "/logo.svg" } },
     mainEntityOfPage: { "@type": "WebPage", "@id": p.url }, url: p.url,
     articleSection: p.category, keywords: p.tags.join(", "), wordCount: p.words, inLanguage: p.lang === "en" ? "en-US" : p.lang,
@@ -302,14 +316,14 @@ function renderPost(p, all) {
   <div>${p.tags.map((t) => `<a class="kicker" href="/blog/tag/${slugify(t)}/" style="margin:0 6px 6px 0">${esc(t)}</a>`).join("")}</div>
   <h1>${esc(p.title)}</h1>
   <p class="pb-lede">${esc(p.description)}</p>
-  <div class="pb-meta"><span><span class="av">${esc(p.author.slice(0, 1))}</span>${esc(p.author)}</span><span>Published <time datetime="${isoDate(p.date)}">${fmtDate(p.date)}</time></span>${p.updated !== p.date ? `<span>Updated <time datetime="${isoDate(p.updated)}">${fmtDate(p.updated)}</time></span>` : ""}<span>${p.readingTime} min read</span><span>${p.words.toLocaleString("en-US")} words</span></div>
+  <div class="pb-meta"><span><span class="av">${esc(p.author.slice(0, 1))}</span><a rel="author" href="${AUTHOR_SLUG}">${esc(p.author)}</a></span><span>Published <time datetime="${isoDate(p.date)}">${fmtDate(p.date)}</time></span>${p.updated !== p.date ? `<span>Updated <time datetime="${isoDate(p.updated)}">${fmtDate(p.updated)}</time></span>` : ""}<span>${p.readingTime} min read</span><span>${p.words.toLocaleString("en-US")} words</span></div>
   ${p.showImage ? `<figure class="pb-hero-img"><img src="${esc(p.image)}" alt="${esc(p.imageAlt)}" loading="eager" fetchpriority="high"></figure>` : ""}
  </header>
  <div class="pb-body">
 ${p.html}
  </div>
  <div class="pb-share"><span>Share:</span><a href="https://twitter.com/intent/tweet?url=${share}&text=${shareT}" rel="noopener" target="_blank">X / Twitter</a><a href="https://www.facebook.com/sharer/sharer.php?u=${share}" rel="noopener" target="_blank">Facebook</a><a href="https://www.linkedin.com/sharing/share-offsite/?url=${share}" rel="noopener" target="_blank">LinkedIn</a><a href="https://www.reddit.com/submit?url=${share}&title=${shareT}" rel="noopener" target="_blank">Reddit</a><a href="mailto:?subject=${shareT}&body=${share}">Email</a></div>
- <aside class="pb-author"><div class="av">${esc(p.author.slice(0, 1))}</div><div><strong>${esc(p.author)}</strong><p>We publish data-checked guides: every date and figure is computed or sourced, not copied. Found an error? <a href="/contact">Tell us</a> and we will fix it and credit you. Last review: ${fmtDate(p.updated)}.</p></div></aside>
+ <aside class="pb-author"><div class="av">${esc(p.author.slice(0, 1))}</div><div><strong><a rel="author" href="${AUTHOR_SLUG}">${esc(p.author)}</a></strong><span class="pb-author-role">${esc(AUTHOR_TITLE)}</span><p>${esc(AUTHOR_BIO)} Every date on this page is computed from ephemeris data and every price is checked against the seller's own terms. Found an error? <a href="/contact">Tell us</a> and we will correct it in place, with the correction noted. Last review: ${fmtDate(p.updated)}.</p></div></aside>
  ${prev || next ? `<nav class="pb-prevnext" aria-label="More posts">${prev ? `<a href="/blog/${prev.slug}/"><span>← Older</span>${esc(prev.title)}</a>` : "<span></span>"}${next ? `<a class="next" href="/blog/${next.slug}/"><span>Newer →</span>${esc(next.title)}</a>` : ""}</nav>` : ""}
  ${related.length ? `<section class="pb-related"><h2>Related guides</h2><div class="pb-grid">${related.map((r) => card(r)).join("")}</div></section>` : ""}
  <a class="pb-back" href="/blog/">← All posts</a>
