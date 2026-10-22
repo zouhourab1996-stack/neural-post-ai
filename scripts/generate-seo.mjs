@@ -196,17 +196,22 @@ var PAGE_INTRO = {
 
 var indexable = staticPages.concat(reviewPages).filter(function(p){ return !isNoindex(p[0]); });
 var urls = indexable.map(function(p){ return p[0]; });
+// تاريخ البناء = آخر تعديل حقيقي للصفحات الثابتة (تُعاد توليدها مع كل نشر)
+var buildDay = new Date().toISOString().slice(0,10);
+var dayOnly  = function(d){ return String(d).slice(0,10); };
 var sitemapEntries = indexable.map(function(p){
-  return "  <url><loc>" + SITE + p[0] + "</loc></url>";
+  var pri = (p[0] === "/") ? "1.0" : "0.6";
+  return "  <url><loc>" + SITE + p[0] + "</loc><lastmod>" + buildDay +
+         "</lastmod><changefreq>weekly</changefreq><priority>" + pri + "</priority></url>";
 });
 if (blog.posts.length) {
-  var blogLastmod = blog.posts.map(function(p){ return p.updated || p.date; }).sort().pop();
+  var blogLastmod = dayOnly(blog.posts.map(function(p){ return p.updated || p.date; }).sort().pop());
   urls.push("/blog/");
   sitemapEntries.push("  <url><loc>" + SITE + "/blog/</loc><lastmod>" + blogLastmod + "</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>");
   blog.posts.forEach(function(p){
     var loc = p.url.replace(SITE, "");
     urls.push(loc);
-    sitemapEntries.push("  <url><loc>" + SITE + loc + "</loc><lastmod>" + (p.updated || p.date) + "</lastmod><priority>0.8</priority></url>");
+    sitemapEntries.push("  <url><loc>" + SITE + loc + "</loc><lastmod>" + dayOnly(p.updated || p.date) + "</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>");
   });
   blog.tags.filter(function(t){ return !t.thin; }).forEach(function(t){
     var loc = t.url.replace(SITE, "");
@@ -216,7 +221,7 @@ if (blog.posts.length) {
 }
 articles.forEach(function(a){
   urls.push("/article/" + a.slug + "/");
-  sitemapEntries.push("  <url><loc>" + SITE + "/article/" + a.slug + "/</loc><lastmod>" + new Date(a.updated_at || a.created_at).toISOString() + "</lastmod></url>");
+  sitemapEntries.push("  <url><loc>" + SITE + "/article/" + a.slug + "/</loc><lastmod>" + dayOnly(a.updated_at || a.created_at) + "</lastmod></url>");
 });
 
 fs.writeFileSync(path.join(dist,"sitemap.xml"),
