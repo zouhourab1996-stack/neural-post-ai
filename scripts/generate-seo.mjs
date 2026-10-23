@@ -148,7 +148,7 @@ function postsList(withDesc) {
   }).join('') + '</ul>';
 }
 var EXPLORE_LIST = '<ul>' + [
-  ['/blog/','All astrology articles'], ['/about/','About Prophetic'], ['/editorial/','Editorial policy'],
+  ['/blog/','All astrology articles'], ['/tools/mercury-retrograde/','Mercury retrograde calculator'], ['/about/','About Prophetic'], ['/editorial/','Editorial policy'],
   ['/ai-policy/','AI content policy'], ['/contact/','Contact'], ['/sitemap/','HTML sitemap']
 ].map(function(x){ return '<li><a href="' + x[0] + '">' + x[1] + '</a></li>'; }).join('') + '</ul>';
 var HOMEPAGE_BODY = '<main>'
@@ -156,6 +156,7 @@ var HOMEPAGE_BODY = '<main>'
  + '<p>Prophetic publishes astrology guides with their dates computed to the minute — retrogrades and their shadow periods, eclipses, moon phases, meteor showers and portals — alongside plain-language explainers for reading your own chart, and honest cost guides for readings and spiritual services. No filler: every guide is dated, sourced, and updated when the sky changes.</p>'
  + '<section><h2>Latest astrology guides</h2>' + postsList(true) + '</section>'
  + '<section><h2>Free calculators and tools</h2><ul>'
+ + '<li><a href="/tools/mercury-retrograde/">Mercury Retrograde Calculator</a> — live status right now, any date through 2028, and every shadow window. Stations computed from JPL ephemeris data, not copied from a list.</li>'
  + '<li><a href="/blog/mercury-retrograde-2026/">Mercury retrograde chart checker</a> — find out whether you were born with Mercury retrograde and whether the 2026 stations touch your chart.</li>'
  + '<li><a href="/blog/venus-retrograde-2026/">Venus retrograde calculator</a> — check any birth chart against the 2026 Venus stations.</li>'
  + '<li><a href="/blog/jupiter-retrograde-2026/">Jupiter retrograde guide</a> — the quiet background review running underneath the 2026 retrograde season.</li>'

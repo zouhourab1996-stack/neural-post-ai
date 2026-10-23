@@ -42,6 +42,13 @@ const contentDir = path.join(root, "content", "blog");
 const dist = path.join(root, "dist");
 const blogDist = path.join(dist, "blog");
 const themeCss = fs.readFileSync(path.join(root, "scripts", "blog", "blog.css"), "utf8");
+const TOOL_PROMO_CSS = `
+.pb-toolpromo{border:1px solid hsl(var(--border));border-radius:16px;background:hsl(var(--card));padding:22px 24px;margin-top:26px;max-width:720px}
+.pb-toolpromo h2{margin:8px 0 8px;font-size:22px}
+.pb-toolpromo p{margin:0 0 14px;color:hsl(var(--muted-foreground));font-size:15px;line-height:1.65}
+.pb-toolbtn{display:inline-block;padding:10px 18px;border-radius:10px;background:hsl(var(--primary));color:hsl(var(--primary-foreground));font-weight:600;font-size:14px;text-decoration:none}
+@media(max-width:640px){.pb-toolpromo{padding:18px}}
+`;
 
 // ------------------------------------------------------------------ helpers
 const esc = (v) => String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
@@ -331,16 +338,18 @@ ${p.html}
   return page({ title: `${p.seoTitle} | ${SITE_NAME}`, description: p.description, url: p.canonical, body, active: "blog", ld: [schema, crumbs, ...p.ld], extraCss: p.styles, image: p.image, type: "article", noindex: p.noindex, published: isoDate(p.date), modified: isoDate(p.updated), lang: p.lang });
 }
 
+const TOOL_PROMO = `<div class="pb-toolpromo"><span class="eyebrow accent">Free tool</span><h2>Mercury Retrograde Calculator</h2><p>Find out whether Mercury is retrograde right now, on any date through 2028, or inside a shadow period. Every station is computed from JPL ephemeris data rather than copied from a list — the shadow dates on this site match to the day.</p><a class="pb-toolbtn" href="/tools/mercury-retrograde/">Open the calculator →</a></div>`;
+
 function renderList_(posts, { title, heading, description, url, base, pageNo, pages, tag, allTags, noindex: tagNoindex = false }) {
   const pager = pages > 1 ? `<nav class="pb-pager" aria-label="Pagination">${Array.from({ length: pages }, (_, k) => k + 1).map((n) => n === pageNo ? `<span class="current">${n}</span>` : `<a href="${n === 1 ? base : `${base}page/${n}/`}">${n}</a>`).join("")}</nav>` : "";
   const tagBar = `<div class="pb-tags"><a class="pill${!tag ? " active" : ""}" href="/blog/">All posts</a>${allTags.map((t) => `<a class="pill${tag === t ? " active" : ""}" href="/blog/tag/${slugify(t)}/">${esc(t)}</a>`).join("")}</div>`;
   const grid = posts.length ? `<div class="pb-grid">${posts.map((p, k) => card(p, pageNo === 1 && k === 0 && !tag)).join("")}</div>` : `<p class="pb-empty">No posts yet.</p>`;
-  const body = `<section class="pb-hero"><div class="pb-container"><span class="eyebrow accent">${tag ? "Topic" : "The Prophetic Blog"}</span><h1>${heading}</h1><p>${esc(description)}</p>${tagBar}</div></section>
+  const body = `<section class="pb-hero"><div class="pb-container"><span class="eyebrow accent">${tag ? "Topic" : "The Prophetic Blog"}</span><h1>${heading}</h1><p>${esc(description)}</p>${tagBar}${!tag ? TOOL_PROMO : ""}</div></section>
 <main class="pb-container">${grid}${pager}</main>`;
   const ld = [{ "@context": "https://schema.org", "@type": tag ? "CollectionPage" : "Blog", "@id": tag ? url : SITE + "/blog/#blog", name: title, description, url,
     blogPost: posts.map((p) => ({ "@type": "BlogPosting", headline: p.title, url: p.url, datePublished: isoDate(p.date) })) },
     { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [ { "@type": "ListItem", position: 1, name: "Home", item: SITE + "/" }, { "@type": "ListItem", position: 2, name: "Blog", item: SITE + "/blog/" }, ...(tag ? [{ "@type": "ListItem", position: 3, name: tag, item: url }] : []) ] }];
-  return page({ title, description, url, body, active: "blog", ld, noindex: pageNo > 1 || tagNoindex });
+  return page({ title, description, url, body, active: "blog", ld, noindex: pageNo > 1 || tagNoindex, extraCss: TOOL_PROMO_CSS });
 }
 
 function renderFeed(posts) {
