@@ -8,6 +8,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
+import { fitTitle, fitDesc } from "./seo-fit.mjs";
 
 const root = process.cwd();
 const dist = path.resolve("dist");
@@ -301,8 +302,8 @@ const ldBlocks = [
 ];
 
 const html = page({
-  title: "Mercury Retrograde Calculator — Live Status & Dates to 2028",
-  description: "Check whether Mercury is retrograde right now or on any date through 2028, including shadow periods. Every date computed from JPL ephemeris data, not copied from a list.",
+  title: fitTitle("Mercury Retrograde Calculator — Live Status & Dates to 2028"),
+  description: fitDesc("Check whether Mercury is retrograde right now or on any date through 2028, including shadow periods. Dates computed from JPL ephemeris data."),
   url: `${SITE}/tools/mercury-retrograde/`,
   body,
   active: "tools",

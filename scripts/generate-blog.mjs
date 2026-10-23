@@ -42,6 +42,7 @@ const contentDir = path.join(root, "content", "blog");
 const dist = path.join(root, "dist");
 const blogDist = path.join(dist, "blog");
 const themeCss = fs.readFileSync(path.join(root, "scripts", "blog", "blog.css"), "utf8");
+import { fitTitle, fitDesc } from "./seo-fit.mjs";
 const TOOL_PROMO_CSS = `
 .pb-toolpromo{border:1px solid hsl(var(--border));border-radius:16px;background:hsl(var(--card));padding:22px 24px;margin-top:26px;max-width:720px}
 .pb-toolpromo h2{margin:8px 0 8px;font-size:22px}
@@ -335,7 +336,7 @@ ${p.html}
  ${related.length ? `<section class="pb-related"><h2>Related guides</h2><div class="pb-grid">${related.map((r) => card(r)).join("")}</div></section>` : ""}
  <a class="pb-back" href="/blog/">← All posts</a>
 </article></main>`;
-  return page({ title: `${p.seoTitle} | ${SITE_NAME}`, description: p.description, url: p.canonical, body, active: "blog", ld: [schema, crumbs, ...p.ld], extraCss: p.styles, image: p.image, type: "article", noindex: p.noindex, published: isoDate(p.date), modified: isoDate(p.updated), lang: p.lang });
+  return page({ title: fitTitle(`${p.seoTitle} | ${SITE_NAME}`), description: fitDesc(p.description), url: p.canonical, body, active: "blog", ld: [schema, crumbs, ...p.ld], extraCss: p.styles, image: p.image, type: "article", noindex: p.noindex, published: isoDate(p.date), modified: isoDate(p.updated), lang: p.lang });
 }
 
 const TOOL_PROMO = `<div class="pb-toolpromo"><span class="eyebrow accent">Free tool</span><h2>Mercury Retrograde Calculator</h2><p>Find out whether Mercury is retrograde right now, on any date through 2028, or inside a shadow period. Every station is computed from JPL ephemeris data rather than copied from a list — the shadow dates on this site match to the day.</p><a class="pb-toolbtn" href="/tools/mercury-retrograde/">Open the calculator →</a></div>`;
@@ -349,7 +350,7 @@ function renderList_(posts, { title, heading, description, url, base, pageNo, pa
   const ld = [{ "@context": "https://schema.org", "@type": tag ? "CollectionPage" : "Blog", "@id": tag ? url : SITE + "/blog/#blog", name: title, description, url,
     blogPost: posts.map((p) => ({ "@type": "BlogPosting", headline: p.title, url: p.url, datePublished: isoDate(p.date) })) },
     { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [ { "@type": "ListItem", position: 1, name: "Home", item: SITE + "/" }, { "@type": "ListItem", position: 2, name: "Blog", item: SITE + "/blog/" }, ...(tag ? [{ "@type": "ListItem", position: 3, name: tag, item: url }] : []) ] }];
-  return page({ title, description, url, body, active: "blog", ld, noindex: pageNo > 1 || tagNoindex, extraCss: TOOL_PROMO_CSS });
+  return page({ title: fitTitle(title, { isHome: !tag && pageNo === 1 }), description: fitDesc(description), url, body, active: "blog", ld, noindex: pageNo > 1 || tagNoindex, extraCss: TOOL_PROMO_CSS });
 }
 
 function renderFeed(posts) {

@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { TRACKING_HEAD } from "./head-tags.mjs";
+import { fitTitle, fitDesc } from "./seo-fit.mjs";
 
 const dist = path.resolve("dist");
 const SITE = "https://prophetic.pw";
@@ -10,17 +11,17 @@ const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.VI
 const staticPages = [
   ["/", "Prophetic — Astrology Guides, Retrograde Dates & Chart Tools", "Astrology guides with dates computed to the minute — Mercury and Venus retrogrades, eclipses, moon phases, Saturn returns — plus plain-language chart explainers and honest reading-cost guides."],
   ["/tools/mercury-retrograde/", "Mercury Retrograde Calculator — Live Status & Dates to 2028", "Check whether Mercury is retrograde right now or on any date through 2028, including shadow periods. Dates computed from JPL ephemeris data."],
-  ["/compare/", "Compare Business Tools | Prophetic", "Compare software, finance, marketing, and developer tools with clear, independent analysis."],
-  ["/about/", "About Prophetic — How We Compute Our Astrology Dates", "Who writes Prophetic, how our astrology dates are computed from ephemeris data, our corrections policy, and how affiliate links are handled."],
-  ["/contact/", "Contact Prophetic", "Contact the Prophetic editorial team."],
-  ["/privacy/", "Privacy Policy | Prophetic", "Prophetic's privacy policy and data practices."],
-  ["/terms/", "Terms of Service | Prophetic", "Terms of service for the Prophetic website."],
-  ["/disclaimer/", "Disclaimer | Prophetic", "Disclosures about editorial content, affiliate relationships, and AI-assisted publishing."],
-  ["/editorial/", "Editorial Policy | Prophetic", "Prophetic's editorial standards, sourcing practices, corrections policy, and independence principles."],
-  ["/ai-policy/", "AI Content Policy | Prophetic", "How Prophetic uses AI-assisted tools in research and content production."],
-  ["/sitemap/", "HTML Sitemap | Prophetic", "Browse public pages and articles published by Prophetic."],
-  ["/topics/", "Topics | Prophetic", "Browse Prophetic topics across AI, technology, business, science, and world news."],
-  ["/guides/", "Guides | Prophetic", "Browse practical guides and explainers from Prophetic."],
+  ["/compare/", "Compare Business Tools | Prophetic", "Side-by-side comparisons of the tools teams actually pay for — what each does well, where it breaks, and which plan to start on, built from hands-on use and published pricing."],
+  ["/about/", "About Prophetic — How We Compute Our Astrology Dates", "Who writes Prophetic, how every astrology date is computed from JPL ephemeris data rather than copied from a list, our corrections policy, and how affiliate links are handled."],
+  ["/contact/", "Contact Prophetic", "Contact the Prophetic editorial team — corrections, sourcing questions and tips. We read everything and publish fixes with the next update of the article concerned."],
+  ["/privacy/", "Privacy Policy | Prophetic", "Prophetic's privacy policy in plain language: what data a page view records, how the calculators handle your input, and what we never collect or sell."],
+  ["/terms/", "Terms of Service | Prophetic", "Terms of service for prophetic.pw — permitted use of the guides and calculators, content licensing, and the limits of what our astrology dates are provided for."],
+  ["/disclaimer/", "Disclaimer | Prophetic", "How Prophetic handles editorial independence, affiliate relationships and AI-assisted publishing. What we verify, what we cannot verify, and where we say so plainly."],
+  ["/editorial/", "Editorial Policy | Prophetic", "Prophetic's editorial standards: how astrology dates are computed from ephemeris data, how service claims are verified, and how corrections are published in place."],
+  ["/ai-policy/", "AI Content Policy | Prophetic", "How Prophetic uses AI-assisted tools in research and drafting: what they are used for, what a human editor checks before publication, and what is never automated."],
+  ["/sitemap/", "HTML Sitemap | Prophetic", "Browse every public page and article published by Prophetic — astrology guides, retrograde dates, chart explainers, reading-cost guides and the free calculators."],
+  ["/topics/", "Topics | Prophetic", "Browse Prophetic by topic: retrogrades and transits, moon phases, eclipses, numerology, manifestation, and honest cost guides for readings and spiritual services."],
+  ["/guides/", "Guides | Prophetic", "Practical step-by-step guides from Prophetic: how to read a retrograde, how to check your chart against a transit, and how to judge a paid reading before you buy."],
   ["/author/hedi-touati/", "Hedi Touati — Founder & Editor of Prophetic", "Hedi Touati is the founder and editor of Prophetic: he computes the site's astrology dates from ephemeris data and edits every guide before publication."]
 ];
 
@@ -98,11 +99,12 @@ function schema(article) {
 }
 
 function html(url,title,description,body,scriptSrc,json,robots) {
-  var d = String(description || title).slice(0,160);
+  var d = fitDesc(String(description || title));
+  var t = fitTitle(String(title), { isHome: url === SITE + "/" });
   var schemaTag = json ? '<script type="application/ld+json">' + JSON.stringify(json) + "</script>" : "";
   return '<!doctype html><html lang="en"><head>' +
     '<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">' +
-    '<title>' + esc(title) + '</title>' +
+    '<title>' + esc(t) + '</title>' +
     '<meta name="description" content="' + esc(d) + '">' +
     '<meta name="robots" content="' + (robots || "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1") + '">' +
     '<meta name="author" content="Hedi Touati">' +
@@ -151,6 +153,21 @@ var EXPLORE_LIST = '<ul>' + [
   ['/blog/','All astrology articles'], ['/tools/mercury-retrograde/','Mercury retrograde calculator'], ['/about/','About Prophetic'], ['/editorial/','Editorial policy'],
   ['/ai-policy/','AI content policy'], ['/contact/','Contact'], ['/sitemap/','HTML sitemap']
 ].map(function(x){ return '<li><a href="' + x[0] + '">' + x[1] + '</a></li>'; }).join('') + '</ul>';
+var HOMEPAGE_SCHEMA = {
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "Organization", "@id": SITE + "/#organization",
+      name: "Prophetic", url: SITE + "/",
+      description: "Independent astrology publisher. Every guide is built from primary ephemeris data and dated to the minute.",
+      founder: { "@id": SITE + "/author/hedi-touati/#person" },
+      sameAs: [] },
+    { "@type": "WebSite", "@id": SITE + "/#website",
+      url: SITE + "/", name: "Prophetic",
+      publisher: { "@id": SITE + "/#organization" },
+      inLanguage: "en" }
+  ]
+};
+
 var HOMEPAGE_BODY = '<main>'
  + '<h1>Astrology guides with dates you can check</h1>'
  + '<p>Prophetic publishes astrology guides with their dates computed to the minute — retrogrades and their shadow periods, eclipses, moon phases, meteor showers and portals — alongside plain-language explainers for reading your own chart, and honest cost guides for readings and spiritual services. No filler: every guide is dated, sourced, and updated when the sky changes.</p>'
@@ -261,7 +278,7 @@ staticPages.concat(reviewPages).forEach(function(p){
          + "</section></main>";
   }
   writeRoute(p[0],html(SITE+p[0],p[1],p[2],body,scriptSrc,
-    p[0] === "/author/hedi-touati/" ? AUTHOR_SCHEMA : null,
+    p[0] === "/author/hedi-touati/" ? AUTHOR_SCHEMA : (p[0] === "/" ? HOMEPAGE_SCHEMA : null),
     isNoindex(p[0]) ? "noindex,follow" : null));
 });
 
