@@ -1,6 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { TRACKING_HEAD } from "./head-tags.mjs";
+import { STATIC_EXTRA } from "./static-extra.mjs";
+import { STATIC_FAQ } from "./static-faq.mjs";
 import { fitTitle, fitDesc } from "./seo-fit.mjs";
 
 const dist = path.resolve("dist");
@@ -98,10 +100,15 @@ function schema(article) {
   };
 }
 
-function html(url,title,description,body,scriptSrc,json,robots) {
+function html(url,title,description,body,scriptSrc,json,robots,faq) {
   var d = fitDesc(String(description || title));
   var t = fitTitle(String(title), { isHome: url === SITE + "/" });
-  var schemaTag = json ? '<script type="application/ld+json">' + JSON.stringify(json) + "</script>" : "";
+  var faqTag = faq ? '<script type="application/ld+json">' + JSON.stringify({
+    "@context": "https://schema.org", "@type": "FAQPage",
+    mainEntity: faq.map(function(qa){ return { "@type": "Question", name: qa[0],
+      acceptedAnswer: { "@type": "Answer", text: qa[1] } }; })
+  }) + "</script>" : "";
+  var schemaTag = (json ? '<script type="application/ld+json">' + JSON.stringify(json) + "</script>" : "") + faqTag;
   return '<!doctype html><html lang="en"><head>' +
     '<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">' +
     '<title>' + esc(t) + '</title>' +
@@ -179,6 +186,7 @@ var HOMEPAGE_BODY = '<main>'
  + '<li><a href="/blog/jupiter-retrograde-2026/">Jupiter retrograde guide</a> — the quiet background review running underneath the 2026 retrograde season.</li>'
  + '<li><a href="https://daysuntil.bond/" rel="noopener">daysuntil.bond</a> — live countdowns to every eclipse, full moon and retrograde station.</li>'
  + '</ul></section>'
+ + '<section><h2>Why the dates are computed, not copied</h2><p>Most astrology sites publish a date where the sky gives a moment. A retrograde station happens at a specific time; rounding it to a calendar day puts it on one side or the other of midnight depending on who is rounding and in which zone. Every date on Prophetic is computed from ephemeris data and published with its time, which is why our answer occasionally looks a day out from a site that only ever had a date. When a page moves, it is updated in place rather than replaced, so a link that worked last year still points at the right answer.</p><p>The same rule applies to the service guides: prices are quoted from the seller on a stated day, and that day is printed on the page. Where a claim cannot be checked against two independent sources, we say so instead of repeating it.</p></section>'
  + '<section><h2>Explore Prophetic</h2>' + EXPLORE_LIST + '</section>'
  + '</main>';
 var PAGE_INTRO = {
@@ -272,6 +280,10 @@ staticPages.concat(reviewPages).forEach(function(p){
   } else {
     body = "<main><h1>"+esc(heading)+"</h1><p>"+esc(p[2])+"</p>"
          + (PAGE_INTRO[p[0]] || "")
+         + (STATIC_EXTRA[p[0]] || "")
+         + (STATIC_FAQ[p[0]] ? '<section><h2>Questions</h2>' + STATIC_FAQ[p[0]].map(function(qa){
+             return '<h3>' + esc(qa[0]) + '</h3><p>' + esc(qa[1]) + '</p>';
+           }).join("") + '</section>' : "")
          + "<section><h2>More from Prophetic</h2>"
          + "<h3>Latest astrology guides</h3>"+postsList(false)
          + "<h3>Explore</h3>"+EXPLORE_LIST
@@ -279,7 +291,8 @@ staticPages.concat(reviewPages).forEach(function(p){
   }
   writeRoute(p[0],html(SITE+p[0],p[1],p[2],body,scriptSrc,
     p[0] === "/author/hedi-touati/" ? AUTHOR_SCHEMA : (p[0] === "/" ? HOMEPAGE_SCHEMA : null),
-    isNoindex(p[0]) ? "noindex,follow" : null));
+    isNoindex(p[0]) ? "noindex,follow" : null,
+    STATIC_FAQ[p[0]] || null));
 });
 
 articles.forEach(function(a){

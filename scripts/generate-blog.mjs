@@ -13,6 +13,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { TRACKING_HEAD } from "./head-tags.mjs";
+import { tagIntro, tagFaq } from "./tag-copy.mjs";
 
 const SITE = "https://prophetic.pw";
 const SITE_NAME = "Prophetic";
@@ -345,11 +346,22 @@ function renderList_(posts, { title, heading, description, url, base, pageNo, pa
   const pager = pages > 1 ? `<nav class="pb-pager" aria-label="Pagination">${Array.from({ length: pages }, (_, k) => k + 1).map((n) => n === pageNo ? `<span class="current">${n}</span>` : `<a href="${n === 1 ? base : `${base}page/${n}/`}">${n}</a>`).join("")}</nav>` : "";
   const tagBar = `<div class="pb-tags"><a class="pill${!tag ? " active" : ""}" href="/blog/">All posts</a>${allTags.map((t) => `<a class="pill${tag === t ? " active" : ""}" href="/blog/tag/${slugify(t)}/">${esc(t)}</a>`).join("")}</div>`;
   const grid = posts.length ? `<div class="pb-grid">${posts.map((p, k) => card(p, pageNo === 1 && k === 0 && !tag)).join("")}</div>` : `<p class="pb-empty">No posts yet.</p>`;
+  const intro = tag ? tagIntro(tag) : null;
+  const faq = tag ? tagFaq(tag) : null;
+  const introBlock = intro
+    ? `<section class="pb-container"><div class="prose" style="max-width:760px;margin:0 auto 2rem"><p style="font-size:1.05rem;line-height:1.7">${intro}</p></div></section>`
+    : "";
+  const faqBlock = faq
+    ? `<section class="pb-container"><div style="max-width:760px;margin:2.5rem auto"><h2 style="font-size:1.4rem;margin-bottom:1rem">Questions people ask about ${esc(tag)}</h2>${faq
+        .map(([q, a]) => `<details style="border-bottom:1px solid rgba(255,255,255,.12);padding:.9rem 0"><summary style="cursor:pointer;font-weight:600">${esc(q)}</summary><p style="margin:.7rem 0 0;line-height:1.7;opacity:.88">${esc(a)}</p></details>`)
+        .join("")}</div></section>`
+    : "";
   const body = `<section class="pb-hero"><div class="pb-container"><span class="eyebrow accent">${tag ? "Topic" : "The Prophetic Blog"}</span><h1>${heading}</h1><p>${esc(description)}</p>${tagBar}${!tag ? TOOL_PROMO : ""}</div></section>
-<main class="pb-container">${grid}${pager}</main>`;
+<main class="pb-container">${introBlock}${grid}${pager}${faqBlock}</main>`;
   const ld = [{ "@context": "https://schema.org", "@type": tag ? "CollectionPage" : "Blog", "@id": tag ? url : SITE + "/blog/#blog", name: title, description, url,
     blogPost: posts.map((p) => ({ "@type": "BlogPosting", headline: p.title, url: p.url, datePublished: isoDate(p.date) })) },
-    { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [ { "@type": "ListItem", position: 1, name: "Home", item: SITE + "/" }, { "@type": "ListItem", position: 2, name: "Blog", item: SITE + "/blog/" }, ...(tag ? [{ "@type": "ListItem", position: 3, name: tag, item: url }] : []) ] }];
+    { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [ { "@type": "ListItem", position: 1, name: "Home", item: SITE + "/" }, { "@type": "ListItem", position: 2, name: "Blog", item: SITE + "/blog/" }, ...(tag ? [{ "@type": "ListItem", position: 3, name: tag, item: url }] : []) ] },
+    ...(faq ? [{ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faq.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) }] : [])];
   return page({ title: fitTitle(title, { isHome: !tag && pageNo === 1 }), description: fitDesc(description), url, body, active: "blog", ld, noindex: pageNo > 1 || tagNoindex, extraCss: TOOL_PROMO_CSS });
 }
 
@@ -397,7 +409,9 @@ const MIN_TAG_POSTS = 3;
 const isThinTag = (t) => posts.filter((p) => p.tags.includes(t)).length < MIN_TAG_POSTS;
 allTags.forEach((t) => {
   const slice = posts.filter((p) => p.tags.includes(t));
-  writeFile(`blog/tag/${slugify(t)}/index.html`, renderList_(slice, { title: `${t} — ${BLOG_TITLE}`, heading: `${esc(t)}`, description: `${slice.length} post${slice.length === 1 ? "" : "s"} about ${t} from the Prophetic editorial team.`, url: `${SITE}/blog/tag/${slugify(t)}/`, base: `/blog/tag/${slugify(t)}/`, pageNo: 1, pages: 1, tag: t, allTags, noindex: isThinTag(t) }));
+  writeFile(`blog/tag/${slugify(t)}/index.html`, renderList_(slice, { title: `${t} — ${BLOG_TITLE}`, heading: `${esc(t)}`, description: tagIntro(t)
+      ? `${tagIntro(t).split(". ")[0]}.`
+      : `${slice.length} post${slice.length === 1 ? "" : "s"} about ${t} from the Prophetic editorial team.`, url: `${SITE}/blog/tag/${slugify(t)}/`, base: `/blog/tag/${slugify(t)}/`, pageNo: 1, pages: 1, tag: t, allTags, noindex: isThinTag(t) }));
 });
 writeFile("blog/feed.xml", renderFeed(posts));
 writeFile("blog/manifest.json", JSON.stringify({
