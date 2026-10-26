@@ -14,14 +14,11 @@ const Contact = lazy(() => import("@/pages/Contact"))
 const Privacy = lazy(() => import("@/pages/Privacy"))
 const Terms = lazy(() => import("@/pages/Terms"))
 const Disclaimer = lazy(() => import("@/pages/Disclaimer"))
-const Editorial = lazy(() => import("@/pages/Editorial"))
-const AiPolicy = lazy(() => import("@/pages/AiPolicy"))
-const Author = lazy(() => import("@/pages/Author"))
 const Loading = () => <div className="page-loading"><span /></div>
 const queryClient = new QueryClient()
 
 export default function App() {
-  return <QueryClientProvider client={queryClient}><ThemeProvider defaultTheme="dark" storageKey="prophetic-theme"><BrowserRouter><Suspense fallback={<Loading />}><Routes><Route element={<PlatformShell />}><Route path="/" element={<Home />} /><Route path="/review/:slug" element={<Review />} /><Route path="/article/:slug" element={<Article />} /><Route path="/compare" element={<Comparison />} /><Route path="/about" element={<About />} /><Route path="/contact" element={<Contact />} /><Route path="/privacy" element={<Privacy />} /><Route path="/terms" element={<Terms />} /><Route path="/disclaimer" element={<Disclaimer />} /><Route path="/editorial" element={<Editorial />} /><Route path="/ai-policy" element={<AiPolicy />} /><Route path="/author/hedi-touati" element={<Author />} /><Route path="*" element={<NotFoundFallback />} /></Route></Routes></Suspense><Toaster /></BrowserRouter></ThemeProvider></QueryClientProvider>
+  return <QueryClientProvider client={queryClient}><ThemeProvider defaultTheme="dark" storageKey="prophetic-theme"><BrowserRouter><Suspense fallback={<Loading />}><Routes><Route element={<PlatformShell />}><Route path="/" element={<Home />} /><Route path="/review/:slug" element={<Review />} /><Route path="/article/:slug" element={<Article />} /><Route path="/compare" element={<Comparison />} /><Route path="/about" element={<About />} /><Route path="/contact" element={<Contact />} /><Route path="/privacy" element={<Privacy />} /><Route path="/terms" element={<Terms />} /><Route path="/disclaimer" element={<Disclaimer />} /><Route path="*" element={<NotFoundFallback />} /></Route></Routes></Suspense><Toaster /></BrowserRouter></ThemeProvider></QueryClientProvider>
 }
 
 function NotFoundFallback() {

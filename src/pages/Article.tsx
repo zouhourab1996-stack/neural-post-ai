@@ -57,7 +57,7 @@ export default function Article() {
       description: article.meta_description,
       datePublished: article.created_at,
       dateModified: article.updated_at || article.created_at,
-      author: { "@type": "Person", "@id": "https://prophetic.pw/author/hedi-touati/#person", name: "Hedi Touati", url: "https://prophetic.pw/author/hedi-touati/", jobTitle: "Founder & Editor" },
+      author: { "@type": "Organization", name: "Prophetic Editorial Team" },
       publisher: { "@type": "Organization", name: "Prophetic", url: SITE, logo: { "@type": "ImageObject", url: `${SITE}/logo.svg` } },
       mainEntityOfPage: { "@type": "WebPage", "@id": url },
       url,

@@ -1,48 +1,35 @@
 import { Link } from "react-router-dom"
-import { ArrowRight, CalendarClock, Compass, Gauge, Sparkles, Telescope } from "lucide-react"
-import { useEffect, useState } from "react"
+import { ArrowRight, ArrowUpRight, Check, ChevronRight, Search, ShieldCheck, Sparkles, Star, TrendingUp } from "lucide-react"
+import { useEffect, useMemo, useState } from "react"
+import { affiliateProps, categories, reviews, testimonials } from "@/data/reviews"
+
+function Score({ value }: { value: number }) { return <span className="score"><Star fill="currentColor" /> {value}</span> }
+function ReviewCard({ review }: { review: typeof reviews[number] }) { return <article className="review-card"><div className={`review-logo ${review.accent}`}>{review.name.slice(0, 1)}</div><div className="card-top"><span className="eyebrow">{review.category}</span><Score value={review.score} /></div><h3>{review.name}</h3><p>{review.tagline}</p><div className="card-meta"><span>{review.price}</span><Link to={`/review/${review.slug}`} aria-label={`Read ${review.name} review`}>Read review <ArrowRight /></Link></div></article> }
 
 type BlogPost = { slug: string; url: string; title: string; description: string; date: string; tags: string[]; category: string; readingTime: number }
-
-const TOOLS = [
-  { href: "/blog/mercury-retrograde-2026/", title: "Mercury retrograde chart checker", blurb: "Find out whether you were born with Mercury retrograde and whether the 2026 stations touch your chart." },
-  { href: "/blog/venus-retrograde-2026/", title: "Venus retrograde calculator", blurb: "Check any birth chart against the 2026 Venus stations and their shadow periods." },
-  { href: "/blog/jupiter-retrograde-2026/", title: "Jupiter retrograde guide", blurb: "The quiet background review running underneath the 2026 retrograde season." },
-  { href: "/blog/saturn-return-in-aries-2026/", title: "Saturn return calculator", blurb: "Work out whether you are inside your Saturn return, and which houses it is moving through." },
-]
-
-const STANDARDS = [
-  { n: "01", title: "Dates you can check", body: "Every retrograde station, moon phase and eclipse on Prophetic is computed from ephemeris data and published to the minute, with the shadow periods marked." },
-  { n: "02", title: "Prices we actually verified", body: "Our reading and service cost guides quote what a seller charged on the day we checked, and we print that date. Where we cannot verify a number, we say so." },
-  { n: "03", title: "Clear incentives", body: "Some guides carry affiliate links, labelled at the point of the link. They never change a date, a price we quote, or a conclusion." },
-]
-
-function LatestGuides() {
-  const [posts, setPosts] = useState<BlogPost[]>([])
-  useEffect(() => {
-    let alive = true
-    fetch("/blog/manifest.json", { headers: { Accept: "application/json" } })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => { if (alive && data && Array.isArray(data.posts)) setPosts(data.posts.slice(0, 6)) })
-      .catch(() => undefined)
-    return () => { alive = false }
-  }, [])
-  if (!posts.length) return null
-  return <section className="container-main section-pad"><div className="section-heading"><div><span className="eyebrow">LATEST GUIDES</span><h2>Retrogrades, moon phases and chart explainers.</h2></div><a className="text-link" href="/blog/">Visit the blog <ArrowRight /></a></div><div className="review-grid">{posts.map((post) => <article key={post.slug} className="review-card"><div className="card-top"><span className="eyebrow">{post.category}</span><span className="score">{post.readingTime} min</span></div><h3><a href={`/blog/${post.slug}/`}>{post.title}</a></h3><p>{post.description}</p><div className="card-meta"><span>{new Date(post.date + "T12:00:00Z").toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" })}</span><a href={`/blog/${post.slug}/`} aria-label={`Read ${post.title}`}>Read guide <ArrowRight /></a></div></article>)}</div></section>
+function BlogTeaser() {
+ const [posts, setPosts] = useState<BlogPost[]>([])
+ useEffect(() => {
+  let alive = true
+  fetch("/blog/manifest.json", { headers: { Accept: "application/json" } }).then((r) => (r.ok ? r.json() : null)).then((data) => { if (alive && data && Array.isArray(data.posts)) setPosts(data.posts.slice(0, 3)) }).catch(() => undefined)
+  return () => { alive = false }
+ }, [])
+ if (!posts.length) return null
+ return <section className="container-main section-pad"><div className="section-heading"><div><span className="eyebrow">FROM THE BLOG</span><h2>Guides, forecasts and deep dives.</h2></div><a className="text-link" href="/blog/">Visit the blog <ArrowRight /></a></div><div className="review-grid">{posts.map((post) => <article key={post.slug} className="review-card"><div className="card-top"><span className="eyebrow">{post.category}</span><span className="score">{post.readingTime} min</span></div><h3><a href={`/blog/${post.slug}/`}>{post.title}</a></h3><p>{post.description}</p><div className="card-meta"><span>{new Date(post.date + "T12:00:00Z").toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" })}</span><a href={`/blog/${post.slug}/`} aria-label={`Read ${post.title}`}>Read guide <ArrowRight /></a></div></article>)}</div></section>
 }
 
 export default function Index() {
-  return <>
-    <section className="hero"><div className="hero-glow" /><div className="container-main hero-inner"><div className="eyebrow accent-label"><Sparkles /> THE ASTROLOGY DESK</div><h1>Astrology, dated<br /><em>to the minute.</em></h1><p className="hero-copy">Retrogrades and their shadow periods, eclipses, moon phases, meteor showers and portals — computed from ephemeris data, published with the exact time, and updated when the sky changes. Plus plain-language chart explainers and honest cost guides for readings.</p><div className="hero-actions"><a className="button" href="/blog/">Read the guides <ArrowRight /></a><Link className="button button-ghost" to="/about">How we compute dates</Link></div></div></section>
-
-    <LatestGuides />
-
-    <section className="container-main section-pad"><div className="section-heading"><div><span className="eyebrow">FREE TOOLS</span><h2>Check your chart against the sky</h2></div></div><div className="review-grid">{TOOLS.map((tool) => <article key={tool.href} className="review-card"><div className="card-top"><span className="eyebrow"><Gauge /> Calculator</span></div><h3><a href={tool.href}>{tool.title}</a></h3><p>{tool.blurb}</p><div className="card-meta"><a href={tool.href} aria-label={`Open ${tool.title}`}>Open tool <ArrowRight /></a></div></article>)}</div></section>
-
-    <section className="container-main section-pad"><div className="section-heading"><div><span className="eyebrow">WHAT WE COVER</span><h2>Three kinds of guide</h2></div></div><div className="promise-grid"><div><span className="promise-number"><CalendarClock /></span><h3>Dated events</h3><p>Retrogrades, eclipses, full and new moons, meteor showers — when they happen, what the shadow period is, and what it means for your chart.</p></div><div><span className="promise-number"><Compass /></span><h3>Chart explainers</h3><p>What a planet, house or aspect actually means when you read it in your own birth chart, without the jargon.</p></div><div><span className="promise-number"><Telescope /></span><h3>Service cost guides</h3><p>What a reading, a sketch or a numerology report really costs at each price tier, and where the marketplace sits in between.</p></div></div></section>
-
-    <section className="compare-banner"><div className="container-main compare-inner"><div><span className="eyebrow">OUR STANDARDS</span><h2>Useful over mysterious.<br /><em>Every date sourced.</em></h2><p>No filler, no copy-paste forecasts. Each guide is dated, sourced and corrected in place when the astronomy changes.</p></div><Link to="/editorial" className="button button-light">Read the editorial policy <ArrowRight /></Link></div></section>
-
-    <section className="container-main section-pad"><div className="section-heading"><div><span className="eyebrow">OUR PROMISE</span><h2>Useful over noisy.</h2></div></div><div className="promise-grid">{STANDARDS.map((item) => <div key={item.n}><span className="promise-number">{item.n}</span><h3>{item.title}</h3><p>{item.body}</p></div>)}</div></section>
-  </>
+ const [activeCategory, setActiveCategory] = useState("All reviews")
+ const [query, setQuery] = useState("")
+ const filtered = useMemo(() => reviews.filter((review) => (activeCategory === "All reviews" || review.category === activeCategory) && `${review.name} ${review.description}`.toLowerCase().includes(query.toLowerCase())), [activeCategory, query])
+ return <>
+  <section className="hero"><div className="hero-glow" /><div className="container-main hero-inner"><div className="eyebrow accent-label"><Sparkles /> THE INDEPENDENT BUYER'S GUIDE</div><h1>Choose better tools.<br /><em>Build what matters.</em></h1><p className="hero-copy">Clear, independent reviews of the software, financial products, and digital tools powering modern business.</p><div className="hero-search"><Search /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search tools, categories, or use cases..." aria-label="Search reviews" /><kbd>⌘ K</kbd></div><div className="hero-trust"><span><ShieldCheck /> Independent research</span><span><Check /> No pay-to-rank</span><span><TrendingUp /> Updated weekly</span></div></div></section>
+  <section className="container-main section-pad"><div className="section-heading"><div><span className="eyebrow">CURATED FOR YOU</span><h2>Find your next advantage</h2></div><Link className="text-link" to="/compare">See all comparisons <ArrowRight /></Link></div><div className="category-pills">{categories.map((category) => <button key={category} className={activeCategory === category ? "pill active" : "pill"} onClick={() => setActiveCategory(category)}>{category}</button>)}</div><div className="review-grid">{filtered.map((review) => <ReviewCard key={review.slug} review={review} />)}</div></section>
+  <section className="compare-banner"><div className="container-main compare-inner"><div><span className="eyebrow">THE SHORTLIST</span><h2>Stop tab-hopping.<br /><em>Start comparing.</em></h2><p>Side-by-side analysis that turns a long software search into a confident shortlist.</p></div><Link to="/compare" className="button button-light">Explore comparisons <ArrowRight /></Link></div></section>
+  <BlogTeaser />
+  <section className="network-strip"><div className="container-main network-inner"><div><span className="eyebrow">OUR NETWORK</span><p>Prophetic is part of a small family of independent sites. Same standards, different questions.</p></div><nav className="network-links" aria-label="Our other websites"><a href="https://www.pro-reviewer.cyou/" target="_blank" rel="noopener">Pro Reviewer <ArrowUpRight /></a><a href="https://propheticguidance2026.blogspot.com/" target="_blank" rel="noopener">Prophetic Guidance 2026 <ArrowUpRight /></a><a href="https://www.bmrcalc.bond/" target="_blank" rel="noopener">BmrCalc — BMR calculator <ArrowUpRight /></a></nav></div></section>
+  <section className="container-main section-pad"><div className="section-heading"><div><span className="eyebrow">OUR PROMISE</span><h2>Useful over noisy.</h2></div></div><div className="promise-grid"><div><span className="promise-number">01</span><h3>Evidence-led</h3><p>We test workflows, pricing, support, and the details that sales pages leave out.</p></div><div><span className="promise-number">02</span><h3>Human judgment</h3><p>Scores help you scan. Nuanced recommendations help you decide.</p></div><div><span className="promise-number">03</span><h3>Clear incentives</h3><p>When a link supports our work, we label it. Our rankings stay independent.</p></div></div></section>
+  <section className="container-main section-pad testimonials"><div className="section-heading"><div><span className="eyebrow">FROM THE COMMUNITY</span><h2>Readers are building smarter.</h2></div></div><div className="testimonial-grid">{testimonials.map((item) => <figure key={item.name}><div className="stars">★★★★★</div><blockquote>“{item.quote}”</blockquote><figcaption><strong>{item.name}</strong><span>{item.role}</span></figcaption></figure>)}</div></section>
+  <section className="newsletter"><div className="container-main newsletter-inner"><div><span className="eyebrow">THE SIGNAL</span><h2>One smart email.<br /><em>Zero inbox clutter.</em></h2></div><form onSubmit={(e) => e.preventDefault()}><input type="email" placeholder="you@company.com" aria-label="Email address" required /><button className="button">Join the signal <ArrowRight /></button><small>Weekly insights. Unsubscribe anytime.</small></form></div></section>
+ </>
 }

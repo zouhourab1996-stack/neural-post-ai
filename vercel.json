@@ -155,7 +155,7 @@
           "value": "1"
         }
       ],
-      "destination": "/",
+      "destination": "/?",
       "permanent": true
     },
     {
@@ -167,7 +167,7 @@
           "value": "0"
         }
       ],
-      "destination": "/",
+      "destination": "/?",
       "permanent": true
     },
     {
