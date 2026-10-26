@@ -147,30 +147,6 @@
   ],
   "redirects": [
     {
-      "source": "/",
-      "has": [
-        {
-          "type": "query",
-          "key": "m",
-          "value": "1"
-        }
-      ],
-      "destination": "https://prophetic.pw/",
-      "permanent": true
-    },
-    {
-      "source": "/",
-      "has": [
-        {
-          "type": "query",
-          "key": "m",
-          "value": "0"
-        }
-      ],
-      "destination": "https://prophetic.pw/",
-      "permanent": true
-    },
-    {
       "source": "/review/joiin",
       "destination": "https://trustscore.bond/reviews/joiin-review/",
       "permanent": true
