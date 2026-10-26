@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { TRACKING_HEAD } from "./head-tags.mjs";
+import { fitDesc } from "./seo-fit.mjs";
 
 const dist = path.resolve("dist");
 const SITE = "https://prophetic.pw";
@@ -8,7 +9,7 @@ const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_KEY;
 
 const staticPages = [
-  ["/", "Prophetic — Astrology Guides, Retrograde Dates & Chart Tools", "Astrology guides with dates computed to the minute — Mercury and Venus retrogrades, eclipses, moon phases, Saturn returns — plus plain-language chart explainers and honest reading-cost guides."],
+  ["/", "Prophetic — Astrology Guides, Retrograde Dates & Chart Tools", "Astrology guides with dates computed to the minute — retrogrades, eclipses, moon phases and Saturn returns — plus plain-language chart explainers."],
   ["/compare/", "Compare Business Tools | Prophetic", "Compare software, finance, marketing, and developer tools with clear, independent analysis."],
   ["/about/", "About Prophetic — How We Compute Our Astrology Dates", "Who writes Prophetic, how our astrology dates are computed from ephemeris data, our corrections policy, and how affiliate links are handled."],
   ["/contact/", "Contact Prophetic", "Contact the Prophetic editorial team."],
@@ -97,10 +98,18 @@ function schema(article) {
 }
 
 function html(url,title,description,body,scriptSrc,json,robots) {
-  var d = String(description || title).slice(0,160);
+  var d = fitDesc(description || title);
   var schemaTag = json ? '<script type="application/ld+json">' + JSON.stringify(json) + "</script>" : "";
+  // Strip Blogger's ?m=1 / ?m=0 mobile param. Vercel keeps query strings through
+  // vercel.json redirects, so this has to run client-side — and it must be injected
+  // here because this script overwrites dist/index.html (and every other route),
+  // which would otherwise drop the copy that lives in the source index.html.
+  var STRIP_M_PARAM = '<script>(function(){var p=new URLSearchParams(window.location.search);'
+    + "if(p.has('m')){p.delete('m');var q=p.toString();"
+    + 'window.location.replace(window.location.pathname+(q?"?"+q:""));}})();</script>';
   return '<!doctype html><html lang="en"><head>' +
     '<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">' +
+    STRIP_M_PARAM +
     '<title>' + esc(title) + '</title>' +
     '<meta name="description" content="' + esc(d) + '">' +
     '<meta name="robots" content="' + (robots || "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1") + '">' +
@@ -228,8 +237,17 @@ fs.writeFileSync(path.join(dist,"sitemap.xml"),
   '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
   sitemapEntries.join("\n") + '\n</urlset>\n',"utf8");
 
-fs.writeFileSync(path.join(dist,"robots.txt"),
-  "User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: " + SITE + "/sitemap.xml\n","utf8");
+// Preserve the hand-written robots.txt from public/ (it carries explicit Allow rules
+// for the AI crawlers — GPTBot, CCBot, PerplexityBot, anthropic-ai, Google-Extended —
+// which the generic Allow: / does not signal as clearly). Only append the sitemap line.
+var robotsSrc = path.join("public","robots.txt");
+var robotsTxt = fs.existsSync(robotsSrc)
+  ? fs.readFileSync(robotsSrc,"utf8")
+  : "User-agent: *\nAllow: /\nDisallow: /api/\n";
+if (!/^\s*Sitemap:/im.test(robotsTxt)) {
+  robotsTxt = robotsTxt.replace(/\s*$/,"") + "\n\nSitemap: " + SITE + "/sitemap.xml\n";
+}
+fs.writeFileSync(path.join(dist,"robots.txt"), robotsTxt,"utf8");
 
 var AUTHOR_SCHEMA = {
   "@context":"https://schema.org","@type":"Person","@id":SITE + "/author/hedi-touati/#person",

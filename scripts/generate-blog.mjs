@@ -13,9 +13,19 @@
 import fs from "node:fs";
 import path from "node:path";
 import { TRACKING_HEAD } from "./head-tags.mjs";
+import { fitDesc } from "./seo-fit.mjs";
 
 const SITE = "https://prophetic.pw";
 const SITE_NAME = "Prophetic";
+// Titles are capped at 60 characters because search results truncate past that.
+// The " | Prophetic" brand suffix costs 12 characters, so it is only appended when
+// the result still fits — otherwise the bare seoTitle is used instead.
+const TITLE_MAX = 60;
+const pageTitle = (seoTitle) => {
+  const t = String(seoTitle || "").trim();
+  const branded = `${t} | ${SITE_NAME}`;
+  return branded.length <= TITLE_MAX ? branded : t;
+};
 const BLOG_TITLE = "Prophetic Blog";
 const BLOG_DESCRIPTION = "Long-form astrology guides with dates computed to the minute — retrogrades, moon phases and chart explainers — edited by Hedi Touati.";
 const DEFAULT_AUTHOR = "Hedi Touati";
@@ -210,7 +220,7 @@ function loadPosts() {
     const image = meta.image ? (meta.image.startsWith("http") ? meta.image : SITE + meta.image) : DEFAULT_IMAGE;
     posts.push({
       slug, file, html, styles, ld, words,
-      title: String(meta.title), seoTitle: String(meta.seoTitle || meta.title), description: String(meta.description || "").slice(0, 300),
+      title: String(meta.title), seoTitle: String(meta.seoTitle || meta.title), description: fitDesc(meta.description || ""),
       date: String(meta.date), updated: String(meta.updated || meta.date),
       author: String(meta.author || DEFAULT_AUTHOR),
       tags: uniq(meta.tags.map(String)), category: String(meta.category || meta.tags[0] || "Guides"),
@@ -328,7 +338,7 @@ ${p.html}
  ${related.length ? `<section class="pb-related"><h2>Related guides</h2><div class="pb-grid">${related.map((r) => card(r)).join("")}</div></section>` : ""}
  <a class="pb-back" href="/blog/">← All posts</a>
 </article></main>`;
-  return page({ title: `${p.seoTitle} | ${SITE_NAME}`, description: p.description, url: p.canonical, body, active: "blog", ld: [schema, crumbs, ...p.ld], extraCss: p.styles, image: p.image, type: "article", noindex: p.noindex, published: isoDate(p.date), modified: isoDate(p.updated), lang: p.lang });
+  return page({ title: pageTitle(p.seoTitle), description: p.description, url: p.canonical, body, active: "blog", ld: [schema, crumbs, ...p.ld], extraCss: p.styles, image: p.image, type: "article", noindex: p.noindex, published: isoDate(p.date), modified: isoDate(p.updated), lang: p.lang });
 }
 
 function renderList_(posts, { title, heading, description, url, base, pageNo, pages, tag, allTags, noindex: tagNoindex = false }) {
