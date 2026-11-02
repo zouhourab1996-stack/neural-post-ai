@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { TRACKING_HEAD } from "./head-tags.mjs";
+import { fitDesc } from "./seo-fit.mjs";
 
 const dist = path.resolve("dist");
 const SITE = "https://prophetic.pw";
@@ -8,9 +9,9 @@ const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_KEY;
 
 const staticPages = [
-  ["/", "Prophetic — Astrology Guides & Independent Reviews", "Astrology guides with dates computed to the minute — Mercury and Venus retrogrades, the 11/11 portal, Saturn returns — plus independent software and business reviews."],
+  ["/", "Prophetic — Astrology Guides, Retrograde Dates & Chart Tools", "Astrology guides with dates computed to the minute — retrogrades, eclipses, moon phases and Saturn returns — plus plain-language chart explainers."],
   ["/compare/", "Compare Business Tools | Prophetic", "Compare software, finance, marketing, and developer tools with clear, independent analysis."],
-  ["/about/", "About Prophetic", "Learn about Prophetic's editorial mission, research standards, and independent reviews."],
+  ["/about/", "About Prophetic — How We Compute Our Astrology Dates", "Who writes Prophetic, how our astrology dates are computed from ephemeris data, our corrections policy, and how affiliate links are handled."],
   ["/contact/", "Contact Prophetic", "Contact the Prophetic editorial team."],
   ["/privacy/", "Privacy Policy | Prophetic", "Prophetic's privacy policy and data practices."],
   ["/terms/", "Terms of Service | Prophetic", "Terms of service for the Prophetic website."],
@@ -19,7 +20,8 @@ const staticPages = [
   ["/ai-policy/", "AI Content Policy | Prophetic", "How Prophetic uses AI-assisted tools in research and content production."],
   ["/sitemap/", "HTML Sitemap | Prophetic", "Browse public pages and articles published by Prophetic."],
   ["/topics/", "Topics | Prophetic", "Browse Prophetic topics across AI, technology, business, science, and world news."],
-  ["/guides/", "Guides | Prophetic", "Browse practical guides and explainers from Prophetic."]
+  ["/guides/", "Guides | Prophetic", "Browse practical guides and explainers from Prophetic."],
+  ["/author/hedi-touati/", "Hedi Touati — Founder & Editor of Prophetic", "Hedi Touati is the founder and editor of Prophetic: he computes the site's astrology dates from ephemeris data and edits every guide before publication."]
 ];
 
 const reviewPages = [
@@ -31,9 +33,14 @@ const reviewPages = [
   ["/review/volza/", "Volza Review | Prophetic", "Independent review of Volza for global trade intelligence."],
   ["/review/mera-work/", "Mera Work Review | Prophetic", "Independent review of Mera Work (formerly Mera Monitor): live screen streaming, stealth mode, AI productivity reports and attendance tracking from $3 per user per month, with pricing versus Hubstaff, Time Doctor and Teramind."],
   ["/review/involve-me/", "involve.me Review | Prophetic", "Independent review of involve.me: quiz funnels, calculators, lead scoring, AI funnel builder and email automation from $29/month with unlimited responses — current 2026 pricing versus Typeform, Paperform and Jotform."],
-  ["/review/pocket-option/", "Pocket Option Review | Prophetic", "Honest review of Pocket Option: a fast binary options platform with $5 deposits and payouts up to 92% — but licensed only offshore, on the CFTC RED List, and banned for retail traders in the EU, UK, Canada and Australia. The risk math explained."],
   ["/review/convert/", "Convert.com Review | Prophetic", "Convert.com review: transparent A/B testing from $299/mo, dual stats engines, 90+ integrations, SOC 2 and HIPAA compliance — with honest limits vs VWO."]
 ];
+
+// Off-topic / thin pages: kept live for readers and existing links, but kept OUT of
+// Google's index and OUT of the sitemap so prophetic.pw reads as one topical site
+// (astrology). `follow` keeps internal link equity flowing to the astrology cluster.
+const NOINDEX = ["/compare/", "/topics/", "/guides/"];
+const isNoindex = (route) => NOINDEX.includes(route) || route.startsWith("/review/");
 
 function esc(v) {
   return String(v || "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;");
@@ -81,7 +88,7 @@ function schema(article) {
     "description":article.meta_description,
     "datePublished":article.created_at,
     "dateModified":article.updated_at || article.created_at,
-    "author":{"@type":"Organization","name":"Prophetic Editorial Team"},
+    "author":{"@type":"Person","@id":SITE + "/author/hedi-touati/#person","name":"Hedi Touati","url":SITE + "/author/hedi-touati/","jobTitle":"Founder & Editor"},
     "publisher":{"@type":"Organization","name":"Prophetic","url":SITE,"logo":{"@type":"ImageObject","url":SITE + "/logo.svg"}},
     "mainEntityOfPage":{"@type":"WebPage","@id":url},
     "url":url,
@@ -90,15 +97,23 @@ function schema(article) {
   };
 }
 
-function html(url,title,description,body,scriptSrc,json) {
-  var d = String(description || title).slice(0,160);
+function html(url,title,description,body,scriptSrc,json,robots) {
+  var d = fitDesc(description || title);
   var schemaTag = json ? '<script type="application/ld+json">' + JSON.stringify(json) + "</script>" : "";
+  // Strip Blogger's ?m=1 / ?m=0 mobile param. Vercel keeps query strings through
+  // vercel.json redirects, so this has to run client-side — and it must be injected
+  // here because this script overwrites dist/index.html (and every other route),
+  // which would otherwise drop the copy that lives in the source index.html.
+  var STRIP_M_PARAM = '<script>(function(){var p=new URLSearchParams(window.location.search);'
+    + "if(p.has('m')){p.delete('m');var q=p.toString();"
+    + 'window.location.replace(window.location.pathname+(q?"?"+q:""));}})();</script>';
   return '<!doctype html><html lang="en"><head>' +
     '<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">' +
+    STRIP_M_PARAM +
     '<title>' + esc(title) + '</title>' +
     '<meta name="description" content="' + esc(d) + '">' +
-    '<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">' +
-    '<meta name="author" content="Prophetic Editorial Team">' +
+    '<meta name="robots" content="' + (robots || "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1") + '">' +
+    '<meta name="author" content="Hedi Touati">' +
     '<link rel="canonical" href="' + url + '">' +
     '<link rel="alternate" hreflang="en" href="' + url + '">' +
     '<link rel="alternate" hreflang="x-default" href="' + url + '">' +
@@ -140,18 +155,13 @@ function postsList(withDesc) {
     return '<li><a href="' + loc + '">' + esc(p.title) + '</a>' + (withDesc && p.description ? ' — ' + esc(String(p.description).slice(0,150)) : '') + '</li>';
   }).join('') + '</ul>';
 }
-var REVIEW_LIST = '<ul>' + reviewPages.map(function(p){
-  return '<li><a href="' + p[0] + '">' + esc(p[1].replace(' | Prophetic','')) + '</a></li>';
-}).join('') + '</ul>';
 var EXPLORE_LIST = '<ul>' + [
-  ['/blog/','All articles'], ['/compare/','Compare business tools'], ['/topics/','Topics'],
-  ['/guides/','Guides'], ['/about/','About Prophetic'], ['/editorial/','Editorial policy'],
+  ['/blog/','All astrology articles'], ['/about/','About Prophetic'], ['/editorial/','Editorial policy'],
   ['/ai-policy/','AI content policy'], ['/contact/','Contact'], ['/sitemap/','HTML sitemap']
 ].map(function(x){ return '<li><a href="' + x[0] + '">' + x[1] + '</a></li>'; }).join('') + '</ul>';
-var NETWORK = '<p>Prophetic is part of a small independent network: <a href="https://twinflame.bond/" rel="noopener">twinflame.bond</a> (twin flame guides), <a href="https://daysuntil.bond/" rel="noopener">daysuntil.bond</a> (live event countdowns), <a href="https://trustscore.bond/" rel="noopener">trustscore.bond</a> (scored product reviews) and <a href="https://www.bmrcalc.bond/" rel="noopener">bmrcalc.bond</a> (BMR calculator).</p>';
 var HOMEPAGE_BODY = '<main>'
- + '<h1>Astrology guides and independent reviews</h1>'
- + '<p>Prophetic publishes astrology guides with their dates computed to the minute — retrogrades, stations, shadows and portals — alongside independent software and business reviews that publish the cons as loudly as the pros. No AI-generated filler: every guide is dated, sourced and updated when the sky changes.</p>'
+ + '<h1>Astrology guides with dates you can check</h1>'
+ + '<p>Prophetic publishes astrology guides with their dates computed to the minute — retrogrades and their shadow periods, eclipses, moon phases, meteor showers and portals — alongside plain-language explainers for reading your own chart, and honest cost guides for readings and spiritual services. No filler: every guide is dated, sourced, and updated when the sky changes.</p>'
  + '<section><h2>Latest astrology guides</h2>' + postsList(true) + '</section>'
  + '<section><h2>Free calculators and tools</h2><ul>'
  + '<li><a href="/blog/mercury-retrograde-2026/">Mercury retrograde chart checker</a> — find out whether you were born with Mercury retrograde and whether the 2026 stations touch your chart.</li>'
@@ -159,12 +169,14 @@ var HOMEPAGE_BODY = '<main>'
  + '<li><a href="/blog/jupiter-retrograde-2026/">Jupiter retrograde guide</a> — the quiet background review running underneath the 2026 retrograde season.</li>'
  + '<li><a href="https://daysuntil.bond/" rel="noopener">daysuntil.bond</a> — live countdowns to every eclipse, full moon and retrograde station.</li>'
  + '</ul></section>'
- + '<section><h2>Independent software and business reviews</h2>' + REVIEW_LIST + '</section>'
  + '<section><h2>Explore Prophetic</h2>' + EXPLORE_LIST + '</section>'
- + '<section><h2>Our network</h2>' + NETWORK + '</section>'
  + '</main>';
 var PAGE_INTRO = {
- "/about/": '<p>Prophetic is an independent publisher. Our astrology guides are computed from primary ephemeris data and dated to the minute; our reviews are researched, scored and updated. ' + NETWORK + '</p>',
+ "/about/": '<p>Prophetic is an independent astrology publisher. Every guide on this site is built from primary ephemeris data — the same astronomical tables professional astrologers use — and published with the date and time of each event to the minute, in UTC and in your local timezone where it matters. When a retrograde station or a moon phase moves, we update the article rather than publishing a new one.</p>'
+   + '<h2>What we publish</h2><p>Three things: dated event guides (retrogrades, eclipses, moon phases, meteor showers, portals), chart explainers (what a planet, house or aspect actually means when you read it in your own chart), and honest cost guides for readings and spiritual services — what you get at $15, at $60 and at $300, and where the marketplace sits in between.</p>'
+   + '<h2>How we work</h2><p>Dates come from ephemeris computation, not from copying other astrology sites. Claims about services come from their published pricing and terms on the day we check them, and we say which day that was. Where we cannot verify something, we say so instead of inventing a number.</p>'
+   + '<h2>Independence and corrections</h2><p>Some guides contain affiliate links, always labelled at the point of the link; they never change a date, a price we quote, or a conclusion. We accept no payment for coverage. Errors are corrected in place and the correction is noted in the article it affects — email the editor and the fix is published with the next update.</p>'
+   + '<h2>What astrology is — and is not</h2><p>We treat astrology as a symbolic and reflective practice with a long history, not as a prediction engine and not as a substitute for medical, legal or financial advice. That boundary is stated on every page that touches health, money or major life decisions.</p>',
  "/compare/": '<p>Side-by-side comparisons of the tools teams actually pay for — what each one does well, where it breaks, and which plan to start on. Every comparison is built from hands-on use and published pricing, not vendor copy.</p>',
  "/contact/": '<p>The fastest way to reach the editorial team is email: anistouati74@gmail.com. We read everything, and corrections are published with the next update of the article they concern.</p>',
  "/topics/": '<p>Browse everything Prophetic covers by topic — astrology transits and retrogrades, numerology, manifestation rituals, and the software categories we review.</p>',
@@ -175,6 +187,11 @@ var PAGE_INTRO = {
  "/privacy/": '<p>Prophetic is a static website: no accounts, no comment forms, minimal analytics. This page describes exactly what little data is collected and by whom.</p>',
  "/terms/": '<p>The plain-language terms that apply when you use prophetic.pw.</p>',
  "/disclaimer/": '<p>Astrology is a symbolic, reflective practice — not a prediction engine and not professional advice. Our reviews contain affiliate links, disclosed at the point of the link. This page details both.</p>',
+ "/author/hedi-touati/": '<p>Hedi Touati is the founder and editor of Prophetic. He is responsible for every guide published here: computing the astrology dates from ephemeris data, checking the prices quoted in the service guides against sellers’ own terms, and editing each piece before it goes live.</p>'
+   + '<h2>What he does here</h2><p>Retrograde stations, eclipses, moon phases and meteor-shower peaks are calculated rather than copied, which is why Prophetic’s times sometimes differ by a few hours from other astrology sites. Each guide carries the date it was last checked, and corrections are made in place rather than quietly replaced.</p>'
+   + '<h2>Background</h2><p>Prophetic began as a set of private notes on retrograde dates — the kind of table you build when you are tired of websites that disagree with each other by a day. It is now a public reference for people who want to check the sky for themselves: what is happening, when exactly, and what it means for a chart.</p>'
+   + '<h2>Standards and independence</h2><p>Some guides carry affiliate links, disclosed at the point of the link. They fund the site and never change a date, a quoted price or a conclusion. Corrections are published on the article they affect, with the date of the change. The full standards are in the <a href="/editorial/">editorial policy</a>.</p>'
+   + '<h2>Contact</h2><p>Corrections, questions and pitches: <a href="mailto:anistouati74@gmail.com">anistouati74@gmail.com</a>. Everything is read, and verified corrections are published with the next update of the article.</p>',
  "/review/notion/": '<p>Notion remains the most flexible all-in-one workspace, and the one most teams adopt enthusiastically and then drown in. Our review covers where it genuinely shines — docs, wikis, linked databases — and where it costs you: speed at scale, the mobile app, and per-seat pricing that compounds.</p>',
  "/review/linear/": '<p>Linear is the issue tracker that product and engineering teams actually enjoy using — opinionated, fast, and built around cycles rather than ticket churn. Our review covers where that opinionation helps and where it fights your process.</p>',
  "/review/hubspot/": '<p>HubSpot bundles CRM, marketing, sales and service hubs into one platform — powerful, and priced accordingly. Our review covers which hubs earn their cost, where the free tier is genuinely usable, and where the pricing staircase bites.</p>',
@@ -183,24 +200,29 @@ var PAGE_INTRO = {
  "/review/volza/": '<p>Volza aggregates bills of lading and customs data across 190+ countries: real buyers, real suppliers, real volumes. Our review covers what the data actually shows, how fresh it is per country, and who the subscription pays off for.</p>',
  "/review/mera-work/": '<p>Mera Work is the budget entry in employee monitoring — screenshots, activity levels and time tracking from about $3 per user per month, with a usable free tier. Our review compares it honestly against Insightful, Hubstaff and Time Doctor.</p>',
  "/review/involve-me/": '<p>involve.me builds quiz funnels with the CRM and email automation attached — from $29/month on top of a capable free plan. Our review covers the quiz builder, the automation depth, and how it compares to Typeform and Jotform for lead generation.</p>',
- "/review/pocket-option/": '<p>Pocket Option is a fast binary-options platform with $5 deposits and payouts up to 92% — licensed only offshore, on the CFTC RED List, and banned for retail traders in the EU, UK, Canada and Australia. Our review is a risk explainer first: read it before depositing anything.</p>',
  "/review/convert/": '<p>Convert.com is enterprise-grade A/B testing from $299/month — client and server-side experiments, privacy-safe analytics, and support staffed by testing people. Our review covers what you get for the price and who should stay on cheaper tools.</p>'
 };
 
-var urls = staticPages.concat(reviewPages).map(function(p){ return p[0]; });
-var sitemapEntries = staticPages.concat(reviewPages).map(function(p){
-  return "  <url><loc>" + SITE + p[0] + "</loc></url>";
+var indexable = staticPages.concat(reviewPages).filter(function(p){ return !isNoindex(p[0]); });
+var urls = indexable.map(function(p){ return p[0]; });
+// تاريخ البناء = آخر تعديل حقيقي للصفحات الثابتة (تُعاد توليدها مع كل نشر)
+var buildDay = new Date().toISOString().slice(0,10);
+var dayOnly  = function(d){ return String(d).slice(0,10); };
+var sitemapEntries = indexable.map(function(p){
+  var pri = (p[0] === "/") ? "1.0" : "0.6";
+  return "  <url><loc>" + SITE + p[0] + "</loc><lastmod>" + buildDay +
+         "</lastmod><changefreq>weekly</changefreq><priority>" + pri + "</priority></url>";
 });
 if (blog.posts.length) {
-  var blogLastmod = blog.posts.map(function(p){ return p.updated || p.date; }).sort().pop();
+  var blogLastmod = dayOnly(blog.posts.map(function(p){ return p.updated || p.date; }).sort().pop());
   urls.push("/blog/");
   sitemapEntries.push("  <url><loc>" + SITE + "/blog/</loc><lastmod>" + blogLastmod + "</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>");
   blog.posts.forEach(function(p){
     var loc = p.url.replace(SITE, "");
     urls.push(loc);
-    sitemapEntries.push("  <url><loc>" + SITE + loc + "</loc><lastmod>" + (p.updated || p.date) + "</lastmod><priority>0.8</priority></url>");
+    sitemapEntries.push("  <url><loc>" + SITE + loc + "</loc><lastmod>" + dayOnly(p.updated || p.date) + "</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>");
   });
-  blog.tags.forEach(function(t){
+  blog.tags.filter(function(t){ return !t.thin; }).forEach(function(t){
     var loc = t.url.replace(SITE, "");
     urls.push(loc);
     sitemapEntries.push("  <url><loc>" + SITE + loc + "</loc><lastmod>" + blogLastmod + "</lastmod><priority>0.4</priority></url>");
@@ -208,15 +230,33 @@ if (blog.posts.length) {
 }
 articles.forEach(function(a){
   urls.push("/article/" + a.slug + "/");
-  sitemapEntries.push("  <url><loc>" + SITE + "/article/" + a.slug + "/</loc><lastmod>" + new Date(a.updated_at || a.created_at).toISOString() + "</lastmod></url>");
+  sitemapEntries.push("  <url><loc>" + SITE + "/article/" + a.slug + "/</loc><lastmod>" + dayOnly(a.updated_at || a.created_at) + "</lastmod></url>");
 });
 
 fs.writeFileSync(path.join(dist,"sitemap.xml"),
   '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
   sitemapEntries.join("\n") + '\n</urlset>\n',"utf8");
 
-fs.writeFileSync(path.join(dist,"robots.txt"),
-  "User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: " + SITE + "/sitemap.xml\n","utf8");
+// Preserve the hand-written robots.txt from public/ (it carries explicit Allow rules
+// for the AI crawlers — GPTBot, CCBot, PerplexityBot, anthropic-ai, Google-Extended —
+// which the generic Allow: / does not signal as clearly). Only append the sitemap line.
+var robotsSrc = path.join("public","robots.txt");
+var robotsTxt = fs.existsSync(robotsSrc)
+  ? fs.readFileSync(robotsSrc,"utf8")
+  : "User-agent: *\nAllow: /\nDisallow: /api/\n";
+if (!/^\s*Sitemap:/im.test(robotsTxt)) {
+  robotsTxt = robotsTxt.replace(/\s*$/,"") + "\n\nSitemap: " + SITE + "/sitemap.xml\n";
+}
+fs.writeFileSync(path.join(dist,"robots.txt"), robotsTxt,"utf8");
+
+var AUTHOR_SCHEMA = {
+  "@context":"https://schema.org","@type":"Person","@id":SITE + "/author/hedi-touati/#person",
+  name:"Hedi Touati", url:SITE + "/author/hedi-touati/", jobTitle:"Founder & Editor",
+  description:"Founder and editor of Prophetic. Computes the site\u2019s astrology dates from ephemeris data and edits every guide before publication.",
+  worksFor:{"@type":"Organization","name":"Prophetic","url":SITE + "/"},
+  knowsAbout:["Astrology","Birth charts","Planetary transits","Retrograde motion","Moon phases"],
+  email:"mailto:anistouati74@gmail.com"
+};
 
 staticPages.concat(reviewPages).forEach(function(p){
   var heading = p[1].replace(" | Prophetic","").replace("Prophetic — ","");
@@ -228,11 +268,12 @@ staticPages.concat(reviewPages).forEach(function(p){
          + (PAGE_INTRO[p[0]] || "")
          + "<section><h2>More from Prophetic</h2>"
          + "<h3>Latest astrology guides</h3>"+postsList(false)
-         + "<h3>Software &amp; business reviews</h3>"+REVIEW_LIST
          + "<h3>Explore</h3>"+EXPLORE_LIST
          + "</section></main>";
   }
-  writeRoute(p[0],html(SITE+p[0],p[1],p[2],body,scriptSrc,null));
+  writeRoute(p[0],html(SITE+p[0],p[1],p[2],body,scriptSrc,
+    p[0] === "/author/hedi-touati/" ? AUTHOR_SCHEMA : null,
+    isNoindex(p[0]) ? "noindex,follow" : null));
 });
 
 articles.forEach(function(a){
