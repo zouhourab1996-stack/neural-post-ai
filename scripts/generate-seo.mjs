@@ -9,7 +9,7 @@ const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_KEY;
 
 const staticPages = [
-  ["/", "Prophetic — Astrology Guides, Retrograde Dates & Chart Tools", "Astrology guides with dates computed to the minute — retrogrades, eclipses, moon phases and Saturn returns — plus plain-language chart explainers."],
+  ["/", "Prophetic — Astrology Guides, Retrograde Dates & Chart Tools", "Astrology guides with dates computed to the minute — Mercury and Venus retrogrades, eclipses, moon phases, Saturn returns — plus plain-language chart explainers and honest reading-cost guides."],
   ["/compare/", "Compare Business Tools | Prophetic", "Compare software, finance, marketing, and developer tools with clear, independent analysis."],
   ["/about/", "About Prophetic — How We Compute Our Astrology Dates", "Who writes Prophetic, how our astrology dates are computed from ephemeris data, our corrections policy, and how affiliate links are handled."],
   ["/contact/", "Contact Prophetic", "Contact the Prophetic editorial team."],
@@ -248,6 +248,15 @@ if (!/^\s*Sitemap:/im.test(robotsTxt)) {
   robotsTxt = robotsTxt.replace(/\s*$/,"") + "\n\nSitemap: " + SITE + "/sitemap.xml\n";
 }
 fs.writeFileSync(path.join(dist,"robots.txt"), robotsTxt,"utf8");
+
+var AUTHOR_SCHEMA = {
+  "@context":"https://schema.org","@type":"Person","@id":SITE + "/author/hedi-touati/#person",
+  name:"Hedi Touati", url:SITE + "/author/hedi-touati/", jobTitle:"Founder & Editor",
+  description:"Founder and editor of Prophetic. Computes the site\u2019s astrology dates from ephemeris data and edits every guide before publication.",
+  worksFor:{"@type":"Organization","name":"Prophetic","url":SITE + "/"},
+  knowsAbout:["Astrology","Birth charts","Planetary transits","Retrograde motion","Moon phases"],
+  email:"mailto:anistouati74@gmail.com"
+};
 
 var AUTHOR_SCHEMA = {
   "@context":"https://schema.org","@type":"Person","@id":SITE + "/author/hedi-touati/#person",
