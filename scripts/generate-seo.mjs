@@ -12,16 +12,16 @@ const staticPages = [
   ["/", "Prophetic — Astrology Guides, Retrograde Dates & Chart Tools", "Astrology guides with dates computed to the minute — Mercury and Venus retrogrades, eclipses, moon phases, Saturn returns — plus plain-language chart explainers and honest reading-cost guides."],
   ["/compare/", "Compare Business Tools | Prophetic", "Compare software, finance, marketing, and developer tools with clear, independent analysis."],
   ["/about/", "About Prophetic — How We Compute Our Astrology Dates", "Who writes Prophetic, how our astrology dates are computed from ephemeris data, our corrections policy, and how affiliate links are handled."],
-  ["/contact/", "Contact Prophetic", "Contact the Prophetic editorial team."],
-  ["/privacy/", "Privacy Policy | Prophetic", "Prophetic's privacy policy and data practices."],
-  ["/terms/", "Terms of Service | Prophetic", "Terms of service for the Prophetic website."],
-  ["/disclaimer/", "Disclaimer | Prophetic", "Disclosures about editorial content, affiliate relationships, and AI-assisted publishing."],
-  ["/editorial/", "Editorial Policy | Prophetic", "Prophetic's editorial standards, sourcing practices, corrections policy, and independence principles."],
-  ["/ai-policy/", "AI Content Policy | Prophetic", "How Prophetic uses AI-assisted tools in research and content production."],
-  ["/sitemap/", "HTML Sitemap | Prophetic", "Browse public pages and articles published by Prophetic."],
+  ["/contact/", "Contact the Prophetic Editorial Team", "Contact the Prophetic editorial team with corrections, sourcing questions, feedback, or a carefully researched pitch."],
+  ["/privacy/", "Prophetic Privacy Policy & Data Practices", "Read Prophetic's privacy policy, including the limited data collected by the site, analytics, advertising, and your available choices."],
+  ["/terms/", "Prophetic Website Terms of Service", "Read the terms that apply when you use Prophetic's astrology guides, calculators, reviews, affiliate links, and other published content."],
+  ["/disclaimer/", "Prophetic Disclaimer & Affiliate Disclosure", "Read Prophetic's disclaimer about astrology, general information, affiliate relationships, AI-assisted publishing, and professional advice boundaries."],
+  ["/editorial/", "Prophetic Editorial Policy & Standards", "Learn how Prophetic computes dates, checks service claims, handles corrections, discloses affiliates, and protects editorial independence."],
+  ["/ai-policy/", "Prophetic AI Content Policy & Human Review", "Learn how Prophetic uses AI-assisted tools for research and drafting while requiring human review, source checks, and accountable publication."],
+  ["/sitemap/", "Prophetic HTML Sitemap & Article Index", "Browse Prophetic's public pages, astrology guides, dated event explainers, calculators, reviews, and the latest published articles."],
   ["/topics/", "Topics | Prophetic", "Browse Prophetic topics across AI, technology, business, science, and world news."],
   ["/guides/", "Guides | Prophetic", "Browse practical guides and explainers from Prophetic."],
-  ["/author/hedi-touati/", "Hedi Touati — Founder & Editor of Prophetic", "Hedi Touati is the founder and editor of Prophetic: he computes the site's astrology dates from ephemeris data and edits every guide before publication."]
+  ["/author/hedi-touati/", "Meet Hedi Touati, Prophetic Founder & Editor", "Meet Hedi Touati, founder and editor of Prophetic, who computes the site's astrology dates and edits every guide before publication."]
 ];
 
 const reviewPages = [
