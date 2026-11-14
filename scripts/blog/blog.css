@@ -85,6 +85,7 @@ code,kbd,pre,.mono{font-family:"DM Mono",ui-monospace,SFMono-Regular,Menlo,monos
 .pb-body h3{font-size:1.18rem;margin:1.6em 0 .45em;letter-spacing:-.01em;scroll-margin-top:90px}
 .pb-body h4{font-size:1.02rem;margin:1.4em 0 .4em;text-transform:uppercase;letter-spacing:.06em;color:hsl(var(--muted-foreground))}
 .pb-body p{margin:.85em 0}
+.pb-body p a,.pb-body li a,.pb-author p a{text-decoration:underline;text-decoration-thickness:.08em;text-underline-offset:.16em}
 .pb-body ul,.pb-body ol{padding-left:1.4em;margin:.7em 0}
 .pb-body li{margin:.3em 0}
 .pb-body li>ul,.pb-body li>ol{margin:.25em 0}
