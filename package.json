@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/generate-platform.mjs && node scripts/generate-blog.mjs && node scripts/generate-seo.mjs",
-    "build:dev": "vite build --mode development && node scripts/generate-platform.mjs && node scripts/generate-blog.mjs && node scripts/generate-seo.mjs",
+    "build": "node scripts/copy-public.mjs && node scripts/generate-blog.mjs && node scripts/generate-seo.mjs",
+    "build:dev": "npm run build",
+    "build:spa": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",

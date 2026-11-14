@@ -14,6 +14,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { TRACKING_HEAD } from "./head-tags.mjs";
 import { fitDesc } from "./seo-fit.mjs";
+import { chrome, themeCss, THEME_SCRIPT, FONT_LINKS } from "./site-chrome.mjs";
 
 const SITE = "https://prophetic.pw";
 const SITE_NAME = "Prophetic";
@@ -51,7 +52,6 @@ const root = process.cwd();
 const contentDir = path.join(root, "content", "blog");
 const dist = path.join(root, "dist");
 const blogDist = path.join(dist, "blog");
-const themeCss = fs.readFileSync(path.join(root, "scripts", "blog", "blog.css"), "utf8");
 
 // ------------------------------------------------------------------ helpers
 const esc = (v) => String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
@@ -237,28 +237,6 @@ function loadPosts() {
 }
 
 // ------------------------------------------------------------------ layout
-const THEME_SCRIPT = `<script>(function(){var t;try{t=localStorage.getItem("prophetic-theme")}catch(e){}var d=document.documentElement;d.classList.remove("dark","light");d.classList.add(t==="light"?"light":"dark");})();</script>`;
-const TOGGLE_SCRIPT = `<script>(function(){var b=document.getElementById("pb-theme");if(!b)return;b.addEventListener("click",function(){var d=document.documentElement,n=d.classList.contains("dark")?"light":"dark";d.classList.remove("dark","light");d.classList.add(n);try{localStorage.setItem("prophetic-theme",n)}catch(e){}});})();</script>`;
-const SUN = '<svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>';
-const MOON = '<svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>';
-
-function chrome(active) {
-  const link = (href, label, key) => `<a href="${href}"${active === key ? ' class="active"' : ""}>${label}</a>`;
-  return {
-    header: `<div class="pb-announce"><span class="pb-dot"></span> The signal behind better decisions <a href="/about">Our editorial standards ↗</a></div>
-<header class="pb-header"><div class="pb-container pb-nav">
- <a href="/" class="pb-brand"><span class="pb-mark">P</span><span>prophetic<span class="dot">.</span>pw <small>/ signal</small></span></a>
- <nav class="pb-links" aria-label="Primary navigation">${link("/", "Home", "home")}${link("/blog/", "Blog", "blog")}${link("/compare", "Compare", "compare")}${link("/about", "About", "about")}${link("/contact", "Contact", "contact")}</nav>
- <div class="pb-actions"><a href="/blog/feed.xml" class="pb-iconbtn" aria-label="RSS feed" title="RSS feed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg></a><button id="pb-theme" class="pb-iconbtn" aria-label="Toggle theme" type="button">${SUN}${MOON}</button></div>
-</div></header>`,
-    footer: `<footer class="pb-footer"><div class="pb-container pb-footgrid">
- <div><a href="/" class="pb-brand"><span class="pb-mark">P</span><span>prophetic<span class="dot">.</span>pw <small>/ signal</small></span></a><p>Astrology guides with dates computed to the minute.</p></div>
- <div class="col"><strong>Explore</strong><a href="/blog/">All guides</a><a href="/about">About Prophetic</a><a href="/editorial">Editorial policy</a><a href="/blog/feed.xml">RSS feed</a></div>
- <div class="col"><strong>Company</strong><a href="/about">About Prophetic</a><a href="/contact">Contact us</a><a href="/disclaimer">Disclaimer</a><a href="/privacy">Privacy policy</a><a href="/terms">Terms</a></div>
-</div><div class="pb-container pb-footbottom"><span>© ${new Date().getUTCFullYear()} ${SITE_NAME}. Built for better decisions.</span><span>We research. You decide.</span></div></footer>${TOGGLE_SCRIPT}`,
-  };
-}
-
 function page({ title, description, url, body, active, ld = [], extraCss = "", image = DEFAULT_IMAGE, type = "website", noindex = false, published, modified, lang = "en", feed = true }) {
   const ldTags = ld.filter(Boolean).map((j) => `<script type="application/ld+json">${typeof j === "string" ? j : JSON.stringify(j)}</script>`).join("\n");
   const { header, footer } = chrome(active);
@@ -280,8 +258,7 @@ ${published ? `<meta property="article:published_time" content="${published}"><m
 <meta name="theme-color" content="#0a0f1e">
 ${TRACKING_HEAD}
 ${feed ? `<link rel="alternate" type="application/rss+xml" title="${BLOG_TITLE}" href="${SITE}/blog/feed.xml">` : ""}
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+${FONT_LINKS}
 ${THEME_SCRIPT}
 <style>${themeCss}${extraCss ? "\n/* post styles */\n" + extraCss : ""}</style>
 ${ldTags}
@@ -301,10 +278,35 @@ const card = (p, featured = false) => `<a class="pb-card${featured ? " featured"
  <span class="meta"><span>${fmtDate(p.date)}</span><b>${p.readingTime} min read →</b></span>
 </a>`;
 
+
+// ------------------------------------------------------------------ related posts
+// 3–5 related guides per post, rendered as plain <a href> cards in the static HTML.
+// Ranked by shared tags (ignoring generic tags), same category, then title-word overlap.
+// Candidates are restricted to the same niche group so astrology posts never link to
+// the off-niche AI/dev Fiverr posts (and vice versa).
+const GENERIC_TAGS = new Set(["2026", "fiverr", "reviews", "review", "guide", "guides", "beginners", "comparison", "services", "online"].map((t) => t.toLowerCase()));
+const OFF_NICHE_CATEGORY = "Fiverr Reviews";
+const isOffNiche = (p) => p.category === OFF_NICHE_CATEGORY && !p.tags.some((t) => /psychic|tarot|astrolog|twin flame|numerolog|reiki|dream/i.test(t));
+const STOP = new Set("the a an of in and to for your you how what is are with vs on by from best 2026 2027 guide".split(" "));
+const titleWords = (t) => new Set(String(t).toLowerCase().replace(/[^a-z0-9 ]+/g, " ").split(/\s+/).filter((w) => w.length > 2 && !STOP.has(w)));
+function relatedPosts(p, all, min = 3, max = 5) {
+  const pt = new Set(p.tags.map((t) => t.toLowerCase()).filter((t) => !GENERIC_TAGS.has(t)));
+  const pw = titleWords(p.title);
+  const off = isOffNiche(p);
+  const scored = all.filter((o) => o !== p && !o.noindex && isOffNiche(o) === off).map((o) => {
+    const shared = o.tags.filter((t) => pt.has(t.toLowerCase())).length;
+    let words = 0; titleWords(o.title).forEach((w) => { if (pw.has(w)) words++; });
+    return { o, score: shared * 3 + (o.category === p.category ? 2 : 0) + words };
+  }).sort((x, y) => y.score - x.score || (x.o.date < y.o.date ? 1 : -1));
+  const strong = scored.filter((x) => x.score >= 3).slice(0, max);
+  const picked = strong.length >= min ? strong : scored.slice(0, min);
+  return picked.map((x) => x.o);
+}
+
 // ------------------------------------------------------------------ renderers
 function renderPost(p, all) {
   const idx = all.indexOf(p); const prev = all[idx + 1]; const next = all[idx - 1];
-  const related = all.filter((o) => o !== p && o.tags.some((t) => p.tags.includes(t))).slice(0, 3);
+  const related = relatedPosts(p, all);
   const schema = {
     "@context": "https://schema.org", "@type": "BlogPosting",
     headline: p.title, description: p.description, image: [p.image],
@@ -333,7 +335,7 @@ function renderPost(p, all) {
 ${p.html}
  </div>
  <div class="pb-share"><span>Share:</span><a href="https://twitter.com/intent/tweet?url=${share}&text=${shareT}" rel="noopener" target="_blank">X / Twitter</a><a href="https://www.facebook.com/sharer/sharer.php?u=${share}" rel="noopener" target="_blank">Facebook</a><a href="https://www.linkedin.com/sharing/share-offsite/?url=${share}" rel="noopener" target="_blank">LinkedIn</a><a href="https://www.reddit.com/submit?url=${share}&title=${shareT}" rel="noopener" target="_blank">Reddit</a><a href="mailto:?subject=${shareT}&body=${share}">Email</a></div>
- <aside class="pb-author"><div class="av">${esc(p.author.slice(0, 1))}</div><div><strong><a rel="author" href="${AUTHOR_SLUG}">${esc(p.author)}</a></strong><span class="pb-author-role">${esc(AUTHOR_TITLE)}</span><p>${esc(AUTHOR_BIO)} Every date on this page is computed from ephemeris data and every price is checked against the seller's own terms. Found an error? <a href="/contact">Tell us</a> and we will correct it in place, with the correction noted. Last review: ${fmtDate(p.updated)}.</p></div></aside>
+ <aside class="pb-author"><div class="av">${esc(p.author.slice(0, 1))}</div><div><strong><a rel="author" href="${AUTHOR_SLUG}">${esc(p.author)}</a></strong><span class="pb-author-role">${esc(AUTHOR_TITLE)}</span><p>${esc(AUTHOR_BIO)} Every date on this page is computed from ephemeris data and every price is checked against the seller's own terms. Found an error? <a href="/contact/">Tell us</a> and we will correct it in place, with the correction noted. Last review: ${fmtDate(p.updated)}.</p></div></aside>
  ${prev || next ? `<nav class="pb-prevnext" aria-label="More posts">${prev ? `<a href="/blog/${prev.slug}/"><span>← Older</span>${esc(prev.title)}</a>` : "<span></span>"}${next ? `<a class="next" href="/blog/${next.slug}/"><span>Newer →</span>${esc(next.title)}</a>` : ""}</nav>` : ""}
  ${related.length ? `<section class="pb-related"><h2>Related guides</h2><div class="pb-grid">${related.map((r) => card(r)).join("")}</div></section>` : ""}
  <a class="pb-back" href="/blog/">← All posts</a>
@@ -341,12 +343,12 @@ ${p.html}
   return page({ title: pageTitle(p.seoTitle), description: p.description, url: p.canonical, body, active: "blog", ld: [schema, crumbs, ...p.ld], extraCss: p.styles, image: p.image, type: "article", noindex: p.noindex, published: isoDate(p.date), modified: isoDate(p.updated), lang: p.lang });
 }
 
-function renderList_(posts, { title, heading, description, url, base, pageNo, pages, tag, allTags, noindex: tagNoindex = false }) {
+function renderList_(posts, { title, heading, description, url, base, pageNo, pages, tag, allTags, noindex: tagNoindex = false, allPosts = null }) {
   const pager = pages > 1 ? `<nav class="pb-pager" aria-label="Pagination">${Array.from({ length: pages }, (_, k) => k + 1).map((n) => n === pageNo ? `<span class="current">${n}</span>` : `<a href="${n === 1 ? base : `${base}page/${n}/`}">${n}</a>`).join("")}</nav>` : "";
   const tagBar = `<div class="pb-tags"><a class="pill${!tag ? " active" : ""}" href="/blog/">All posts</a>${allTags.map((t) => `<a class="pill${tag === t ? " active" : ""}" href="/blog/tag/${slugify(t)}/">${esc(t)}</a>`).join("")}</div>`;
   const grid = posts.length ? `<div class="pb-grid">${posts.map((p, k) => card(p, pageNo === 1 && k === 0 && !tag)).join("")}</div>` : `<p class="pb-empty">No posts yet.</p>`;
   const body = `<section class="pb-hero"><div class="pb-container"><span class="eyebrow accent">${tag ? "Topic" : "The Prophetic Blog"}</span><h1>${heading}</h1><p>${esc(description)}</p>${tagBar}</div></section>
-<main class="pb-container">${grid}${pager}</main>`;
+<main class="pb-container">${grid}${pager}${allPosts ? `<section class="pb-related pb-allposts"><h2>All ${allPosts.length} guides</h2><ul>${allPosts.map((p) => `<li><a href="/blog/${p.slug}/">${esc(p.title)}</a></li>`).join("")}</ul></section>` : ""}</main>`;
   const ld = [{ "@context": "https://schema.org", "@type": tag ? "CollectionPage" : "Blog", "@id": tag ? url : SITE + "/blog/#blog", name: title, description, url,
     blogPost: posts.map((p) => ({ "@type": "BlogPosting", headline: p.title, url: p.url, datePublished: isoDate(p.date) })) },
     { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [ { "@type": "ListItem", position: 1, name: "Home", item: SITE + "/" }, { "@type": "ListItem", position: 2, name: "Blog", item: SITE + "/blog/" }, ...(tag ? [{ "@type": "ListItem", position: 3, name: tag, item: url }] : []) ] }];
@@ -389,22 +391,27 @@ for (let n = 1; n <= pages; n++) {
   const slice = posts.slice((n - 1) * POSTS_PER_PAGE, n * POSTS_PER_PAGE);
   const rel = n === 1 ? "blog/index.html" : `blog/page/${n}/index.html`;
   const url = n === 1 ? `${SITE}/blog/` : `${SITE}/blog/page/${n}/`;
-  writeFile(rel, renderList_(slice, { title: n === 1 ? `${BLOG_TITLE} — Guides, Forecasts & Deep Dives` : `${BLOG_TITLE} — Page ${n}`, heading: `Guides, forecasts<br><em>and deep dives.</em>`, description: BLOG_DESCRIPTION, url, base: "/blog/", pageNo: n, pages, tag: null, allTags }));
+  writeFile(rel, renderList_(slice, { title: n === 1 ? `${BLOG_TITLE} — Guides, Forecasts & Deep Dives` : `${BLOG_TITLE} — Page ${n}`, heading: `Guides, forecasts<br><em>and deep dives.</em>`, description: BLOG_DESCRIPTION, url, base: "/blog/", pageNo: n, pages, tag: null, allTags, allPosts: n === 1 ? posts.filter((p) => !p.noindex) : null }));
 }
 // Thin-content guard: a tag archive with only one or two posts is a doorway page,
 // not a useful hub. Those are kept reachable (and followed) but kept out of the index.
+// A tag archive is also thin when its own unique text (heading + intro, i.e. excluding
+// the post cards that duplicate each post's description) is under MIN_TAG_WORDS words.
 const MIN_TAG_POSTS = 3;
-const isThinTag = (t) => posts.filter((p) => p.tags.includes(t)).length < MIN_TAG_POSTS;
+const MIN_TAG_WORDS = 300;
+const tagDescription = (t) => { const n = posts.filter((p) => p.tags.includes(t)).length; return `${n} post${n === 1 ? "" : "s"} about ${t} from the Prophetic editorial team.`; };
+const tagUniqueWords = (t) => wordCount(`${t} ${tagDescription(t)}`);
+const isThinTag = (t) => posts.filter((p) => p.tags.includes(t)).length < MIN_TAG_POSTS || tagUniqueWords(t) < MIN_TAG_WORDS;
 allTags.forEach((t) => {
   const slice = posts.filter((p) => p.tags.includes(t));
-  writeFile(`blog/tag/${slugify(t)}/index.html`, renderList_(slice, { title: `${t} — ${BLOG_TITLE}`, heading: `${esc(t)}`, description: `${slice.length} post${slice.length === 1 ? "" : "s"} about ${t} from the Prophetic editorial team.`, url: `${SITE}/blog/tag/${slugify(t)}/`, base: `/blog/tag/${slugify(t)}/`, pageNo: 1, pages: 1, tag: t, allTags, noindex: isThinTag(t) }));
+  writeFile(`blog/tag/${slugify(t)}/index.html`, renderList_(slice, { title: `${t} — ${BLOG_TITLE}`, heading: `${esc(t)}`, description: tagDescription(t), url: `${SITE}/blog/tag/${slugify(t)}/`, base: `/blog/tag/${slugify(t)}/`, pageNo: 1, pages: 1, tag: t, allTags, noindex: isThinTag(t) }));
 });
 writeFile("blog/feed.xml", renderFeed(posts));
 writeFile("blog/manifest.json", JSON.stringify({
   generatedAt: new Date().toISOString(),
   index: `${SITE}/blog/`,
-  tags: allTags.map((t) => ({ name: t, url: `${SITE}/blog/tag/${slugify(t)}/`, count: posts.filter((p) => p.tags.includes(t)).length, thin: isThinTag(t) })),
+  tags: allTags.map((t) => ({ name: t, url: `${SITE}/blog/tag/${slugify(t)}/`, count: posts.filter((p) => p.tags.includes(t)).length, thin: isThinTag(t), uniqueWords: tagUniqueWords(t) })),
   pages: Array.from({ length: pages }, (_, k) => k === 0 ? `${SITE}/blog/` : `${SITE}/blog/page/${k + 1}/`),
-  posts: posts.map((p) => ({ slug: p.slug, url: p.url, title: p.title, description: p.description, date: p.date, updated: p.updated, tags: p.tags, category: p.category, readingTime: p.readingTime, image: p.image })),
+  posts: posts.map((p) => ({ slug: p.slug, url: p.url, title: p.title, description: p.description, date: p.date, updated: p.updated, tags: p.tags, category: p.category, readingTime: p.readingTime, image: p.image, file: p.file, canonical: p.canonical, noindex: p.noindex, words: p.words })),
 }, null, 2));
 console.log(`[blog] ${posts.length} post(s), ${allTags.length} tag(s), ${pages} index page(s) → dist/blog/`);

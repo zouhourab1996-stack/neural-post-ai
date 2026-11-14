@@ -27,4 +27,5 @@ User-agent: PerplexityBot
 Allow: /
 
 Sitemap: https://prophetic.pw/sitemap.xml
-
+Sitemap: https://sitemaps.prophetic.pw/sitemap.xml
+Sitemap: https://prophetic.pw/sitemap.txt

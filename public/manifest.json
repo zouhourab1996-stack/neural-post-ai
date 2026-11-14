@@ -1,17 +1,27 @@
 {
-  "name": "Prophetic — AI Predictions & Tech Forecasts",
+  "name": "Prophetic — Astrology Dates, Retrogrades & Moon Calendar",
   "short_name": "Prophetic",
-  "description": "Daily AI predictions, tech forecasts, market analysis, and science coverage. Expert insights on emerging trends.",
+  "description": "Astrology guides with dates computed to the minute: retrogrades, eclipses, moon phases and plain-English birth chart explainers.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0f1e",
   "theme_color": "#3b82f6",
   "lang": "en",
   "dir": "ltr",
-  "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  "categories": [
+    "lifestyle",
+    "education"
   ],
-  "categories": ["news", "technology", "finance"],
-  "orientation": "portrait"
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }

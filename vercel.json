@@ -9,6 +9,31 @@
           "value": "application/xml; charset=utf-8"
         },
         {
+          "key": "Content-Disposition",
+          "value": "inline"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/sitemap.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
+        {
+          "key": "Content-Disposition",
+          "value": "inline"
+        },
+        {
           "key": "X-Content-Type-Options",
           "value": "nosniff"
         },
@@ -151,102 +176,12 @@
   ],
   "redirects": [
     {
-      "source": "/review/joiin",
-      "destination": "https://trustscore.bond/reviews/joiin-review/",
+      "source": "/index.html",
+      "destination": "/",
       "permanent": true
     },
     {
-      "source": "/review/joiin/",
-      "destination": "https://trustscore.bond/reviews/joiin-review/",
-      "permanent": true
-    },
-    {
-      "source": "/review/volza",
-      "destination": "https://trustscore.bond/reviews/volza-review/",
-      "permanent": true
-    },
-    {
-      "source": "/review/volza/",
-      "destination": "https://trustscore.bond/reviews/volza-review/",
-      "permanent": true
-    },
-    {
-      "source": "/review/involve-me",
-      "destination": "https://trustscore.bond/reviews/involveme-review/",
-      "permanent": true
-    },
-    {
-      "source": "/review/involve-me/",
-      "destination": "https://trustscore.bond/reviews/involveme-review/",
-      "permanent": true
-    },
-    {
-      "source": "/review/convert",
-      "destination": "https://trustscore.bond/reviews/convert-review/",
-      "permanent": true
-    },
-    {
-      "source": "/review/convert/",
-      "destination": "https://trustscore.bond/reviews/convert-review/",
-      "permanent": true
-    },
-    {
-      "source": "/review/mera-work",
-      "destination": "https://trustscore.bond/reviews/mera-review/",
-      "permanent": true
-    },
-    {
-      "source": "/review/mera-work/",
-      "destination": "https://trustscore.bond/reviews/mera-review/",
-      "permanent": true
-    },
-    {
-      "source": "/review/notion",
-      "destination": "/blog/",
-      "permanent": true
-    },
-    {
-      "source": "/review/notion/",
-      "destination": "/blog/",
-      "permanent": true
-    },
-    {
-      "source": "/review/linear",
-      "destination": "/blog/",
-      "permanent": true
-    },
-    {
-      "source": "/review/linear/",
-      "destination": "/blog/",
-      "permanent": true
-    },
-    {
-      "source": "/review/hubspot",
-      "destination": "/blog/",
-      "permanent": true
-    },
-    {
-      "source": "/review/hubspot/",
-      "destination": "/blog/",
-      "permanent": true
-    },
-    {
-      "source": "/review/wise-business",
-      "destination": "/blog/",
-      "permanent": true
-    },
-    {
-      "source": "/review/wise-business/",
-      "destination": "/blog/",
-      "permanent": true
-    },
-    {
-      "source": "/review/pocket-option",
-      "destination": "/blog/",
-      "permanent": true
-    },
-    {
-      "source": "/review/pocket-option/",
+      "source": "/review{/:path(.*)}?",
       "destination": "/blog/",
       "permanent": true
     },
@@ -271,67 +206,32 @@
       "permanent": true
     },
     {
-      "source": "/:year(\\d{4})/:month(\\d{2})/:slug",
+      "source": "/:year(\\d{4}){/:month(\\d{2})}?{/:slug}?{/}?",
       "destination": "/blog/",
       "permanent": true
     },
     {
-      "source": "/review/:slug",
-      "destination": "/review/:slug/",
-      "permanent": true
-    },
-    {
-      "source": "/saturn-return-in-aries-2026",
+      "source": "/saturn-return-in-aries-2026{/}?",
       "destination": "/blog/saturn-return-in-aries-2026/",
       "permanent": true
     },
     {
-      "source": "/saturn-return-in-aries-2026/",
-      "destination": "/blog/saturn-return-in-aries-2026/",
+      "source": "/blog/read-birth-chart-without-birth-time{/}?",
+      "destination": "/blog/read-birth-chart-without-birth-time-2026/",
       "permanent": true
     },
     {
-      "source": "/blog",
+      "source": "/tools/mercury-retrograde{/}?",
+      "destination": "/blog/mercury-retrograde-2026/",
+      "permanent": true
+    },
+    {
+      "source": "/search{/:path(.*)}?",
       "destination": "/blog/",
       "permanent": true
     },
     {
-      "source": "/:year(\\d{4})/:month(\\d{2})",
-      "destination": "/blog/",
-      "permanent": true
-    },
-    {
-      "source": "/:year(\\d{4})/:month(\\d{2})/",
-      "destination": "/blog/",
-      "permanent": true
-    },
-    {
-      "source": "/:year(\\d{4})",
-      "destination": "/blog/",
-      "permanent": true
-    },
-    {
-      "source": "/:year(\\d{4})/",
-      "destination": "/blog/",
-      "permanent": true
-    },
-    {
-      "source": "/search/label/:label*",
-      "destination": "/blog/",
-      "permanent": true
-    },
-    {
-      "source": "/search",
-      "destination": "/blog/",
-      "permanent": true
-    },
-    {
-      "source": "/search/",
-      "destination": "/blog/",
-      "permanent": true
-    },
-    {
-      "source": "/feeds/:path*",
+      "source": "/feeds{/:path(.*)}?",
       "destination": "/blog/feed.xml",
       "permanent": true
     },
@@ -396,7 +296,7 @@
       "permanent": true
     },
     {
-      "source": "/p/:slug*",
+      "source": "/p/:slug(.*)",
       "destination": "/",
       "permanent": true
     },
@@ -418,6 +318,16 @@
     {
       "source": "/sitemap1.xml",
       "destination": "/sitemap.xml",
+      "permanent": true
+    },
+    {
+      "source": "/:path((?:[^/]+/)*[^/.]+)",
+      "destination": "/:path/",
+      "permanent": true
+    },
+    {
+      "source": "/:path((?:[^/]+/)*[^/]+\\.\\w+)/",
+      "destination": "/:path",
       "permanent": true
     }
   ]
