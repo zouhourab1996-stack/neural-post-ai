@@ -1,0 +1,10 @@
+{
+  "_comment": "AdSense slot IDs for manual units. An empty string disables that position entirely (no markup, no reserved space). Edit, then `npm run build`. Auto ads (anchor, side rail, vignette, in-page) stay on via the loader in head-tags.mjs.",
+  "client": "ca-pub-3898992716389443",
+  "afterIntro": "7833225038",
+  "inArticle": "2189841100",
+  "beforeFaq": "3067983512",
+  "multiplex": "3893980029",
+  "sidebar": "3383503279",
+  "homepage": "7833225038"
+}

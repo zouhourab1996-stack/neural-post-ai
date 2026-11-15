@@ -3,7 +3,7 @@ title: Your Title Here (Year): The Complete Guide
 description: One or two sentences that make someone click. Max ~160 characters. Used for the meta description, cards and RSS.
 date: 2026-01-01
 updated: 2026-01-01
-author: Prophetic Editorial Team
+author: Hedi Touati
 category: Astrology
 tags: [Astrology, Guides]
 image: /og-image.jpg

@@ -23,7 +23,7 @@ title: Best Free Birth Chart Calculators (2026): 9 Tools Tested   # required
 description: One or two sentences, max ~160 chars. Used for meta description, cards, RSS.   # required
 date: 2026-10-05          # required, YYYY-MM-DD (controls ordering)
 updated: 2026-10-05       # optional, shown as "Updated" when different from date
-author: Prophetic Editorial Team   # optional
+author: Hedi Touati   # optional
 category: Astrology       # optional, one label shown on cards (defaults to first tag)
 tags: [Astrology, Calculators, Birth Chart]   # optional, each tag gets /blog/tag/<tag>/
 image: /images/blog/birth-chart-calculators.jpg   # optional, OG image (path in /public or full URL)

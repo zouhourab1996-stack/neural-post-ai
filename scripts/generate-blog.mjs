@@ -15,6 +15,7 @@ import path from "node:path";
 import { TRACKING_HEAD } from "./head-tags.mjs";
 import { fitDesc } from "./seo-fit.mjs";
 import { chrome, themeCss, THEME_SCRIPT, FONT_LINKS } from "./site-chrome.mjs";
+import { ADS_CSS, insertAds, adMultiplex, adRail, hasRail } from "./ads.mjs";
 
 const SITE = "https://prophetic.pw";
 const SITE_NAME = "Prophetic";
@@ -322,7 +323,8 @@ function renderPost(p, all) {
     { "@type": "ListItem", position: 2, name: "Blog", item: SITE + "/blog/" },
     { "@type": "ListItem", position: 3, name: p.title, item: p.url } ] };
   const share = encodeURIComponent(p.url), shareT = encodeURIComponent(p.title);
-  const body = `<main class="pb-container"><article class="pb-post">
+  const rail = hasRail() ? adRail() : "";
+  const body = `<main class="pb-container">${rail ? '<div class="pb-layout">' : ""}<article class="pb-post">
  <nav class="pb-crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/blog/">Blog</a> › <span>${esc(p.category)}</span></nav>
  <header class="pb-post-head">
   <div>${p.tags.map((t) => `<a class="kicker" href="/blog/tag/${slugify(t)}/" style="margin:0 6px 6px 0">${esc(t)}</a>`).join("")}</div>
@@ -332,15 +334,16 @@ function renderPost(p, all) {
   ${p.showImage ? `<figure class="pb-hero-img"><img src="${esc(p.image)}" alt="${esc(p.imageAlt)}" loading="eager" fetchpriority="high"></figure>` : ""}
  </header>
  <div class="pb-body">
-${p.html}
+${insertAds(p.html, p.words)}
  </div>
  <div class="pb-share"><span>Share:</span><a href="https://twitter.com/intent/tweet?url=${share}&text=${shareT}" rel="noopener" target="_blank">X / Twitter</a><a href="https://www.facebook.com/sharer/sharer.php?u=${share}" rel="noopener" target="_blank">Facebook</a><a href="https://www.linkedin.com/sharing/share-offsite/?url=${share}" rel="noopener" target="_blank">LinkedIn</a><a href="https://www.reddit.com/submit?url=${share}&title=${shareT}" rel="noopener" target="_blank">Reddit</a><a href="mailto:?subject=${shareT}&body=${share}">Email</a></div>
  <aside class="pb-author"><div class="av">${esc(p.author.slice(0, 1))}</div><div><strong><a rel="author" href="${AUTHOR_SLUG}">${esc(p.author)}</a></strong><span class="pb-author-role">${esc(AUTHOR_TITLE)}</span><p>${esc(AUTHOR_BIO)} Every date on this page is computed from ephemeris data and every price is checked against the seller's own terms. Found an error? <a href="/contact/">Tell us</a> and we will correct it in place, with the correction noted. Last review: ${fmtDate(p.updated)}.</p></div></aside>
  ${prev || next ? `<nav class="pb-prevnext" aria-label="More posts">${prev ? `<a href="/blog/${prev.slug}/"><span>← Older</span>${esc(prev.title)}</a>` : "<span></span>"}${next ? `<a class="next" href="/blog/${next.slug}/"><span>Newer →</span>${esc(next.title)}</a>` : ""}</nav>` : ""}
+ ${adMultiplex()}
  ${related.length ? `<section class="pb-related"><h2>Related guides</h2><div class="pb-grid">${related.map((r) => card(r)).join("")}</div></section>` : ""}
  <a class="pb-back" href="/blog/">← All posts</a>
-</article></main>`;
-  return page({ title: pageTitle(p.seoTitle), description: p.description, url: p.canonical, body, active: "blog", ld: [schema, crumbs, ...p.ld], extraCss: p.styles, image: p.image, type: "article", noindex: p.noindex, published: isoDate(p.date), modified: isoDate(p.updated), lang: p.lang });
+</article>${rail ? rail + "</div>" : ""}</main>`;
+  return page({ title: pageTitle(p.seoTitle), description: p.description, url: p.canonical, body, active: "blog", ld: [schema, crumbs, ...p.ld], extraCss: ADS_CSS + "\n" + p.styles, image: p.image, type: "article", noindex: p.noindex, published: isoDate(p.date), modified: isoDate(p.updated), lang: p.lang });
 }
 
 function renderList_(posts, { title, heading, description, url, base, pageNo, pages, tag, allTags, noindex: tagNoindex = false, allPosts = null }) {
@@ -356,7 +359,7 @@ function renderList_(posts, { title, heading, description, url, base, pageNo, pa
 }
 
 function renderFeed(posts) {
-  const items = posts.slice(0, 20).map((p) => `  <item>
+  const items = posts.filter((p) => !p.noindex).slice(0, 20).map((p) => `  <item>
    <title>${esc(p.title)}</title>
    <link>${p.url}</link>
    <guid isPermaLink="true">${p.url}</guid>
@@ -399,7 +402,7 @@ for (let n = 1; n <= pages; n++) {
 // the post cards that duplicate each post's description) is under MIN_TAG_WORDS words.
 const MIN_TAG_POSTS = 3;
 const MIN_TAG_WORDS = 300;
-const tagDescription = (t) => { const n = posts.filter((p) => p.tags.includes(t)).length; return `${n} post${n === 1 ? "" : "s"} about ${t} from the Prophetic editorial team.`; };
+const tagDescription = (t) => { const n = posts.filter((p) => p.tags.includes(t)).length; return `${n} post${n === 1 ? "" : "s"} about ${t} edited by Hedi Touati.`; };
 const tagUniqueWords = (t) => wordCount(`${t} ${tagDescription(t)}`);
 const isThinTag = (t) => posts.filter((p) => p.tags.includes(t)).length < MIN_TAG_POSTS || tagUniqueWords(t) < MIN_TAG_WORDS;
 allTags.forEach((t) => {
