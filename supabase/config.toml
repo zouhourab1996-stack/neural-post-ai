@@ -15,3 +15,7 @@ verify_jwt = false
 
 [functions.rewrite-articles]
 verify_jwt = false
+
+[functions.rankyak-webhook]
+verify_jwt = false
+import_map = "./functions/rankyak-webhook/deno.json"
