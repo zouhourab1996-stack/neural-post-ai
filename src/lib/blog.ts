@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 
 export type BlogArticle = Database["public"]["Tables"]["rankyak_articles"]["Row"];
-export const BLOG_SITE = "https://neural-post-ai.lovable.app";
+export const BLOG_SITE = "https://prophetic.pw";
 export const cleanBlogHtml = (html: string) => DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
 export async function publishedBlogArticles() {
   const { data, error } = await supabase.from("rankyak_articles").select("*").eq("status", "published").order("published_at", { ascending: false, nullsFirst: false });

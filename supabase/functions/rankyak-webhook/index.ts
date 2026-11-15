@@ -2,7 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { payloadSchema, isConnectionTest, sameSecret } from "./payload.ts";
 
-const SITE_URL = "https://neural-post-ai.lovable.app";
+const SITE_URL = "https://prophetic.pw";
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), {
   status, headers: { ...corsHeaders, "Content-Type": "application/json" },
 });
@@ -26,7 +26,7 @@ Deno.serve(async req => {
       ...payload.article, status: payload.status, received_at: new Date().toISOString(),
     }, { onConflict: "id" });
     if (error) return json({ error: "Unable to save article" }, 500);
-    return json({ url: `${SITE_URL}/blog/${payload.article.slug}` });
+    return json({ url: `${SITE_URL}/blog/${payload.article.slug}/` });
   } catch {
     return json({ error: "Unable to process request" }, 500);
   }

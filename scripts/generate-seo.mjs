@@ -241,7 +241,7 @@ indexable.forEach(function(p){
 });
 if (indexablePosts.length) {
   sitemapUrls.push(["/blog/", maxDate([STATIC_LASTMOD, newestPost])]);
-  indexablePosts.forEach(function(p){ sitemapUrls.push([p.rankyak ? p.url : p.url.replace(SITE, ""), postLastmod(p)]); });
+  indexablePosts.forEach(function(p){ sitemapUrls.push([p.url.replace(SITE, ""), postLastmod(p)]); });
   // Tag archives are listed only if not thin (see generate-blog.mjs isThinTag); thin ones are noindex,follow.
   blog.tags.filter(function(t){ return !t.thin; }).forEach(function(t){
     var tagPosts = indexablePosts.filter(function(p){ return p.tags.indexOf(t.name) !== -1; });

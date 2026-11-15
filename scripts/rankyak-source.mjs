@@ -1,6 +1,6 @@
 import sanitizeHtml from "sanitize-html";
 
-export const RANKYAK_SITE = "https://neural-post-ai.lovable.app";
+export const RANKYAK_SITE = "https://prophetic.pw";
 export async function loadRankyakPosts() {
   const base = process.env.VITE_SUPABASE_URL;
   const key = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_KEY;
@@ -31,7 +31,7 @@ export async function loadRankyakPosts() {
       author: "Prophetic Editorial Team", tags: [], category: "Articles",
       image: row.header_image_url || "", imageAlt: row.title, showImage: !!row.header_image_url,
       readingTime: Math.max(1, Math.round(words / 200)),
-      canonical: `${RANKYAK_SITE}/blog/${row.slug}`, url: `${RANKYAK_SITE}/blog/${row.slug}`,
+      canonical: `${RANKYAK_SITE}/blog/${row.slug}/`, url: `${RANKYAK_SITE}/blog/${row.slug}/`,
       lang: "en", noindex: false, rankyak: true,
     };
   });
