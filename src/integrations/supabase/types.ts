@@ -86,6 +86,60 @@ export type Database = {
         }
         Relationships: []
       }
+      rankyak_articles: {
+        Row: {
+          archived_at: string | null
+          excerpt: string | null
+          header_image_url: string | null
+          html: string | null
+          id: number
+          markdown: string | null
+          meta_description: string | null
+          meta_title: string | null
+          publish_at: string | null
+          published_at: string | null
+          received_at: string
+          slug: string
+          status: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          archived_at?: string | null
+          excerpt?: string | null
+          header_image_url?: string | null
+          html?: string | null
+          id: number
+          markdown?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          publish_at?: string | null
+          published_at?: string | null
+          received_at?: string
+          slug: string
+          status: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          archived_at?: string | null
+          excerpt?: string | null
+          header_image_url?: string | null
+          html?: string | null
+          id?: number
+          markdown?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          publish_at?: string | null
+          published_at?: string | null
+          received_at?: string
+          slug?: string
+          status?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       trending_keywords: {
         Row: {
           category: string
