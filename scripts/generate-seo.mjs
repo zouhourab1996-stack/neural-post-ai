@@ -234,7 +234,7 @@ var maxDate = function(list){ return list.filter(Boolean).sort().pop() || ""; };
 
 var indexable = staticPages.filter(function(p){ return !isNoindex(p[0]); });
 var sitemapUrls = []; // [loc, lastmod]
-var indexablePosts = blog.posts.filter(function(p){ return !p.noindex && (!p.canonical || p.canonical === p.url) && /\/$/.test(p.url); });
+var indexablePosts = blog.posts.filter(function(p){ return !p.noindex && (!p.canonical || p.canonical === p.url) && (p.rankyak || /\/$/.test(p.url)); });
 var newestPost = maxDate(indexablePosts.map(postLastmod));
 indexable.forEach(function(p){
   sitemapUrls.push([p[0], (p[0] === "/" || p[0] === "/topics/") ? maxDate([STATIC_LASTMOD, newestPost]) : STATIC_LASTMOD]);
@@ -252,15 +252,15 @@ articles.forEach(function(a){
   sitemapUrls.push(["/article/" + a.slug + "/", dayOnly(a.updated_at || a.created_at)]);
 });
 var seenLoc = {};
-sitemapUrls = sitemapUrls.filter(function(u){ if (seenLoc[u[0]] || !/\/$/.test(u[0])) return false; seenLoc[u[0]] = 1; return true; });
+sitemapUrls = sitemapUrls.filter(function(u){ if (seenLoc[u[0]] || (!/^https:\/\//.test(u[0]) && !/\/$/.test(u[0]))) return false; seenLoc[u[0]] = 1; return true; });
 var urls = sitemapUrls.map(function(u){ return u[0]; });
 
 fs.writeFileSync(path.join(dist,"sitemap.xml"),
   '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
   sitemapUrls.map(function(u){
-    return "  <url><loc>" + esc(SITE + u[0]) + "</loc>" + (u[1] ? "<lastmod>" + u[1] + "</lastmod>" : "") + "</url>";
+    return "  <url><loc>" + esc(/^https:\/\//.test(u[0]) ? u[0] : SITE + u[0]) + "</loc>" + (u[1] ? "<lastmod>" + u[1] + "</lastmod>" : "") + "</url>";
   }).join("\n") + '\n</urlset>\n',"utf8");
-fs.writeFileSync(path.join(dist,"sitemap.txt"), sitemapUrls.map(function(u){ return SITE + u[0]; }).join("\n") + "\n", "utf8");
+fs.writeFileSync(path.join(dist,"sitemap.txt"), sitemapUrls.map(function(u){ return /^https:\/\//.test(u[0]) ? u[0] : SITE + u[0]; }).join("\n") + "\n", "utf8");
 
 // Preserve the hand-written robots.txt from public/ (explicit Allow rules for AI
 // crawlers); make sure both sitemaps are referenced.

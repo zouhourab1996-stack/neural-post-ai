@@ -8,6 +8,8 @@ import PlatformShell from "@/components/PlatformShell"
 const Home = lazy(() => import("@/pages/Index"))
 const Review = lazy(() => import("@/pages/Review"))
 const Article = lazy(() => import("@/pages/Article"))
+const Blog = lazy(() => import("@/pages/Blog"))
+const BlogArticle = lazy(() => import("@/pages/BlogArticle"))
 const Comparison = lazy(() => import("@/pages/Comparison"))
 const About = lazy(() => import("@/pages/About"))
 const Contact = lazy(() => import("@/pages/Contact"))
@@ -18,7 +20,7 @@ const Loading = () => <div className="page-loading"><span /></div>
 const queryClient = new QueryClient()
 
 export default function App() {
-  return <QueryClientProvider client={queryClient}><ThemeProvider defaultTheme="dark" storageKey="prophetic-theme"><BrowserRouter><Suspense fallback={<Loading />}><Routes><Route element={<PlatformShell />}><Route path="/" element={<Home />} /><Route path="/review/:slug" element={<Review />} /><Route path="/article/:slug" element={<Article />} /><Route path="/compare" element={<Comparison />} /><Route path="/about" element={<About />} /><Route path="/contact" element={<Contact />} /><Route path="/privacy" element={<Privacy />} /><Route path="/terms" element={<Terms />} /><Route path="/disclaimer" element={<Disclaimer />} /><Route path="*" element={<NotFoundFallback />} /></Route></Routes></Suspense><Toaster /></BrowserRouter></ThemeProvider></QueryClientProvider>
+  return <QueryClientProvider client={queryClient}><ThemeProvider defaultTheme="dark" storageKey="prophetic-theme"><BrowserRouter><Suspense fallback={<Loading />}><Routes><Route element={<PlatformShell />}><Route path="/" element={<Home />} /><Route path="/blog" element={<Blog />} /><Route path="/blog/:slug" element={<BlogArticle />} /><Route path="/review/:slug" element={<Review />} /><Route path="/article/:slug" element={<Article />} /><Route path="/compare" element={<Comparison />} /><Route path="/about" element={<About />} /><Route path="/contact" element={<Contact />} /><Route path="/privacy" element={<Privacy />} /><Route path="/terms" element={<Terms />} /><Route path="/disclaimer" element={<Disclaimer />} /><Route path="*" element={<NotFoundFallback />} /></Route></Routes></Suspense><Toaster /></BrowserRouter></ThemeProvider></QueryClientProvider>
 }
 
 function NotFoundFallback() {

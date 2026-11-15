@@ -16,6 +16,7 @@ import { TRACKING_HEAD } from "./head-tags.mjs";
 import { fitDesc } from "./seo-fit.mjs";
 import { chrome, themeCss, THEME_SCRIPT, FONT_LINKS } from "./site-chrome.mjs";
 import { ADS_CSS, insertAds, adMultiplex, adRail, hasRail } from "./ads.mjs";
+import { loadRankyakPosts } from "./rankyak-source.mjs";
 
 const SITE = "https://prophetic.pw";
 const SITE_NAME = "Prophetic";
@@ -273,9 +274,10 @@ ${footer}
 }
 
 const card = (p, featured = false) => `<a class="pb-card${featured ? " featured" : ""}" href="/blog/${p.slug}/">
+ ${p.rankyak && p.showImage ? `<img src="${esc(p.image)}" alt="${esc(p.imageAlt)}" loading="lazy">` : ""}
  <span class="eyebrow accent">${esc(p.category)}</span>
  ${featured ? `<h2>${esc(p.title)}</h2>` : `<h3>${esc(p.title)}</h3>`}
- <p>${esc(p.description)}</p>
+ <p>${esc(p.rankyak ? p.excerpt : p.description)}</p>
  <span class="meta"><span>${fmtDate(p.date)}</span><b>${p.readingTime} min read →</b></span>
 </a>`;
 
@@ -343,7 +345,9 @@ ${insertAds(p.html, p.words)}
  ${related.length ? `<section class="pb-related"><h2>Related guides</h2><div class="pb-grid">${related.map((r) => card(r)).join("")}</div></section>` : ""}
  <a class="pb-back" href="/blog/">← All posts</a>
 </article>${rail ? rail + "</div>" : ""}</main>`;
-  return page({ title: pageTitle(p.seoTitle), description: p.description, url: p.canonical, body, active: "blog", ld: [schema, crumbs, ...p.ld], extraCss: ADS_CSS + "\n" + p.styles, image: p.image, type: "article", noindex: p.noindex, published: isoDate(p.date), modified: isoDate(p.updated), lang: p.lang });
+  const renderedBody = p.rankyak ? body.replace(/<aside class="pb-author">[\s\S]*?<\/aside>/, "") : body;
+  const postSchema = p.rankyak ? { ...schema, author: { "@type": "Organization", name: "Prophetic Editorial Team" } } : schema;
+  return page({ title: p.rankyak ? p.seoTitle : pageTitle(p.seoTitle), description: p.description, url: p.canonical, body: renderedBody, active: "blog", ld: [postSchema, crumbs, ...p.ld], extraCss: ADS_CSS + "\n" + p.styles, image: p.image, type: "article", noindex: p.noindex, published: isoDate(p.date), modified: isoDate(p.updated), lang: p.lang });
 }
 
 function renderList_(posts, { title, heading, description, url, base, pageNo, pages, tag, allTags, noindex: tagNoindex = false, allPosts = null }) {
@@ -383,7 +387,10 @@ ${items}
 }
 
 // ------------------------------------------------------------------ main
-const posts = loadPosts();
+const localPosts = loadPosts();
+const incoming = await loadRankyakPosts();
+const localSlugs = new Set(localPosts.map(p => p.slug));
+const posts = [...localPosts, ...incoming.filter(p => !localSlugs.has(p.slug))].sort((a, b) => b.date.localeCompare(a.date));
 const allTags = uniq(posts.flatMap((p) => p.tags)).sort((a, b) => a.localeCompare(b));
 fs.mkdirSync(blogDist, { recursive: true });
 
@@ -415,6 +422,6 @@ writeFile("blog/manifest.json", JSON.stringify({
   index: `${SITE}/blog/`,
   tags: allTags.map((t) => ({ name: t, url: `${SITE}/blog/tag/${slugify(t)}/`, count: posts.filter((p) => p.tags.includes(t)).length, thin: isThinTag(t), uniqueWords: tagUniqueWords(t) })),
   pages: Array.from({ length: pages }, (_, k) => k === 0 ? `${SITE}/blog/` : `${SITE}/blog/page/${k + 1}/`),
-  posts: posts.map((p) => ({ slug: p.slug, url: p.url, title: p.title, description: p.description, date: p.date, updated: p.updated, tags: p.tags, category: p.category, readingTime: p.readingTime, image: p.image, file: p.file, canonical: p.canonical, noindex: p.noindex, words: p.words })),
+  posts: posts.map((p) => ({ slug: p.slug, url: p.url, title: p.title, description: p.description, date: p.date, updated: p.updated, tags: p.tags, category: p.category, readingTime: p.readingTime, image: p.image, file: p.file, canonical: p.canonical, noindex: p.noindex, words: p.words, rankyak: !!p.rankyak })),
 }, null, 2));
 console.log(`[blog] ${posts.length} post(s), ${allTags.length} tag(s), ${pages} index page(s) → dist/blog/`);
