@@ -13,14 +13,14 @@ const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.VI
 
 const staticPages = [
   ["/", "Prophetic — Astrology Guides, Retrograde Dates & Chart Tools", "Astrology guides with dates computed to the minute — Mercury and Venus retrogrades, eclipses, moon phases, Saturn returns — plus plain-language chart explainers and honest reading-cost guides."],
-  ["/about/", "About Prophetic — How We Compute Our Astrology Dates", "Who writes Prophetic, how our astrology dates are computed from ephemeris data, our corrections policy, and how affiliate links are handled."],
+  ["/about/", "About Prophetic — How We Compute Our Astrology Dates", "Who writes Prophetic, how our astrology dates are computed from ephemeris data, our corrections policy, and our editorial independence."],
   ["/contact/", "Contact the Prophetic Editorial Team", "Contact the Prophetic editorial team with corrections, sourcing questions, feedback, or a carefully researched pitch."],
   ["/privacy/", "Prophetic Privacy Policy & Data Practices", "Read Prophetic's privacy policy, including the limited data collected by the site, analytics, advertising, and your available choices."],
-  ["/terms/", "Prophetic Website Terms of Service", "Read the terms that apply when you use Prophetic's astrology guides, calculators, reviews, affiliate links, and other published content."],
-  ["/disclaimer/", "Prophetic Disclaimer & Affiliate Disclosure", "Read Prophetic's disclaimer about astrology, general information, affiliate relationships, AI-assisted publishing, and professional advice boundaries."],
-  ["/editorial/", "Prophetic Editorial Policy & Standards", "Learn how Prophetic computes dates, checks service claims, handles corrections, discloses affiliates, and protects editorial independence."],
+  ["/terms/", "Prophetic Website Terms of Service", "Read the terms that apply when you use Prophetic's astrology guides, calculators, and other published content."],
+  ["/disclaimer/", "Prophetic Disclaimer", "Read Prophetic's disclaimer about astrology, general information, AI-assisted publishing, editorial independence, and professional advice boundaries."],
+  ["/editorial/", "Prophetic Editorial Policy & Standards", "Learn how Prophetic computes dates, checks service claims, handles corrections, and protects editorial independence."],
   ["/ai-policy/", "Prophetic AI Content Policy & Human Review", "Learn how Prophetic uses AI-assisted tools for research and drafting while requiring human review, source checks, and accountable publication."],
-  ["/sitemap/", "Prophetic HTML Sitemap & Article Index", "Browse Prophetic's public pages, astrology guides, dated event explainers, calculators, reviews, and the latest published articles."],
+  ["/sitemap/", "Prophetic HTML Sitemap & Article Index", "Browse Prophetic's public pages, astrology guides, dated event explainers, calculators, and the latest published articles."],
   ["/topics/", "Astrology Topics: Retrogrades, Moons & Charts | Prophetic", "Every Prophetic astrology guide grouped by topic: retrogrades, zodiac seasons, moon phases and sky events, birth charts, numerology and tarot, and reading costs."],
   ["/author/hedi-touati/", "Meet Hedi Touati, Prophetic Founder & Editor", "Meet Hedi Touati, founder and editor of Prophetic, who computes the site's astrology dates and edits every guide before publication."]
 ];
@@ -68,7 +68,12 @@ async function getArticles() {
     rows = rows.concat(batch);
     if (batch.length < 1000) break;
   }
-  return rows.filter(function(a) { return a && a.slug && a.title; });
+  // 2026-11-16: no affiliate/marketplace promotion anywhere on the site. Legacy rows that
+  // promote Fiverr/ClickBank are not built (middleware.js returns 410 for them), and any
+  // line linking to such content is stripped from the remaining legacy pages.
+  var PROMO = /fiverr|clickbank|hop\.clickbank/i;
+  return rows.filter(function(a) { return a && a.slug && a.title && !PROMO.test(a.slug) && !PROMO.test(a.title); })
+    .map(function(a) { a.content = String(a.content || "").split("\n").filter(function(l){ return !PROMO.test(l); }).join("\n"); return a; });
 }
 
 function schema(article) {
@@ -191,7 +196,7 @@ var PAGE_INTRO = {
  "/about/": '<p>Prophetic is an independent astrology publisher. Every guide on this site is built from primary ephemeris data — the same astronomical tables professional astrologers use — and published with the date and time of each event to the minute, in UTC and in your local timezone where it matters. When a retrograde station or a moon phase moves, we update the article rather than publishing a new one.</p>'
    + '<h2>What we publish</h2><p>Three things: dated event guides (retrogrades, eclipses, moon phases, meteor showers, portals), chart explainers (what a planet, house or aspect actually means when you read it in your own chart), and honest cost guides for readings and spiritual services — what you get at $15, at $60 and at $300, and where the marketplace sits in between.</p>'
    + '<h2>How we work</h2><p>Dates come from ephemeris computation, not from copying other astrology sites. Claims about services come from their published pricing and terms on the day we check them, and we say which day that was. Where we cannot verify something, we say so instead of inventing a number.</p>'
-   + '<h2>Independence and corrections</h2><p>Some guides contain affiliate links, always labelled at the point of the link; they never change a date, a price we quote, or a conclusion. We accept no payment for coverage. Errors are corrected in place and the correction is noted in the article it affects — email the editor and the fix is published with the next update.</p>'
+   + '<h2>Independence and corrections</h2><p>Prophetic carries no affiliate links and accepts no payment for coverage. Errors are corrected in place and the correction is noted in the article it affects — email the editor and the fix is published with the next update.</p>'
    + '<h2>What astrology is — and is not</h2><p>We treat astrology as a symbolic and reflective practice with a long history, not as a prediction engine and not as a substitute for medical, legal or financial advice. That boundary is stated on every page that touches health, money or major life decisions.</p>',
  "/contact/": '<p>The fastest way to reach the editorial team is email: anistouati74@gmail.com. We read everything, and corrections are published with the next update of the article they concern.</p>',
  "/editorial/": '<p>Our editorial standards in one sentence: dates computed from primary sources, opinions owned and dated, cons published as loudly as pros, and corrections logged in public.</p>',
@@ -199,11 +204,11 @@ var PAGE_INTRO = {
  "/sitemap/": '<p>The complete list of pages and articles on Prophetic.</p>',
  "/privacy/": '<p>Prophetic is a static website: no accounts, no comment forms, minimal analytics. This page describes exactly what little data is collected and by whom.</p>',
  "/terms/": '<p>The plain-language terms that apply when you use prophetic.pw.</p>',
- "/disclaimer/": '<p>Astrology is a symbolic, reflective practice — not a prediction engine and not professional advice. Our reviews contain affiliate links, disclosed at the point of the link. This page details both.</p>',
+ "/disclaimer/": '<p>Astrology is a symbolic, reflective practice — not a prediction engine and not professional advice. This page explains what that means for how you use the site.</p>',
  "/author/hedi-touati/": '<p>Hedi Touati is the founder and editor of Prophetic. He is responsible for every guide published here: computing the astrology dates from ephemeris data, checking the prices quoted in the service guides against sellers’ own terms, and editing each piece before it goes live.</p>'
    + '<h2>What he does here</h2><p>Retrograde stations, eclipses, moon phases and meteor-shower peaks are calculated rather than copied, which is why Prophetic’s times sometimes differ by a few hours from other astrology sites. Each guide carries the date it was last checked, and corrections are made in place rather than quietly replaced.</p>'
    + '<h2>Background</h2><p>Prophetic began as a set of private notes on retrograde dates — the kind of table you build when you are tired of websites that disagree with each other by a day. It is now a public reference for people who want to check the sky for themselves: what is happening, when exactly, and what it means for a chart.</p>'
-   + '<h2>Standards and independence</h2><p>Some guides carry affiliate links, disclosed at the point of the link. They fund the site and never change a date, a quoted price or a conclusion. Corrections are published on the article they affect, with the date of the change. The full standards are in the <a href="/editorial/">editorial policy</a>.</p>'
+   + '<h2>Standards and independence</h2><p>Prophetic carries no affiliate links and accepts no payment for coverage; the site is funded by display advertising, which never changes a date or a conclusion. Corrections are published on the article they affect, with the date of the change. The full standards are in the <a href="/editorial/">editorial policy</a>.</p>'
    + '<h2>Contact</h2><p>Corrections, questions and pitches go through the <a href="/contact/">contact page</a>. Everything is read, and verified corrections are published with the next update of the article.</p>',
 };
 

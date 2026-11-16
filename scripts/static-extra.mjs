@@ -31,8 +31,8 @@ export const STATIC_EXTRA = {
  <p>Astronomical times — retrograde stations, eclipses, moon phases, meteor peaks — are computed from ephemeris data and are as accurate as that data allows. They are provided for information. They are not provided as the basis for any decision where being an hour out carries a consequence, and they are not a substitute for a professional ephemeris if you are doing work that needs one.</p>
  <h2>No professional advice</h2>
  <p>Nothing here is medical, legal, financial or psychological advice. Astrology is treated throughout as a symbolic and reflective practice. Where a page touches health, money or a major life decision, that boundary is stated on the page rather than buried here.</p>
- <h2>Affiliate links and independence</h2>
- <p>Some guides carry affiliate links, disclosed at the point of the link. They fund the site and never change a date, a quoted price or a conclusion. We accept no payment for coverage, and no page has been shown to an advertiser before publication.</p>
+ <h2>Independence</h2>
+ <p>Prophetic carries no affiliate links. We accept no payment for coverage, and no page has been shown to an advertiser before publication.</p>
  <h2>Changes</h2>
  <p>These terms may change. If they change materially, the substance of the change will be noted here rather than only reflected in a new date at the top.</p>
  <h2>Accuracy and limits</h2>
@@ -44,8 +44,8 @@ export const STATIC_EXTRA = {
  <p>So we publish the dates accurately and decline to tell you what they mean for your life. A retrograde station is a fact about planetary motion. What you make of it is yours, and any site claiming to know the second part is selling you something.</p>
  <h2>Health, money and major decisions</h2>
  <p>Nothing here is medical, legal, financial or psychological advice. Where a guide discusses a paid service, the price and terms are quoted from the seller on a stated date — and that is the extent of the claim.</p>
- <h2>Affiliate relationships</h2>
- <p>Some guides contain affiliate links, always labelled at the point of the link. They never change a date, a price we quote, or a conclusion. Several pages on this site link to services we rate poorly, because an honest description of a mediocre product is worth more than a flattering one.</p>
+ <h2>No affiliate relationships</h2>
+ <p>Prophetic carries no affiliate links and does not sell or promote readings, reports or other products. No commercial relationship influences a date or a conclusion on this site.</p>
  <h2>Dates and sources</h2>
  <p>Astronomical dates are computed, not copied. Where a date depends on an announcement rather than a calculation, we say so and mark it as expected. Where two independent sources disagree, we say which we used and why.</p>`,
 
@@ -58,7 +58,7 @@ export const STATIC_EXTRA = {
  <h2>Corrections</h2>
  <p>Errors are corrected in place and the correction is noted in the article it affects, with the date of the change. We do not quietly edit and pretend it never happened — the record of a correction is the only thing that makes an editorial policy worth publishing.</p>
  <h2>Independence</h2>
- <p>We accept no payment for coverage. Affiliate links are disclosed at the point of the link and never change a date, a price or a conclusion. No advertiser has reviewed a page before publication, and none will.</p>`,
+ <p>We accept no payment for coverage and carry no affiliate links. No advertiser has reviewed a page before publication, and none will.</p>`,
 
   "/ai-policy/": `
  <h2>What we use AI assistance for</h2>
@@ -77,7 +77,7 @@ export const STATIC_EXTRA = {
   "/sitemap/": `
  <h2>How this site is organised</h2>
  <p>Prophetic is built around dated astronomical events first and chart explainers second. The event guides — retrogrades, eclipses, moon phases, meteor showers — are maintained rather than left to rot, so a page about a coming eclipse still reads correctly when the year turns over. The explainers are written to be read once for the answer and once for the reasoning.</p>
- <p>The third group is the cost guides: what you actually get from a paid reading at different price points, and how the marketplaces that sell them are structured. Those are the pages most likely to save you money, and the ones we are most careful about, because they are where affiliate pressure is strongest.</p>
+ <p>The third group is practical guidance for anyone considering a personal reading: what a birth chart reading should cover and how to tell a careful astrologer from a script.</p>
  <p>If you arrived here looking for something specific, the tool at <a href="/tools/mercury-retrograde/">/tools/mercury-retrograde/</a> is the fastest way to check a date, and the blog index carries everything else in reverse order of publication.</p>
  <h2>What is not here</h2>
  <p>A handful of comparison and software review pages exist on the site and are deliberately left out of the index. They are off-topic for an astrology publisher, and keeping them out lets the site read as one coherent subject rather than a general-content domain. They remain reachable if you have the link.</p>

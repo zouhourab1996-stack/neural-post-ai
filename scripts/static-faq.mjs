@@ -12,8 +12,8 @@ export const STATIC_FAQ = {
      "Short passages with attribution and a link, yes. Republishing a guide in full, reselling it, or passing our computed dates off as your own work is not permitted."],
     ["Are the dates guaranteed accurate?",
      "They are computed from ephemeris data and are as accurate as that data allows. They are provided for information, not as the basis for any decision where being an hour out carries a consequence."],
-    ["Do affiliate links change what you publish?",
-     "No. They are disclosed at the point of the link and never change a date, a quoted price or a conclusion. We accept no payment for coverage."],
+    ["Do you use affiliate links?",
+     "No. Prophetic carries no affiliate links and accepts no payment for coverage."],
   ],
   "/disclaimer/": [
     ["Is astrology predictive?",

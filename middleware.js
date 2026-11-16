@@ -10,6 +10,7 @@ export const config = {
     "/blog/tag/:tag", "/blog/tag/:tag/",
     "/compare", "/compare/", "/compare/:path*",
     "/guides", "/guides/", "/guides/:path*",
+    "/article/:slug", "/article/:slug/",
   ],
 };
 
@@ -19,7 +20,11 @@ const GONE_POSTS = new Set([
   "/blog/best-fiverr-ai-ugc-video-ads-2026/",
   "/blog/best-fiverr-ai-video-editors-2026/",
 ]);
-const GONE_TAGS = new Set(["ai", "ai-agents", "ai-developers", "ai-ugc", "automation", "claude-code", "video-ads", "video-editing", "arabic"]);
+// 2026-11-16: legacy /article/* pages that promoted Fiverr gigs are removed (no affiliate content).
+const GONE_ARTICLE = /^\/article\/[^/]*(fiverr|clickbank)[^/]*\/$/;
+const GONE_TAGS = new Set(["ai", "ai-agents", "ai-developers", "ai-ugc", "automation", "claude-code", "video-ads", "video-editing", "arabic",
+  // 2026-11-16: tags used only by the removed affiliate/review posts
+  "bazi", "chinese-astrology", "consumer-protection", "costs", "dreams", "energy-healing", "fiverr", "interpretation", "kasamba", "keen", "law-of-attraction", "online-readings", "reiki", "reviews", "scams", "self-study", "soulmate-sketch", "twin-flame", "clickbank"]);
 
 const BODY = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Page removed | Prophetic</title></head><body style="font-family:system-ui,sans-serif;max-width:640px;margin:60px auto;padding:0 20px"><h1>This page has been removed</h1><p>It is no longer part of Prophetic.</p><p><a href="/">Prophetic home</a> · <a href="/blog/">All astrology guides</a> · <a href="/topics/">Guides by topic</a></p></body></html>';
 
@@ -27,7 +32,7 @@ export default function middleware(request) {
   const p = new URL(request.url).pathname.toLowerCase();
   const norm = p.endsWith("/") ? p : p + "/";
   const tag = norm.match(/^\/blog\/tag\/([^/]+)\/$/);
-  if (GONE_POSTS.has(norm) || (tag && GONE_TAGS.has(tag[1])) || norm.startsWith("/compare/") || norm.startsWith("/guides/")) {
+  if (GONE_POSTS.has(norm) || (tag && GONE_TAGS.has(tag[1])) || norm.startsWith("/compare/") || norm.startsWith("/guides/") || GONE_ARTICLE.test(norm)) {
     return new Response(BODY, { status: 410, headers: { "content-type": "text/html; charset=utf-8", "x-robots-tag": "noindex", "cache-control": "public, max-age=3600" } });
   }
   // otherwise fall through to the normal static response
