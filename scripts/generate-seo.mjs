@@ -248,9 +248,9 @@ if (indexablePosts.length) {
     sitemapUrls.push([t.url.replace(SITE, ""), maxDate(tagPosts.map(postLastmod))]);
   });
 }
-articles.forEach(function(a){
-  sitemapUrls.push(["/article/" + a.slug + "/", dayOnly(a.updated_at || a.created_at)]);
-});
+// Legacy off-niche "The Signal" news pages (/article/*) are kept reachable but noindex and are NOT listed
+// in the sitemap, so the site's indexed content stays astrology-only (decision 2026-11-16).
+
 var seenLoc = {};
 sitemapUrls = sitemapUrls.filter(function(u){ if (seenLoc[u[0]] || (!/^https:\/\//.test(u[0]) && !/\/$/.test(u[0]))) return false; seenLoc[u[0]] = 1; return true; });
 var urls = sitemapUrls.map(function(u){ return u[0]; });
@@ -319,7 +319,7 @@ staticPages.concat(reviewPages).forEach(function(p){
 articles.forEach(function(a){
   var url = SITE + "/article/" + a.slug + "/";
   var body = "<header><p>"+esc(a.category || "Prophetic")+"</p><h1>"+esc(a.title)+"</h1><p>"+esc(a.meta_description || "")+"</p></header><div>"+markdown(a.content)+"</div>";
-  writeRoute("/article/"+a.slug+"/",html(url,a.title+" | Prophetic",a.meta_description || a.title,body,schema(a)));
+  writeRoute("/article/"+a.slug+"/",html(url,a.title+" | Prophetic",a.meta_description || a.title,body,null,"noindex,follow"));
 });
 
 fs.writeFileSync(path.join(dist,"404.html"),
