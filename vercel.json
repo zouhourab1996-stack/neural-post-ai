@@ -228,97 +228,97 @@
     {
       "source": "/blog/the-last-wish-review{/}?",
       "destination": "/blog/new-moon-ritual/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/blog/seraphina-tarot-reading-review{/}?",
       "destination": "/blog/tarot-spreads-for-beginners-2026/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/blog/mystery-school-code-review{/}?",
       "destination": "/blog/new-moon-ritual/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/blog/eastern-astrology-language-reading-review{/}?",
       "destination": "/blog/natal-chart-reading-guide-2026/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/blog/soulmate-sketch-honest-guide{/}?",
       "destination": "/blog/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/blog/best-fiverr-birth-chart-readings-2026{/}?",
       "destination": "/blog/what-to-expect-birth-chart-reading-2026/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/blog/best-fiverr-dream-interpretation-2026{/}?",
       "destination": "/blog/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/blog/best-fiverr-numerology-readings-2026{/}?",
       "destination": "/blog/life-path-number-guide-2026/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/blog/best-fiverr-psychic-readings-2026{/}?",
       "destination": "/blog/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/blog/best-fiverr-reiki-distance-healing-2026{/}?",
       "destination": "/blog/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/blog/best-fiverr-tarot-readers-2026{/}?",
       "destination": "/blog/tarot-spreads-for-beginners-2026/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/blog/best-fiverr-twin-flame-readings-2026{/}?",
       "destination": "/blog/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/blog/fiverr-psychic-vs-keen-kasamba-2026{/}?",
       "destination": "/blog/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/blog/fiverr-vs-psychic-platforms-2026{/}?",
       "destination": "/blog/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/blog/best-online-psychic-reading-sites-2026{/}?",
       "destination": "/blog/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/blog/online-psychic-reading-cost-2026{/}?",
       "destination": "/blog/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/blog/birth-chart-reading-cost-2026{/}?",
       "destination": "/blog/how-to-find-reliable-astrologer-birth-chart-reading-2026/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/blog/psychic-reading-red-flags-2026{/}?",
       "destination": "/blog/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/blog/how-to-prepare-first-psychic-reading-2026{/}?",
       "destination": "/blog/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/tools/mercury-retrograde{/}?",
