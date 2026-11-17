@@ -138,6 +138,16 @@
   ],
   "redirects": [
     {
+      "source": "/blog/choose-online-horoscope-platform-2026",
+      "destination": "/blog/astro-com-vs-cafe-astrology-vs-prophetic-2026/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/choose-online-horoscope-platform-2026/",
+      "destination": "/blog/astro-com-vs-cafe-astrology-vs-prophetic-2026/",
+      "permanent": true
+    },
+    {
       "source": "/index.html",
       "destination": "/",
       "permanent": true
