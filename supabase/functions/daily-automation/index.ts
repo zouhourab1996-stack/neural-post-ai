@@ -14,15 +14,38 @@ serve(async (req) => {
   try {
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
     const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY');
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     
-    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-      throw new Error('Supabase configuration missing');
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !SUPABASE_SERVICE_ROLE_KEY) {
+      throw new Error('Supabase URL, anon key, and service-role key are required');
     }
 
     console.log(`[${new Date().toISOString()}] Starting daily automation...`);
 
-    // Generate ONE article every day, rotating categories deterministically
-    const categories = ['AI', 'Tech', 'Business', 'Science', 'World'];
+    // Enforce one published article per UTC day, including manual retries.
+    const adminClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const dayStart = new Date();
+    dayStart.setUTCHours(0, 0, 0, 0);
+    const nextDay = new Date(dayStart);
+    nextDay.setUTCDate(nextDay.getUTCDate() + 1);
+    const { data: todayArticles, error: dailyCheckError } = await adminClient
+      .from('articles')
+      .select('slug')
+      .gte('created_at', dayStart.toISOString())
+      .lt('created_at', nextDay.toISOString())
+      .limit(1);
+    if (dailyCheckError) throw new Error(`Daily publication check failed: ${dailyCheckError.message}`);
+    if (todayArticles && todayArticles.length > 0) {
+      return new Response(JSON.stringify({
+        success: true,
+        skipped: true,
+        message: 'One article has already been published today; daily limit enforced.',
+        existingSlug: todayArticles[0].slug,
+      }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+
+    // One article per day, rotating only through Prophetic's actual editorial categories.
+    const categories = ['Transits', 'Moon Phases', 'Numerology', 'Zodiac', 'Rituals'];
     const today = new Date();
     const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
     const category1 = categories[dayOfYear % categories.length];
@@ -52,10 +75,7 @@ serve(async (req) => {
     }
 
     // Clean up old keywords (keep last 7 days)
-    const supabase = createClient(
-      SUPABASE_URL, 
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || SUPABASE_ANON_KEY
-    );
+    const supabase = adminClient;
     
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
