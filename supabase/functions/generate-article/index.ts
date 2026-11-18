@@ -58,10 +58,6 @@ function validateArticleQuality(article: any, existingTitles: string[] = []): st
   if (!/frequently asked questions|\bfaq\b/i.test(html)) issues.push('FAQ section is missing');
   if (/<script\b|<iframe\b|<object\b|<embed\b|\bon[a-z]+\s*=|javascript:/i.test(html)) issues.push('unsafe HTML or script-like content detected');
 
-  const signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
-  const missingSigns = signs.filter((sign) => !new RegExp('\\b' + sign + '\\b', 'i').test(html));
-  if (missingSigns.length) issues.push('zodiac coverage is incomplete: ' + missingSigns.join(', '));
-
   const externalHosts = new Set<string>();
   const links = html.matchAll(/href\s*=\s*["'](https?:\/\/[^"']+)["']/gi);
   for (const match of links) {
