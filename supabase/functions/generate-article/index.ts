@@ -40,6 +40,43 @@ function countWords(text: string): number {
     .length;
 }
 
+
+function validateArticleQuality(article: any, existingTitles: string[] = []): string[] {
+  const issues: string[] = [];
+  const title = String(article?.title || '').trim();
+  const slug = String(article?.slug || '').trim();
+  const description = String(article?.meta_description || '').trim();
+  const html = String(article?.content || '');
+  const plain = html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  const words = countWords(plain);
+
+  if (title.length < 20 || title.length > 60) issues.push('title must be 20–60 characters');
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || slug.length > 70) issues.push('slug is not a safe, valid URL slug');
+  if (description.length < 120 || description.length > 160) issues.push('meta description must be 120–160 characters');
+  if (words < 1500 || words > 2500) issues.push('article length must be 1,500–2,500 words (got ' + words + ')');
+  if ((html.match(/<h2\b/gi) || []).length < 3 || (html.match(/<h3\b/gi) || []).length < 4) issues.push('article needs a complete heading structure');
+  if (!/frequently asked questions|\bfaq\b/i.test(html)) issues.push('FAQ section is missing');
+  if (/<script\b|<iframe\b|<object\b|<embed\b|\bon[a-z]+\s*=|javascript:/i.test(html)) issues.push('unsafe HTML or script-like content detected');
+
+  const signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
+  const missingSigns = signs.filter((sign) => !new RegExp('\\b' + sign + '\\b', 'i').test(html));
+  if (missingSigns.length) issues.push('zodiac coverage is incomplete: ' + missingSigns.join(', '));
+
+  const externalHosts = new Set<string>();
+  const links = html.matchAll(/href\s*=\s*["'](https?:\/\/[^"']+)["']/gi);
+  for (const match of links) {
+    try {
+      const host = new URL(match[1]).hostname.toLowerCase().replace(/^www\./, '');
+      if (host && host !== 'prophetic.pw' && !host.endsWith('.prophetic.pw')) externalHosts.add(host);
+    } catch { /* malformed links are ignored */ }
+  }
+  if (externalHosts.size < 2) issues.push('at least two distinct external source domains are required');
+
+  const normalizedTitle = normalizeHeadlineKey(title);
+  if (existingTitles.some((old) => normalizeHeadlineKey(old) === normalizedTitle)) issues.push('duplicate title detected');
+  return issues;
+}
+
 function buildMetaDescription(content: string, fallback: string): string {
   const clean = String(content || '')
     .replace(/\s+/g, ' ')
@@ -56,11 +93,11 @@ function enhanceTitleForCTR(title: string): string {
   const hasYear = /\b20(2[5-9]|3[0-9])\b/.test(clean);
   const withYear = hasYear ? clean : `${clean} (2026)`;
 
-  if (withYear.length <= 70) {
+  if (withYear.length <= 60) {
     return withYear;
   }
 
-  return withYear.slice(0, 67).replace(/\s+\S*$/, '') + '...';
+  return withYear.slice(0, 57).replace(/\s+\S*$/, '') + '...';
 }
 
 // Robust JSON parser — handles truncation, extra text, unescaped characters
@@ -918,6 +955,12 @@ serve(async (req) => {
       is_featured: Math.random() > 0.5,
       is_trending: true,
     };
+
+    // Hard publication gate: failed articles are never inserted into the public table.
+    const qualityIssues = validateArticleQuality(finalArticle, existingTitles);
+    if (qualityIssues.length > 0) {
+      throw new Error(`Publication blocked by quality gate: ${qualityIssues.join('; ')}`);
+    }
 
     // Phase 9: Auto-publish if requested
     if (autoPublish && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
