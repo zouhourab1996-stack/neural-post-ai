@@ -295,7 +295,7 @@ var AUTHOR_SCHEMA = {
   "@context":"https://schema.org","@type":"Person","@id":SITE + "/author/hedi-touati/#person",
   name:"Hedi Touati", url:SITE + "/author/hedi-touati/", jobTitle:"Founder & Editor",
   description:"Founder and editor of Prophetic. Computes the site\u2019s astrology dates from ephemeris data and edits every guide before publication.",
-  worksFor:{"@type":"Organization","name":"Prophetic","url":SITE + "/"},
+  worksFor:{"@type":"Organization","@id":SITE + "/#organization","name":"Prophetic","url":SITE + "/","logo":{"@type":"ImageObject","url":SITE + "/logo.svg"}},
   knowsAbout:["Astrology","Birth charts","Planetary transits","Retrograde motion","Moon phases"]
 };
 
