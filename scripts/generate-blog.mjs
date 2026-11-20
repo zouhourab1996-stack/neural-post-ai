@@ -24,7 +24,7 @@ const SITE_NAME = "Prophetic";
 // The " | Prophetic" brand suffix costs 12 characters, so it is only appended when
 // the result still fits — otherwise the bare seoTitle is used instead.
 const pageTitle = (seoTitle) => {
-  const raw = String(seoTitle || "").trim().replace(/\s*(?:\\||—|–|-)\s*Prophetic$/i, "");
+  const raw = String(seoTitle || "").trim().replace(/\s*(?:\||—|–|-)\s*Prophetic$/i, "");
   const lead = fitTitle(raw.length <= 46 ? raw : raw.slice(0, 46));
   const branded = lead + " | " + SITE_NAME;
   return branded.length >= 30 && branded.length <= 60 ? branded : fitTitle(lead + " Astrology Guide | " + SITE_NAME);
