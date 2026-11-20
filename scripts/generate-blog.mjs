@@ -24,9 +24,10 @@ const SITE_NAME = "Prophetic";
 // The " | Prophetic" brand suffix costs 12 characters, so it is only appended when
 // the result still fits — otherwise the bare seoTitle is used instead.
 const pageTitle = (seoTitle) => {
-  const t = String(seoTitle || "").trim();
-  const lead = t.length <= 46 ? t : fitTitle(t.slice(0, 46));
-  return fitTitle(lead + " | " + SITE_NAME);
+  const raw = String(seoTitle || "").trim().replace(/\\s*(?:\\||—|–|-)\\s*Prophetic$/i, "");
+  const lead = fitTitle(raw.length <= 46 ? raw : raw.slice(0, 46));
+  const branded = lead + " | " + SITE_NAME;
+  return branded.length >= 30 && branded.length <= 60 ? branded : fitTitle(lead + " Astrology Guide | " + SITE_NAME);
 };
 const BLOG_TITLE = "Prophetic Blog";
 const BLOG_DESCRIPTION = "Long-form astrology guides with dates computed to the minute — retrogrades, moon phases and chart explainers — edited by Hedi Touati.";
@@ -63,6 +64,15 @@ const fmtDate = (iso) => new Date(iso + (iso.length === 10 ? "T12:00:00Z" : ""))
 const isoDate = (iso) => new Date(iso + (iso.length === 10 ? "T12:00:00Z" : "")).toISOString();
 const writeFile = (rel, content) => { const p = path.join(dist, rel); fs.mkdirSync(path.dirname(p), { recursive: true }); fs.writeFileSync(p, content, "utf8"); };
 const uniq = (arr) => Array.from(new Set(arr));
+
+function ensureDescription(value, title, context = "") {
+  const raw = String(value || "").replace(/\\s+/g, " ").trim();
+  if (raw.length >= 70) return fitDesc(raw);
+  const topic = String(context || title || "astrology").replace(/[.?!]+$/, "");
+  const base = raw || String(title || "Astrology guide");
+  const candidate = base + (/[.!?]$/.test(base) ? "" : ".") + " Learn more about " + topic + " with clear explanations, useful context and related resources from Prophetic.";
+  return fitDesc(candidate.length >= 70 ? candidate : base + " Explore the key dates, practical context and related astrology guidance in this Prophetic reference.");
+}
 
 function fitAlt(value) {
   const plain = String(value || "").replace(/<[^>]*>/g, " ").replace(/&nbsp;/gi, " ").replace(/&amp;/gi, "&").replace(/&quot;/gi, '"').replace(/&#39;/gi, "'").replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/\s+/g, " ").trim();
@@ -279,7 +289,7 @@ function loadPosts() {
     const image = meta.image ? (meta.image.startsWith("http") ? meta.image : SITE + meta.image) : DEFAULT_IMAGE;
     posts.push({
       slug, file, html, styles, ld, words,
-      title: String(meta.title), heading: String(meta.heading || (String(meta.title).length > 70 ? fitTitle(meta.seoTitle || meta.title) : meta.title)), seoTitle: String(meta.seoTitle || meta.title), description: fitDesc(meta.description || ""),
+      title: String(meta.title), heading: fitTitle(meta.heading || meta.title), seoTitle: String(meta.seoTitle || meta.title), description: ensureDescription(meta.description, meta.title, meta.category || meta.tags.join(", ")),
       date: String(meta.date), updated: String(meta.updated || meta.date),
       author: String(meta.author || DEFAULT_AUTHOR),
       tags: uniq(meta.tags.map(String)), category: String(meta.category || meta.tags[0] || "Guides"),
@@ -407,7 +417,7 @@ ${insertAds(p.html, p.words)}
 </article>${rail ? rail + "</div>" : ""}</main>`;
   const renderedBody = p.rankyak ? body.replace(/<aside class="pb-author">[\s\S]*?<\/aside>/, "") : body;
   const postSchema = p.rankyak ? { ...schema, author: { "@type": "Organization", name: "Prophetic Editorial Team" } } : schema;
-  return page({ title: p.rankyak ? p.seoTitle : pageTitle(p.seoTitle), description: p.description, url: p.canonical, body: renderedBody, active: "blog", ld: [postSchema, crumbs, ...p.ld], extraCss: ADS_CSS + "\n" + p.styles, image: p.image, type: "article", noindex: p.noindex, published: isoDate(p.date), modified: isoDate(p.updated), lang: p.lang });
+  return page({ title: pageTitle(p.seoTitle), description: p.description, url: p.canonical, body: renderedBody, active: "blog", ld: [postSchema, crumbs, ...p.ld], extraCss: ADS_CSS + "\n" + p.styles, image: p.image, type: "article", noindex: p.noindex, published: isoDate(p.date), modified: isoDate(p.updated), lang: p.lang });
 }
 
 function renderList_(posts, { title, heading, description, url, base, pageNo, pages, tag, allTags, noindex: tagNoindex = false, allPosts = null }) {
@@ -451,6 +461,12 @@ const localPosts = loadPosts();
 const incoming = await loadRankyakPosts();
 const localSlugs = new Set(localPosts.map(p => p.slug));
 const posts = [...localPosts, ...incoming.filter(p => !localSlugs.has(p.slug))].sort((a, b) => b.date.localeCompare(a.date));
+for (const p of posts) {
+  p.heading = fitTitle(p.heading || p.title);
+  p.seoTitle = pageTitle(p.seoTitle || p.title);
+  p.description = ensureDescription(p.description || p.excerpt, p.title, p.category || p.tags?.join(", "));
+  p.imageAlt = fitAlt(p.imageAlt || p.title);
+}
 const allTags = uniq(posts.flatMap((p) => p.tags)).sort((a, b) => a.localeCompare(b));
 fs.mkdirSync(blogDist, { recursive: true });
 
