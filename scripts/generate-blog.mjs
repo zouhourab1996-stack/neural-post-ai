@@ -25,7 +25,7 @@ const SITE_NAME = "Prophetic";
 // the result still fits — otherwise the bare seoTitle is used instead.
 const pageTitle = (seoTitle) => {
   const raw = String(seoTitle || "").trim().replace(/\s*(?:\||—|–|-)\s*Prophetic$/i, "");
-  const lead = fitTitle(raw.length <= 46 ? raw : raw.slice(0, 46));
+  const lead = (raw.length <= 46 ? raw : raw.slice(0, 46).replace(/\s+\S*$/, "")).replace(/\s+(?:which|vs\.?|and|or|to|the|a|an|of|for|with|in|on|at|by|from|is|are|be|&|that|this|you|your|how|what|when)$/i, "").trim();
   const branded = lead + " | " + SITE_NAME;
   return branded.length >= 30 && branded.length <= 60 ? branded : fitTitle(lead + " Astrology Guide | " + SITE_NAME);
 };
@@ -43,7 +43,7 @@ const AUTHOR_PERSON = {
   url: SITE + AUTHOR_SLUG,
   jobTitle: AUTHOR_TITLE,
   description: AUTHOR_BIO,
-  worksFor: { "@type": "Organization", name: SITE_NAME, url: SITE + "/" },
+  worksFor: { "@type": "Organization", name: SITE_NAME, url: SITE + "/", logo: { "@type": "ImageObject", url: SITE + "/logo.svg" } },
   knowsAbout: ["Astrology", "Birth charts", "Planetary transits", "Retrograde motion", "Moon phases", "Numerology"],
 };
 const DEFAULT_IMAGE = SITE + "/og-image.jpg";
