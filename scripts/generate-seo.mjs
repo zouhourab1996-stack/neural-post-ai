@@ -2,9 +2,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { TRACKING_HEAD } from "./head-tags.mjs";
-import { fitDesc } from "./seo-fit.mjs";
+import { fitDesc, fitTitle } from "./seo-fit.mjs";
 import { chrome, themeCss, THEME_SCRIPT, FONT_LINKS } from "./site-chrome.mjs";
 import { ADS_CSS, adHomepage } from "./ads.mjs";
+import { STATIC_FAQ } from "./static-faq.mjs";
 
 const dist = path.resolve("dist");
 const SITE = "https://prophetic.pw";
@@ -100,9 +101,16 @@ function schema(article) {
 // /author/, /editorial/, /ai-policy/ and /sitemap/.)
 function html(url,title,description,body,json,robots,active) {
   var d = fitDesc(description || title);
-  var jsonList = Array.isArray(json) ? json : (json ? [json] : []);
+  var jsonList = Array.isArray(json) ? json.slice() : (json ? [json] : []);
+  var orgSchema = {"@context":"https://schema.org","@type":"Organization","@id":SITE + "/#organization","name":"Prophetic","url":SITE + "/","logo":{"@type":"ImageObject","url":SITE + "/logo.svg"},"sameAs":["https://twitter.com/PropheticAI"]};
+  if (!jsonList.some(function(j){ return j && j["@type"] === "Organization"; })) jsonList.push(orgSchema);
+  jsonList.push({"@context":"https://schema.org","@type":"WebSite","@id":SITE + "/#website","name":"Prophetic","url":SITE + "/","publisher":{"@id":SITE + "/#organization"},"inLanguage":"en-US"});
+  jsonList.push({"@context":"https://schema.org","@type":"WebPage","@id":url + "#webpage","url":url,"name":title,"description":d,"isPartOf":{"@id":SITE + "/#website"},"publisher":{"@id":SITE + "/#organization"},"inLanguage":"en-US"});
+  var faqRows = STATIC_FAQ[new URL(url).pathname] || [];
+  if (faqRows.length) jsonList.push({"@context":"https://schema.org","@type":"FAQPage","mainEntity":faqRows.map(function(row){ return {"@type":"Question","name":row[0],"acceptedAnswer":{"@type":"Answer","text":row[1]}}; })});
   var schemaTag = jsonList.map(function(j){ return '<script type="application/ld+json">' + JSON.stringify(j) + "</script>"; }).join("");
   var c = chrome(active);
+  var faqHtml = faqRows.length ? '<section class="pb-faq"><h2>Frequently asked questions</h2>' + faqRows.map(function(row){ return '<details><summary>' + esc(row[0]) + '</summary><p>' + esc(row[1]) + '</p></details>'; }).join('') + '</section>' : '';
   return '<!doctype html><html lang="en" class="dark"><head>' +
     '<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">' +
     '<title>' + esc(title) + '</title>' +
@@ -122,7 +130,7 @@ function html(url,title,description,body,json,robots,active) {
     '<link rel="alternate" type="application/rss+xml" title="Prophetic Blog" href="' + SITE + '/blog/feed.xml">' +
     FONT_LINKS + THEME_SCRIPT +
     '<style>' + themeCss + (url === SITE + "/" ? ADS_CSS : "") + '</style>' + schemaTag + '</head><body>' + c.header +
-    '<main class="pb-container"><article class="pb-post"><div class="pb-body">' + body + '</div></article></main>' +
+    '<main class="pb-container"><article class="pb-post"><div class="pb-body">' + body + faqHtml + '</div></article></main>' +
     c.footer + '</body></html>';
 }
 
@@ -318,7 +326,7 @@ staticPages.concat(reviewPages).forEach(function(p){
          + "</section>";
   }
   var ACTIVE = { "/": "home", "/about/": "about", "/contact/": "contact", "/topics/": "topics" };
-  writeRoute(p[0],html(SITE+p[0],p[1],p[2],body,
+  writeRoute(p[0],html(SITE+p[0],p[0] === "/" ? fitTitle(p[1]) : fitTitle((p[1].length <= 46 ? p[1] : fitTitle(p[1].slice(0,46))) + " | Prophetic"),p[2],body,
     p[0] === "/author/hedi-touati/" ? AUTHOR_PROFILE_SCHEMA : (p[0] === "/" ? HOME_SCHEMA : null),
     isNoindex(p[0]) ? "noindex,follow" : null, ACTIVE[p[0]]));
 });

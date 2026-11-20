@@ -13,7 +13,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { TRACKING_HEAD } from "./head-tags.mjs";
-import { fitDesc } from "./seo-fit.mjs";
+import { fitDesc, fitTitle } from "./seo-fit.mjs";
 import { chrome, themeCss, THEME_SCRIPT, FONT_LINKS } from "./site-chrome.mjs";
 import { ADS_CSS, insertAds, adMultiplex, adRail, hasRail } from "./ads.mjs";
 import { loadRankyakPosts } from "./rankyak-source.mjs";
@@ -23,11 +23,10 @@ const SITE_NAME = "Prophetic";
 // Titles are capped at 60 characters because search results truncate past that.
 // The " | Prophetic" brand suffix costs 12 characters, so it is only appended when
 // the result still fits — otherwise the bare seoTitle is used instead.
-const TITLE_MAX = 60;
 const pageTitle = (seoTitle) => {
   const t = String(seoTitle || "").trim();
-  const branded = `${t} | ${SITE_NAME}`;
-  return branded.length <= TITLE_MAX ? branded : t;
+  const lead = t.length <= 46 ? t : fitTitle(t.slice(0, 46));
+  return fitTitle(lead + " | " + SITE_NAME);
 };
 const BLOG_TITLE = "Prophetic Blog";
 const BLOG_DESCRIPTION = "Long-form astrology guides with dates computed to the minute — retrogrades, moon phases and chart explainers — edited by Hedi Touati.";
@@ -64,6 +63,57 @@ const fmtDate = (iso) => new Date(iso + (iso.length === 10 ? "T12:00:00Z" : ""))
 const isoDate = (iso) => new Date(iso + (iso.length === 10 ? "T12:00:00Z" : "")).toISOString();
 const writeFile = (rel, content) => { const p = path.join(dist, rel); fs.mkdirSync(path.dirname(p), { recursive: true }); fs.writeFileSync(p, content, "utf8"); };
 const uniq = (arr) => Array.from(new Set(arr));
+
+function fitAlt(value) {
+  const plain = String(value || "").replace(/<[^>]*>/g, " ").replace(/&nbsp;/gi, " ").replace(/&amp;/gi, "&").replace(/&quot;/gi, '"').replace(/&#39;/gi, "'").replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/\s+/g, " ").trim();
+  if (plain.length <= 100) return plain;
+  const clipped = plain.slice(0, 100), boundary = clipped.lastIndexOf(" ");
+  return (boundary >= 65 ? clipped.slice(0, boundary) : clipped).replace(/[.,;:—-]+$/, "").trim();
+}
+function imageDimensions(src) {
+  try {
+    let pathname = String(src || "").replace(/^https:\/\/prophetic\.pw/i, "").split(/[?#]/)[0];
+    if (!pathname.startsWith("/")) return null;
+    const pub = path.resolve(root, "public"), file = path.resolve(pub, decodeURIComponent(pathname).replace(/^\/+/, ""));
+    if (!file.startsWith(pub + path.sep) || !fs.existsSync(file)) return null;
+    const b = fs.readFileSync(file);
+    if (b.length >= 24 && b.toString("hex",0,8) === "89504e470d0a1a0a") return {width:b.readUInt32BE(16),height:b.readUInt32BE(20)};
+    if (b.length >= 30 && b.toString("ascii",0,4) === "RIFF" && b.toString("ascii",8,12) === "WEBP") {
+      const kind=b.toString("ascii",12,16);
+      if (kind==="VP8X") return {width:1+b.readUIntLE(24,3),height:1+b.readUIntLE(27,3)};
+      if (kind==="VP8 " && b.length>=30) return {width:b.readUInt16LE(26)&0x3fff,height:b.readUInt16LE(28)&0x3fff};
+      if (kind==="VP8L" && b.length>=25) { const bits=b.readUInt32LE(21); return {width:(bits&0x3fff)+1,height:((bits>>>14)&0x3fff)+1}; }
+    }
+    if (b.length>=4 && b[0]===0xff && b[1]===0xd8) {
+      let o=2;
+      while(o+9<b.length) {
+        if(b[o]!==0xff){o++;continue;}
+        const m=b[o+1];o+=2;
+        if(m===0xd8||m===0xd9||(m>=0xd0&&m<=0xd7))continue;
+        if(o+2>b.length)break;
+        const len=b.readUInt16BE(o);
+        if([0xc0,0xc1,0xc2,0xc3,0xc5,0xc6,0xc7,0xc9,0xca,0xcb,0xcd,0xce,0xcf].includes(m)&&o+7<=b.length)return {height:b.readUInt16BE(o+3),width:b.readUInt16BE(o+5)};
+        if(len<2)break;o+=len;
+      }
+    }
+  } catch {}
+  return null;
+}
+function imageSizeAttrs(src, existing) {
+  existing=existing||"";
+  if(/\bwidth\s*=/.test(existing)&&/\bheight\s*=/.test(existing))return "";
+  const d=imageDimensions(src);if(!d||!d.width||!d.height)return "";
+  return (/\bwidth\s*=/.test(existing)?"":' width="'+d.width+'"')+(/\bheight\s*=/.test(existing)?"":' height="'+d.height+'"');
+}
+function faqSchemaFromHtml(html) {
+  const entities=[], re=/<details\b[^>]*>\s*<summary\b[^>]*>([\s\S]*?)<\/summary>([\s\S]*?)<\/details>/gi;
+  let m;
+  while((m=re.exec(String(html||"")))!==null) {
+    const q=stripTags(m[1]).trim(), a=stripTags(m[2]).trim();
+    if(q&&a)entities.push({"@type":"Question",name:q,acceptedAnswer:{"@type":"Answer",text:a}});
+  }
+  return entities.length?{"@context":"https://schema.org","@type":"FAQPage",mainEntity:entities}:null;
+}
 
 function parseValue(raw) {
   const v = raw.trim();
@@ -217,16 +267,23 @@ function loadPosts() {
     html = html.replace(/<style[^>]*>([\s\S]*?)<\/style>/gi, (_, css) => { styles += css + "\n"; return ""; });
     html = html.replace(/<script type=["']application\/ld\+json["']>([\s\S]*?)<\/script>/gi, (_, j) => { ld.push(j.trim()); return ""; });
     if (meta.toc === true) { const toc = buildToc(html); html = html.includes("<!-- toc -->") ? html.replace("<!-- toc -->", toc) : toc + html; }
-    html = html.replace(/<img(?![^>]*\bloading=)/gi, '<img loading="lazy" decoding="async"');
+    html = html.replace(/<img\b([^>]*)>/gi, (_, attrs) => {
+      let next=attrs;
+      const src=next.match(/\bsrc=(["'])(.*?)\1/i), alt=next.match(/\balt=(["'])(.*?)\1/i);
+      if(src) next+=imageSizeAttrs(src[2],next);
+      if(alt && fitAlt(alt[2]).length!==alt[2].length) next=next.replace(alt[0],'alt="'+esc(fitAlt(alt[2]))+'"');
+      if(!/\bloading\s*=/.test(next)) next+=' loading="lazy" decoding="async"';
+      return '<img'+next+'>';
+    });
     const words = wordCount(html);
     const image = meta.image ? (meta.image.startsWith("http") ? meta.image : SITE + meta.image) : DEFAULT_IMAGE;
     posts.push({
       slug, file, html, styles, ld, words,
-      title: String(meta.title), seoTitle: String(meta.seoTitle || meta.title), description: fitDesc(meta.description || ""),
+      title: String(meta.title), heading: String(meta.heading || (String(meta.title).length > 70 ? fitTitle(meta.seoTitle || meta.title) : meta.title)), seoTitle: String(meta.seoTitle || meta.title), description: fitDesc(meta.description || ""),
       date: String(meta.date), updated: String(meta.updated || meta.date),
       author: String(meta.author || DEFAULT_AUTHOR),
       tags: uniq(meta.tags.map(String)), category: String(meta.category || meta.tags[0] || "Guides"),
-      image, imageAlt: String(meta.imageAlt || meta.title), showImage: meta.showImage !== false && !!meta.image,
+      image, imageAlt: fitAlt(meta.imageAlt || meta.title), showImage: meta.showImage !== false && !!meta.image,
       readingTime: Math.max(1, Math.round(wordCount(html.replace(/<table[\s\S]*?<\/table>/gi, " ")) / WORDS_PER_MINUTE)),
       canonical: meta.canonical || `${SITE}/blog/${slug}/`, url: `${SITE}/blog/${slug}/`, lang: String(meta.lang || "en"),
       noindex: meta.noindex === true,
@@ -240,7 +297,10 @@ function loadPosts() {
 
 // ------------------------------------------------------------------ layout
 function page({ title, description, url, body, active, ld = [], extraCss = "", image = DEFAULT_IMAGE, type = "website", noindex = false, published, modified, lang = "en", feed = true }) {
-  const ldTags = ld.filter(Boolean).map((j) => `<script type="application/ld+json">${typeof j === "string" ? j : JSON.stringify(j)}</script>`).join("\n");
+  const org = { "@context": "https://schema.org", "@type": "Organization", "@id": SITE + "/#organization", name: SITE_NAME, url: SITE + "/", logo: { "@type": "ImageObject", url: SITE + "/logo.svg" }, sameAs: ["https://twitter.com/PropheticAI"] };
+  const webPage = { "@context": "https://schema.org", "@type": "WebPage", "@id": url + "#webpage", url, name: title, description, isPartOf: { "@id": SITE + "/#website" }, publisher: { "@id": SITE + "/#organization" }, inLanguage: lang === "en" ? "en-US" : lang };
+  const schemas = [...ld.filter(Boolean), org, webPage, faqSchemaFromHtml(body)].filter(Boolean);
+  const ldTags = schemas.map((j) => `<script type="application/ld+json">${typeof j === "string" ? j : JSON.stringify(j)}</script>`).join("\n");
   const { header, footer } = chrome(active);
   return `<!doctype html>
 <html lang="${esc(lang)}" class="dark">
@@ -274,7 +334,7 @@ ${footer}
 }
 
 const card = (p, featured = false) => `<a class="pb-card${featured ? " featured" : ""}" href="/blog/${p.slug}/">
- ${p.rankyak && p.showImage ? `<img src="${esc(p.image)}" alt="${esc(p.imageAlt)}" loading="lazy">` : ""}
+ ${p.rankyak && p.showImage ? `<img src="${esc(p.image)}" alt="${esc(p.imageAlt)}"${imageSizeAttrs(p.image)} loading="lazy">` : ""}
  <span class="eyebrow accent">${esc(p.category)}</span>
  ${featured ? `<h2>${esc(p.title)}</h2>` : `<h3>${esc(p.title)}</h3>`}
  <p>${esc(p.rankyak ? p.excerpt : p.description)}</p>
@@ -330,10 +390,10 @@ function renderPost(p, all) {
  <nav class="pb-crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/blog/">Blog</a> › <span>${esc(p.category)}</span></nav>
  <header class="pb-post-head">
   <div>${p.tags.map((t) => `<a class="kicker" href="/blog/tag/${slugify(t)}/" style="margin:0 6px 6px 0">${esc(t)}</a>`).join("")}</div>
-  <h1>${esc(p.title)}</h1>
+  <h1>${esc(p.heading)}</h1>
   <p class="pb-lede">${esc(p.description)}</p>
   <div class="pb-meta"><span><span class="av">${esc(p.author.slice(0, 1))}</span><a rel="author" href="${AUTHOR_SLUG}">${esc(p.author)}</a></span><span>Published <time datetime="${isoDate(p.date)}">${fmtDate(p.date)}</time></span>${p.updated !== p.date ? `<span>Updated <time datetime="${isoDate(p.updated)}">${fmtDate(p.updated)}</time></span>` : ""}<span>${p.readingTime} min read</span><span>${p.words.toLocaleString("en-US")} words</span></div>
-  ${p.showImage ? `<figure class="pb-hero-img"><img src="${esc(p.image)}" alt="${esc(p.imageAlt)}" loading="eager" fetchpriority="high"></figure>` : ""}
+  ${p.showImage ? `<figure class="pb-hero-img"><img src="${esc(p.image)}" alt="${esc(p.imageAlt)}"${imageSizeAttrs(p.image)} loading="eager" fetchpriority="high"></figure>` : ""}
  </header>
  <div class="pb-body">
 ${insertAds(p.html, p.words)}
@@ -409,12 +469,12 @@ for (let n = 1; n <= pages; n++) {
 // the post cards that duplicate each post's description) is under MIN_TAG_WORDS words.
 const MIN_TAG_POSTS = 3;
 const MIN_TAG_WORDS = 300;
-const tagDescription = (t) => { const n = posts.filter((p) => p.tags.includes(t)).length; return `${n} post${n === 1 ? "" : "s"} about ${t} edited by Hedi Touati.`; };
+const tagDescription = (t) => { const n = posts.filter((p) => p.tags.includes(t)).length; return `Explore ${n} Prophetic astrology ${n === 1 ? "guide" : "guides"} about ${t}, with clear explanations, useful context and related dates checked by the editorial team.`; };
 const tagUniqueWords = (t) => wordCount(`${t} ${tagDescription(t)}`);
 const isThinTag = (t) => posts.filter((p) => p.tags.includes(t)).length < MIN_TAG_POSTS || tagUniqueWords(t) < MIN_TAG_WORDS;
 allTags.forEach((t) => {
   const slice = posts.filter((p) => p.tags.includes(t));
-  writeFile(`blog/tag/${slugify(t)}/index.html`, renderList_(slice, { title: `${t} — ${BLOG_TITLE}`, heading: `${esc(t)}`, description: tagDescription(t), url: `${SITE}/blog/tag/${slugify(t)}/`, base: `/blog/tag/${slugify(t)}/`, pageNo: 1, pages: 1, tag: t, allTags, noindex: isThinTag(t) }));
+  writeFile(`blog/tag/${slugify(t)}/index.html`, renderList_(slice, { title: fitTitle(`${t} Astrology Guides & Articles | Prophetic`), heading: `${esc(t)}`, description: tagDescription(t), url: `${SITE}/blog/tag/${slugify(t)}/`, base: `/blog/tag/${slugify(t)}/`, pageNo: 1, pages: 1, tag: t, allTags, noindex: isThinTag(t) }));
 });
 writeFile("blog/feed.xml", renderFeed(posts));
 writeFile("blog/manifest.json", JSON.stringify({
