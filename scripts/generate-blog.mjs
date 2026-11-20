@@ -24,7 +24,7 @@ const SITE_NAME = "Prophetic";
 // The " | Prophetic" brand suffix costs 12 characters, so it is only appended when
 // the result still fits — otherwise the bare seoTitle is used instead.
 const pageTitle = (seoTitle) => {
-  const raw = String(seoTitle || "").trim().replace(/\\s*(?:\\||—|–|-)\\s*Prophetic$/i, "");
+  const raw = String(seoTitle || "").trim().replace(/\s*(?:\\||—|–|-)\s*Prophetic$/i, "");
   const lead = fitTitle(raw.length <= 46 ? raw : raw.slice(0, 46));
   const branded = lead + " | " + SITE_NAME;
   return branded.length >= 30 && branded.length <= 60 ? branded : fitTitle(lead + " Astrology Guide | " + SITE_NAME);
@@ -66,7 +66,7 @@ const writeFile = (rel, content) => { const p = path.join(dist, rel); fs.mkdirSy
 const uniq = (arr) => Array.from(new Set(arr));
 
 function ensureDescription(value, title, context = "") {
-  const raw = String(value || "").replace(/\\s+/g, " ").trim();
+  const raw = String(value || "").replace(/\s+/g, " ").trim();
   if (raw.length >= 70) return fitDesc(raw);
   const topic = String(context || title || "astrology").replace(/[.?!]+$/, "");
   const base = raw || String(title || "Astrology guide");
@@ -462,7 +462,7 @@ const incoming = await loadRankyakPosts();
 const localSlugs = new Set(localPosts.map(p => p.slug));
 const posts = [...localPosts, ...incoming.filter(p => !localSlugs.has(p.slug))].sort((a, b) => b.date.localeCompare(a.date));
 for (const p of posts) {
-  p.heading = fitTitle(p.heading || p.title);
+  p.heading = fitTitle(stripTags(p.heading || p.title));
   p.seoTitle = pageTitle(p.seoTitle || p.title);
   p.description = ensureDescription(p.description || p.excerpt, p.title, p.category || p.tags?.join(", "));
   p.imageAlt = fitAlt(p.imageAlt || p.title);
