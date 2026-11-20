@@ -100,6 +100,7 @@ function schema(article) {
 // retired "The Signal" software-comparison site and rendered "Page Not Found" on
 // /author/, /editorial/, /ai-policy/ and /sitemap/.)
 function html(url,title,description,body,json,robots,active) {
+  title = fitTitle(title);
   var d = fitDesc(description || title);
   var jsonList = Array.isArray(json) ? json.slice() : (json ? [json] : []);
   var orgSchema = {"@context":"https://schema.org","@type":"Organization","@id":SITE + "/#organization","name":"Prophetic","url":SITE + "/","logo":{"@type":"ImageObject","url":SITE + "/logo.svg"},"sameAs":["https://twitter.com/PropheticAI"]};

@@ -146,7 +146,7 @@ function parseFrontMatter(raw, ext) {
 function inline(text) {
   const codes = [];
   let t = text.replace(/`([^`]+)`/g, (_, c) => { codes.push("<code>" + esc(c) + "</code>"); return "\u0000" + (codes.length - 1) + "\u0000"; });
-  t = t.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)/g, (_, alt, src, title) => `<img src="${esc(src)}" alt="${esc(alt)}"${title ? ` title="${esc(title)}"` : ""} loading="lazy" decoding="async">`);
+  t = t.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)/g, (_, alt, src, title) => `<img src="${esc(src)}" alt="${esc(fitAlt(alt))}"${imageSizeAttrs(src)}${title ? ` title="${esc(title)}"` : ""} loading="lazy" decoding="async">`);
   t = t.replace(/\[([^\]]+)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)/g, (_, txt, href, title) => `<a href="${esc(href)}"${title ? ` title="${esc(title)}"` : ""}${/^https?:\/\//.test(href) && !href.startsWith(SITE) ? ' rel="noopener" target="_blank"' : ""}>${txt}</a>`);
   t = t.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/__([^_]+)__/g, "<strong>$1</strong>");
   t = t.replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,;:!?]|$)/g, "$1<em>$2</em>").replace(/(^|[\s(])_([^_\n]+)_(?=[\s).,;:!?]|$)/g, "$1<em>$2</em>");
