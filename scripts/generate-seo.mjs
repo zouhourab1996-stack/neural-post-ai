@@ -285,10 +285,10 @@ var robotsTxt = fs.existsSync(robotsSrc)
   ? fs.readFileSync(robotsSrc,"utf8")
   : "User-agent: *\nAllow: /\nDisallow: /api/\n";
 robotsTxt = robotsTxt.replace(/^\s*Sitemap:.*$/gim, "").replace(/\s*$/,"");
-// sitemaps.prophetic.pw is a Cloudflare Worker that proxies prophetic.pw's
-// /sitemap.xml, /sitemap.txt and /blog/feed.xml (works around GSC "Couldn't fetch"
-// on Vercel). The locs inside the sitemap stay https://prophetic.pw/...
-robotsTxt += "\n\nSitemap: " + SITE + "/sitemap.xml\nSitemap: https://sitemaps.prophetic.pw/sitemap.xml\nSitemap: " + SITE + "/sitemap.txt\n";
+// Keep one authoritative, same-host XML sitemap. A second cross-host sitemap
+// endpoint on sitemaps.prophetic.pw is unnecessary and can complicate property
+// verification and fetch diagnostics in Search Console.
+robotsTxt += "\n\nSitemap: " + SITE + "/sitemap.xml\n";
 fs.writeFileSync(path.join(dist,"robots.txt"), robotsTxt,"utf8");
 
 var AUTHOR_SCHEMA = {
