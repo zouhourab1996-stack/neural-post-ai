@@ -55,6 +55,7 @@ toc: true
   const result = document.getElementById("prof-result");
   const button = document.getElementById("prof-calculate");
   const pad = n => String(n).padStart(2,"0");
+  const ordinal = n => n===1?"1st":n===2?"2nd":n===3?"3rd":n+"th";
   const today = new Date();
   target.value = today.getFullYear()+"-"+pad(today.getMonth()+1)+"-"+pad(today.getDate());
   function utcDate(v){ if(!v) return null; const p=v.split("-").map(Number); return new Date(Date.UTC(p[0],p[1]-1,p[2])); }
