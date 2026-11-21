@@ -28,7 +28,7 @@ export const STATIC_EXTRA = {
  <h2>Using the guides and calculators</h2>
  <p>The pages on prophetic.pw are free to read and use for your own purposes. You may quote short passages with attribution and a link. You may not republish a guide in full, resell it, or present our computed dates as your own work without saying where they came from.</p>
  <h2>What the dates are provided for</h2>
- <p>Astronomical times — retrograde stations, eclipses, moon phases, meteor peaks — are computed from ephemeris data and are as accurate as that data allows. They are provided for information. They are not provided as the basis for any decision where being an hour out carries a consequence, and they are not a substitute for a professional ephemeris if you are doing work that needs one.</p>
+ <p>Astronomical dates and event details are presented with references where available. Methods and time zones can differ between sources, so verify time-critical details independently. They are not provided as the basis for any decision where being an hour out carries a consequence, and they are not a substitute for a professional ephemeris if you are doing work that needs one.</p>
  <h2>No professional advice</h2>
  <p>Nothing here is medical, legal, financial or psychological advice. Astrology is treated throughout as a symbolic and reflective practice. Where a page touches health, money or a major life decision, that boundary is stated on the page rather than buried here.</p>
  <h2>Independence</h2>
@@ -36,7 +36,7 @@ export const STATIC_EXTRA = {
  <h2>Changes</h2>
  <p>These terms may change. If they change materially, the substance of the change will be noted here rather than only reflected in a new date at the top.</p>
  <h2>Accuracy and limits</h2>
- <p>We compute dates carefully and update pages when a computation is refined, but we do not warrant that any page is error-free, and we are not liable for decisions made on the basis of one. If you find an error, email us — a verified correction is published on the article it affects, with the date of the change.</p>`,
+ <p>We aim to keep factual details current, but sources and event information can change. Check the cited references before relying on time-sensitive details. If you find an error, email us — a verified correction is published on the article it affects, with the date of the change.</p>`,
 
   "/disclaimer/": `
  <h2>What astrology can and cannot do here</h2>
@@ -47,24 +47,24 @@ export const STATIC_EXTRA = {
  <h2>No affiliate relationships</h2>
  <p>Prophetic carries no affiliate links and does not sell or promote readings, reports or other products. No commercial relationship influences a date or a conclusion on this site.</p>
  <h2>Dates and sources</h2>
- <p>Astronomical dates are computed, not copied. Where a date depends on an announcement rather than a calculation, we say so and mark it as expected. Where two independent sources disagree, we say which we used and why.</p>`,
+ <p>For dated information, we identify references where available and distinguish confirmed astronomical events from forecasts or cultural observances. If sources disagree, consult the source notes and time zone.</p>`,
 
   "/editorial/": `
  <h2>How a date gets published</h2>
- <p>Astronomical times are computed from ephemeris data rather than copied from another astrology site. That is why our station times occasionally differ by a few hours from what you will read elsewhere — and when that happens it is usually because the other site rounded to a date rather than giving a time.</p>
- <p>Every dated guide carries the date it was last checked. When a computation is refined or a date moves, the article is updated in place rather than replaced with a new one, so a link that worked last year still points at the right answer.</p>
+ <p>Dated guides should identify the source, calculation method and time zone used. Different references may present dates differently; readers should check the cited source notes before relying on an exact time.</p>
+ <p>Each dated guide displays its publication or update date. An update date is not a claim that every detail was independently re-verified on that day.</p>
  <h2>How claims about services are checked</h2>
- <p>Prices and terms are quoted from the seller's own pages on the day we check them, and the page says which day that was. Where a claim cannot be checked against two independent sources, we say so instead of repeating it. Where a service's marketing makes a claim the evidence does not support, we say that plainly rather than laundering it into "some users report".</p>
+ <p>Prices and terms may change. Readers should confirm current details with the provider; an article should state a verification date only when a check was actually completed. Where a service's marketing makes a claim the evidence does not support, we say that plainly rather than laundering it into "some users report".</p>
  <h2>Corrections</h2>
  <p>Errors are corrected in place and the correction is noted in the article it affects, with the date of the change. We do not quietly edit and pretend it never happened — the record of a correction is the only thing that makes an editorial policy worth publishing.</p>
  <h2>Independence</h2>
- <p>We accept no payment for coverage and carry no affiliate links. No advertiser has reviewed a page before publication, and none will.</p>`,
+ <p>Advertising may support the publication. Any sponsored or affiliate relationship must be clearly disclosed where it applies, and advertising does not determine editorial conclusions.</p>`,
 
   "/ai-policy/": `
  <h2>What we use AI assistance for</h2>
- <p>Three things: computation, first-draft structure, and checking our own work. Dates, prices and anything else factual are computed or looked up, never generated — a model that invents a plausible retrograde station is worse than no station at all.</p>
+ <p>Automation may assist research, drafting or site operations. It is not evidence or independent verification. Factual claims, dates and prices require reliable sources, and unsupported details should be omitted.</p>
  <h2>What a human editor checks</h2>
- <p>Every published sentence is reviewed by an editor who owns it. That includes every number: station times are recomputed independently, prices are re-checked against the seller, and any claim is traced to a source before it goes live. Where a draft says something the editor cannot verify, it comes out.</p>
+ <p>We aim to review content before publication, but do not claim every sentence or number was independently verified unless the page documents that process.</p>
  <h2>What is never automated</h2>
  <p>Publication. No page goes from a draft to a live URL without a person reading it in full. Judgments about whether a service is honestly sold are made by a person, and the byline on every guide belongs to someone who can be emailed about it.</p>
  <h2>Why tell you this</h2>
