@@ -104,7 +104,7 @@ function html(url,title,description,body,json,robots,active) {
   title = fitTitle(title);
   var d = fitDesc(description || title);
   var jsonList = Array.isArray(json) ? json.slice() : (json ? [json] : []);
-  var orgSchema = {"@context":"https://schema.org","@type":"Organization","@id":SITE + "/#organization","name":"Prophetic","url":SITE + "/","logo":{"@type":"ImageObject","url":SITE + "/logo.svg"},"sameAs":["https://twitter.com/PropheticAI"]};
+  var orgSchema = {"@context":"https://schema.org","@type":"Organization","@id":SITE + "/#organization","name":"Prophetic","url":SITE + "/","logo":{"@type":"ImageObject","url":SITE + "/logo.svg"}};
   if (!jsonList.some(function(j){ return j && j["@type"] === "Organization"; })) jsonList.push(orgSchema);
   jsonList.push({"@context":"https://schema.org","@type":"WebSite","@id":SITE + "/#website","name":"Prophetic","url":SITE + "/","publisher":{"@id":SITE + "/#organization"},"inLanguage":"en-US"});
   jsonList.push({"@context":"https://schema.org","@type":"WebPage","@id":url + "#webpage","url":url,"name":title,"description":d,"isPartOf":{"@id":SITE + "/#website"},"publisher":{"@id":SITE + "/#organization"},"inLanguage":"en-US"});
