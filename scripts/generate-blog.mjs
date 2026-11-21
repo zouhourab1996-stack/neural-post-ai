@@ -30,7 +30,7 @@ const pageTitle = (seoTitle) => {
   return branded.length >= 30 && branded.length <= 60 ? branded : fitTitle(lead + " Astrology Guide | " + SITE_NAME);
 };
 const BLOG_TITLE = "Prophetic Blog";
-const BLOG_DESCRIPTION = "Long-form astrology guides with dates computed to the minute — retrogrades, moon phases and chart explainers — edited by Hedi Touati.";
+const BLOG_DESCRIPTION = "Long-form astrology guides covering planetary cycles, moon phases, sky events and birth-chart concepts, edited by Hedi Touati.";
 const DEFAULT_AUTHOR = "Hedi Touati";
 const AUTHOR_SLUG = "/author/hedi-touati/";
 const AUTHOR_TITLE = "Founder & Editor";
@@ -409,7 +409,7 @@ function renderPost(p, all) {
 ${insertAds(p.html, p.words)}
  </div>
  <div class="pb-share"><span>Share:</span><a href="https://twitter.com/intent/tweet?url=${share}&text=${shareT}" rel="noopener" target="_blank">X / Twitter</a><a href="https://www.facebook.com/sharer/sharer.php?u=${share}" rel="noopener" target="_blank">Facebook</a><a href="https://www.linkedin.com/sharing/share-offsite/?url=${share}" rel="noopener" target="_blank">LinkedIn</a><a href="https://www.reddit.com/submit?url=${share}&title=${shareT}" rel="noopener" target="_blank">Reddit</a><a href="mailto:?subject=${shareT}&body=${share}">Email</a></div>
- <aside class="pb-author"><div class="av">${esc(p.author.slice(0, 1))}</div><div><strong><a rel="author" href="${AUTHOR_SLUG}">${esc(p.author)}</a></strong><span class="pb-author-role">${esc(AUTHOR_TITLE)}</span><p>${esc(AUTHOR_BIO)} Every date on this page is computed from ephemeris data and every price is checked against the seller's own terms. Found an error? <a href="/contact/">Tell us</a> and we will correct it in place, with the correction noted. Last review: ${fmtDate(p.updated)}.</p></div></aside>
+ <aside class="pb-author"><div class="av">${esc(p.author.slice(0, 1))}</div><div><strong><a rel="author" href="${AUTHOR_SLUG}">${esc(p.author)}</a></strong><span class="pb-author-role">${esc(AUTHOR_TITLE)}</span><p>${esc(AUTHOR_BIO)} Dates, prices and other factual details should be checked against the references linked in each guide. Found an error? <a href="/contact/">Tell us</a> and we will correct it in place, with the correction noted. Last review: ${fmtDate(p.updated)}.</p></div></aside>
  ${prev || next ? `<nav class="pb-prevnext" aria-label="More posts">${prev ? `<a href="/blog/${prev.slug}/"><span>← Older</span>${esc(prev.title)}</a>` : "<span></span>"}${next ? `<a class="next" href="/blog/${next.slug}/"><span>Newer →</span>${esc(next.title)}</a>` : ""}</nav>` : ""}
  ${adMultiplex()}
  ${related.length ? `<section class="pb-related"><h2>Related guides</h2><div class="pb-grid">${related.map((r) => card(r)).join("")}</div></section>` : ""}
