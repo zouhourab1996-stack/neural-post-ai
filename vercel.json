@@ -153,26 +153,6 @@
       "permanent": true
     },
     {
-      "source": "/2026/09/total-solar-eclipse-august-2027-leo-century.html",
-      "destination": "https://daysuntil.bond/total-solar-eclipse-august-2027/",
-      "permanent": true
-    },
-    {
-      "source": "/2026/09/new-moon-cancer-july-2027-mercury-direct.html",
-      "destination": "https://daysuntil.bond/new-moon-july-2027/",
-      "permanent": true
-    },
-    {
-      "source": "/2026/09/mercury-retrograde-june-2027-cancer-gemini.html",
-      "destination": "https://daysuntil.bond/mercury-retrograde-june-2027/",
-      "permanent": true
-    },
-    {
-      "source": "/2026/09/flower-moon-scorpio-may-2027-rare.html",
-      "destination": "https://propheticguidance2026.blogspot.com/2026/09/flower-moon-scorpio-may-2027-rare.html",
-      "permanent": true
-    },
-    {
       "source": "/saturn-return-in-aries-2026{/}?",
       "destination": "/blog/saturn-return-in-aries-2026/",
       "permanent": true
@@ -188,38 +168,8 @@
       "permanent": true
     },
     {
-      "source": "/blog/the-last-wish-review{/}?",
-      "destination": "/blog/new-moon-ritual/",
-      "statusCode": 301
-    },
-    {
-      "source": "/blog/seraphina-tarot-reading-review{/}?",
-      "destination": "/blog/tarot-spreads-for-beginners-2026/",
-      "statusCode": 301
-    },
-    {
-      "source": "/blog/mystery-school-code-review{/}?",
-      "destination": "/blog/new-moon-ritual/",
-      "statusCode": 301
-    },
-    {
-      "source": "/blog/eastern-astrology-language-reading-review{/}?",
-      "destination": "/blog/natal-chart-reading-guide-2026/",
-      "statusCode": 301
-    },
-    {
-      "source": "/blog/soulmate-sketch-honest-guide{/}?",
-      "destination": "/blog/",
-      "statusCode": 301
-    },
-    {
       "source": "/blog/best-fiverr-birth-chart-readings-2026{/}?",
       "destination": "/blog/what-to-expect-birth-chart-reading-2026/",
-      "statusCode": 301
-    },
-    {
-      "source": "/blog/best-fiverr-dream-interpretation-2026{/}?",
-      "destination": "/blog/",
       "statusCode": 301
     },
     {
@@ -228,43 +178,8 @@
       "statusCode": 301
     },
     {
-      "source": "/blog/best-fiverr-psychic-readings-2026{/}?",
-      "destination": "/blog/",
-      "statusCode": 301
-    },
-    {
-      "source": "/blog/best-fiverr-reiki-distance-healing-2026{/}?",
-      "destination": "/blog/",
-      "statusCode": 301
-    },
-    {
       "source": "/blog/best-fiverr-tarot-readers-2026{/}?",
       "destination": "/blog/tarot-spreads-for-beginners-2026/",
-      "statusCode": 301
-    },
-    {
-      "source": "/blog/best-fiverr-twin-flame-readings-2026{/}?",
-      "destination": "/blog/",
-      "statusCode": 301
-    },
-    {
-      "source": "/blog/fiverr-psychic-vs-keen-kasamba-2026{/}?",
-      "destination": "/blog/",
-      "statusCode": 301
-    },
-    {
-      "source": "/blog/fiverr-vs-psychic-platforms-2026{/}?",
-      "destination": "/blog/",
-      "statusCode": 301
-    },
-    {
-      "source": "/blog/best-online-psychic-reading-sites-2026{/}?",
-      "destination": "/blog/",
-      "statusCode": 301
-    },
-    {
-      "source": "/blog/online-psychic-reading-cost-2026{/}?",
-      "destination": "/blog/",
       "statusCode": 301
     },
     {
@@ -273,23 +188,8 @@
       "statusCode": 301
     },
     {
-      "source": "/blog/psychic-reading-red-flags-2026{/}?",
-      "destination": "/blog/",
-      "statusCode": 301
-    },
-    {
-      "source": "/blog/how-to-prepare-first-psychic-reading-2026{/}?",
-      "destination": "/blog/",
-      "statusCode": 301
-    },
-    {
       "source": "/tools/mercury-retrograde{/}?",
       "destination": "/blog/mercury-retrograde-2026/",
-      "permanent": true
-    },
-    {
-      "source": "/search{/:path(.*)}?",
-      "destination": "/blog/",
       "permanent": true
     },
     {
@@ -355,11 +255,6 @@
     {
       "source": "/p/disclaimer.html",
       "destination": "/disclaimer/",
-      "permanent": true
-    },
-    {
-      "source": "/p/:slug(.*)",
-      "destination": "/",
       "permanent": true
     },
     {
