@@ -23,6 +23,7 @@ const staticPages = [
   ["/ai-policy/", "Prophetic AI Content Policy & Human Review", "Learn how Prophetic uses AI-assisted tools for research and drafting while requiring human review, source checks, and accountable publication."],
   ["/sitemap/", "Prophetic HTML Sitemap & Article Index", "Browse Prophetic's public pages, astrology guides, dated event explainers, calculators, and the latest published articles."],
   ["/topics/", "Astrology Topics: Retrogrades, Moons & Charts | Prophetic", "Every Prophetic astrology guide grouped by topic: retrogrades, zodiac seasons, moon phases and sky events, birth charts, numerology and tarot, and reading costs."],
+  ["/profection-year-calculator/", "Profection Year Calculator: Find Your Time Lord", "Calculate your annual profection year by age and rising sign. Find the activated whole-sign house, profected zodiac sign and traditional year lord."],
   ["/author/hedi-touati/", "Meet Hedi Touati, Prophetic Founder & Editor", "Meet Hedi Touati, founder and editor of Prophetic, who computes the site's astrology dates and edits every guide before publication."]
 ];
 
@@ -163,7 +164,7 @@ function postsList(withDesc) {
 }
 var EXPLORE_LIST = '<ul>' + [
   ['/blog/','All astrology articles'], ['/topics/','Guides by topic'], ['/about/','About Prophetic'], ['/editorial/','Editorial policy'],
-  ['/ai-policy/','AI content policy'], ['/contact/','Contact'], ['/sitemap/','HTML sitemap']
+  ['/ai-policy/','AI content policy'], ['/contact/','Contact'], ['/profection-year-calculator/','Annual profection calculator'], ['/sitemap/','HTML sitemap']
 ].map(function(x){ return '<li><a href="' + x[0] + '">' + x[1] + '</a></li>'; }).join('') + '</ul>';
 var HOMEPAGE_BODY = ''
  + '<h1>Astrology guides with dates you can check</h1>'
@@ -312,6 +313,8 @@ var HOME_SCHEMA = [
 ];
 
 staticPages.concat(reviewPages).forEach(function(p){
+  // This route is a hand-authored interactive calculator copied from public/.
+  if (p[0] === "/profection-year-calculator/") return;
   var heading = p[1].replace(" | Prophetic","").replace(/^Prophetic — /,"");
   var body;
   if (p[0] === "/") {
