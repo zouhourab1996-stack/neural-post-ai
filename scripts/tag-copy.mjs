@@ -13,11 +13,11 @@ export const TAG_COPY = {
     ],
   },
   "2026": {
-    intro: `Everything dated to 2026 in one place: the year's eclipses, retrograde windows, moon phases and the astrological dates people search for as they approach. Dates are computed from ephemeris data rather than copied, so where a source disagrees by a day it is usually a time-zone conversion rather than an error.`,
+    intro: `Everything dated to 2026 in one place: the year's eclipses, retrograde windows, moon phases and the astrological dates people search for as they approach. Dates and event details should be checked against the references and time zones stated in each guide; differences can reflect source methods or local-date conversions.`,
     faq: [
-      ["Are the 2026 dates confirmed?", "Astronomical ones are — they are computed and do not depend on an announcement. Dates for events that are announced rather than calculated are marked as expected until they are confirmed."],
+      ["Are the 2026 dates confirmed?", "Astronomical events are measurable, but exact details should be checked against the references linked in the relevant guide. Announced or cultural observances may be provisional."],
       ["Why does a date differ between sites?", "Nearly always time zone. A full moon at 23:40 UTC is already the next calendar day in Sydney and still the previous evening in Los Angeles. Check which zone a site is quoting."],
-      ["Will the dates change?", "The astronomical ones will not. Moon-sighting observances can shift by a day, and those are labelled as expected on the individual pages."],
+      ["Will the dates change?", "Published dates may differ by source and time zone. Moon-sighting observances can also vary by location and announcement."],
     ],
   },
   transits: {
