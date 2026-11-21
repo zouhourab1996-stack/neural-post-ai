@@ -3,10 +3,10 @@ import { ArrowRight, CalendarClock, CircleDollarSign, Mail, ScrollText, ShieldCh
 import { Link } from "react-router-dom"
 
 const FACTS = [
-  { icon: <CalendarClock />, title: "Dates are computed, not copied", body: "Retrograde stations, eclipses and moon phases come from ephemeris calculation, which is why Prophetic's times sometimes differ from other astrology sites by a few hours." },
-  { icon: <CircleDollarSign />, title: "Prices are checked against the source", body: "Figures quoted in the service guides come from each seller's own published pricing and terms, checked on the date printed beside them." },
+  { icon: <CalendarClock />, title: "Dates and source notes", body: "Dated guides should identify the astronomical reference and time zone used. Readers should compare source notes when published dates differ." },
+  { icon: <CircleDollarSign />, title: "Pricing information and its limits", body: "Prices and terms can change; confirm current information directly with the provider. A verification date is shown only when a check was actually performed." },
   { icon: <ScrollText />, title: "Corrections are made in public", body: "Errors are fixed in the article they affect, with the change noted on the page and the date it was made — not quietly replaced." },
-  { icon: <ShieldCheck />, title: "No pay-to-rank, ever", body: "Affiliate links are disclosed at the point of the link. They never change a date, a quoted price or a conclusion." },
+  { icon: <ShieldCheck />, title: "Clear commercial disclosures", body: "Any sponsored or affiliate relationship should be disclosed where it applies and should not determine editorial conclusions." },
 ]
 
 export default function Author() {
@@ -14,14 +14,14 @@ export default function Author() {
     <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="about-hero">
       <span className="eyebrow accent-label">EDITOR</span>
       <h1>Hedi Touati<br /><em>Founder &amp; editor.</em></h1>
-      <p>Founder and editor of Prophetic. He computes the site's astrology dates from ephemeris data rather than copying them, checks every quoted price against the seller's own terms, and edits each guide before it is published.</p>
+      <p>Founder and editor of Prophetic, responsible for the publication's editorial direction and corrections. Individual guides should identify their sources and verification limits.</p>
     </motion.section>
 
     <section className="about-grid">
       <div>
         <span className="eyebrow">BACKGROUND</span>
         <h2>Why this site exists.</h2>
-        <p>Prophetic began as a private set of notes on retrograde dates — the kind of table you build when you are tired of websites that disagree with each other by a day and none of them show their working. It is now a public reference for people who want to check the sky for themselves: what is happening, when exactly, and what it means for a chart.</p>
+        <p>Prophetic publishes accessible explainers about astrology, birth-chart concepts and observable sky events, with an emphasis on distinguishing astronomical facts from symbolic interpretations.</p>
         <p>The same instinct drives the service guides. Most pages about readings are written by people selling readings, so the useful question — what does this actually cost at each tier, and what do you get — rarely gets a straight answer. Those guides exist to answer it plainly.</p>
       </div>
       <div className="about-card">
