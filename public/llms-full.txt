@@ -1,6 +1,6 @@
 # Prophetic — Astrology Guides, Retrograde Dates & Chart Tools
 
-Prophetic (prophetic.pw) is an independent astrology publisher. It computes its own astrology dates from astronomical ephemeris data and publishes:
+Prophetic (prophetic.pw) is an independent publication about astrology, birth-chart concepts and observable sky events. It distinguishes astronomical observations from symbolic astrological interpretations and links to references where available. It publishes:
 
 1. **Dated event guides** — Mercury, Venus, Mars and Jupiter retrogrades, eclipses, moon phases, meteor showers and portals, each given to the minute in UTC and converted to the reader's local timezone.
 2. **Chart explainers** — plain-language guides to reading your own natal chart: planets, houses, aspects, Saturn returns and birth-chart interpretation.
