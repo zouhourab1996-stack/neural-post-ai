@@ -23,62 +23,9 @@ toc: true
 
 ## Profection year calculator
 
-<div class="calc" id="profection-calculator">
-  <div class="grid2">
-    <label for="prof-birth"><b>Date of birth</b><input id="prof-birth" type="date" autocomplete="bday"></label>
-    <label for="prof-date"><b>Calculate for date</b><input id="prof-date" type="date"></label>
-  </div>
-  <label for="prof-rising"><b>Your natal rising sign (Ascendant)</b>
-    <select id="prof-rising">
-      <option value="">Choose your rising sign</option>
-      <option>Aries</option><option>Taurus</option><option>Gemini</option><option>Cancer</option>
-      <option>Leo</option><option>Virgo</option><option>Libra</option><option>Scorpio</option>
-      <option>Sagittarius</option><option>Capricorn</option><option>Aquarius</option><option>Pisces</option>
-    </select>
-  </label>
-  <button type="button" class="button" id="prof-calculate">Calculate my profection year</button>
-  <div id="prof-result" class="res-card" aria-live="polite">
-    <b>Your result will appear here.</b>
-    <p>Enter your birth date and rising sign. The calculation runs in this browser; the form does not send your birth date to a server.</p>
-  </div>
-  <p class="small">This calculator uses completed age and whole-sign houses. It does not calculate your Ascendant; you need a reliable natal chart for that. Around your birthday, an astrologer using the exact solar-return moment may set a slightly different changeover date.</p>
-</div>
+Use the [free annual profection calculator](/profection-year-calculator/) to calculate your active house, profected sign and traditional Lord of the Year. Enter your birth date, your natal rising sign and the date you want to examine.
 
-<script>
-(function(){
-  const signs = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
-  const rulers = {Aries:"Mars",Taurus:"Venus",Gemini:"Mercury",Cancer:"Moon",Leo:"Sun",Virgo:"Mercury",Libra:"Venus",Scorpio:"Mars",Sagittarius:"Jupiter",Capricorn:"Saturn",Aquarius:"Saturn",Pisces:"Jupiter"};
-  const themes = ["identity, body and beginnings","money, resources and values","learning, communication and local life","home, family and foundations","creativity, pleasure, romance and children","work, routines, service and wellbeing","partnerships, agreements and open rivals","shared resources, debts, inheritances and deep change","study, travel, philosophy and belief","career, reputation and public responsibilities","friends, groups, networks and long-term hopes","rest, retreat, closure and matters behind the scenes"];
-  const birth = document.getElementById("prof-birth");
-  const target = document.getElementById("prof-date");
-  const rising = document.getElementById("prof-rising");
-  const result = document.getElementById("prof-result");
-  const button = document.getElementById("prof-calculate");
-  const pad = n => String(n).padStart(2,"0");
-  const ordinal = n => n===1?"1st":n===2?"2nd":n===3?"3rd":n+"th";
-  const today = new Date();
-  target.value = today.getFullYear()+"-"+pad(today.getMonth()+1)+"-"+pad(today.getDate());
-  function utcDate(v){ if(!v) return null; const p=v.split("-").map(Number); return new Date(Date.UTC(p[0],p[1]-1,p[2])); }
-  function fmt(d){return d.toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric",timeZone:"UTC"});}
-  button.addEventListener("click",function(){
-    const b=utcDate(birth.value), t=utcDate(target.value), r=signs.indexOf(rising.value);
-    if(!b||!t||r<0){result.innerHTML="<b>Please enter your birth date, calculation date and rising sign.</b>";return;}
-    if(t<b){result.innerHTML="<b>The calculation date must be on or after your birth date.</b>";return;}
-    let age=t.getUTCFullYear()-b.getUTCFullYear();
-    const birthdayPassed=(t.getUTCMonth()>b.getUTCMonth())||(t.getUTCMonth()===b.getUTCMonth()&&t.getUTCDate()>=b.getUTCDate());
-    if(!birthdayPassed) age--;
-    const house=(age%12)+1;
-    const sign=signs[(r+house-1)%12];
-    const lord=rulers[sign];
-    let nextYear=t.getUTCFullYear();
-    const anniversary=new Date(Date.UTC(t.getUTCFullYear(),b.getUTCMonth(),b.getUTCDate()));
-    if(anniversary<=t) nextYear++;
-    const nextBirthday=new Date(Date.UTC(nextYear,b.getUTCMonth(),b.getUTCDate()));
-    const cycle=(age%12)+1;
-    result.innerHTML="<div class='kicker'>Your annual profection</div><h3 style='margin:.35rem 0'>"+house+"th-house year · "+sign+" profected</h3><p><b>Lord of the Year: "+lord+"</b></p><p>At age <b>"+age+"</b>, your "+house+"th whole-sign house is activated. Its traditional ruler, "+lord+", becomes the time lord for this profection year.</p><p><b>House theme:</b> "+themes[house-1]+".</p><p><b>Calculated for:</b> "+fmt(t)+"</p><p><b>Next birthday:</b> "+fmt(nextBirthday)+"</p><p class='small'>The profection cycle repeats every 12 years. This is a traditional astrological timing technique, not a scientifically validated prediction.</p>";
-  });
-})();
-</script>
+The calculator uses the completed-age convention and whole-sign houses. It runs entirely in your browser: your birth date is not sent to a server. It does not calculate your Ascendant, so you need a reliable natal chart for the rising sign.
 
 ## How to calculate an annual profection
 
