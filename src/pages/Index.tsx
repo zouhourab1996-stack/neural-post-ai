@@ -1,35 +1,43 @@
+import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { ArrowRight, ArrowUpRight, Check, ChevronRight, Search, ShieldCheck, Sparkles, Star, TrendingUp } from "lucide-react"
-import { useEffect, useMemo, useState } from "react"
-import { affiliateProps, categories, reviews, testimonials } from "@/data/reviews"
 
-function Score({ value }: { value: number }) { return <span className="score"><Star fill="currentColor" /> {value}</span> }
-function ReviewCard({ review }: { review: typeof reviews[number] }) { return <article className="review-card"><div className={`review-logo ${review.accent}`}>{review.name.slice(0, 1)}</div><div className="card-top"><span className="eyebrow">{review.category}</span><Score value={review.score} /></div><h3>{review.name}</h3><p>{review.tagline}</p><div className="card-meta"><span>{review.price}</span><Link to={`/review/${review.slug}`} aria-label={`Read ${review.name} review`}>Read review <ArrowRight /></Link></div></article> }
-
-type BlogPost = { slug: string; url: string; title: string; description: string; date: string; tags: string[]; category: string; readingTime: number }
-function BlogTeaser() {
- const [posts, setPosts] = useState<BlogPost[]>([])
- useEffect(() => {
-  let alive = true
-  fetch("/blog/manifest.json", { headers: { Accept: "application/json" } }).then((r) => (r.ok ? r.json() : null)).then((data) => { if (alive && data && Array.isArray(data.posts)) setPosts(data.posts.slice(0, 3)) }).catch(() => undefined)
-  return () => { alive = false }
- }, [])
- if (!posts.length) return null
- return <section className="container-main section-pad"><div className="section-heading"><div><span className="eyebrow">FROM THE BLOG</span><h2>Guides, forecasts and deep dives.</h2></div><a className="text-link" href="/blog/">Visit the blog <ArrowRight /></a></div><div className="review-grid">{posts.map((post) => <article key={post.slug} className="review-card"><div className="card-top"><span className="eyebrow">{post.category}</span><span className="score">{post.readingTime} min</span></div><h3><a href={`/blog/${post.slug}/`}>{post.title}</a></h3><p>{post.description}</p><div className="card-meta"><span>{new Date(post.date + "T12:00:00Z").toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" })}</span><a href={`/blog/${post.slug}/`} aria-label={`Read ${post.title}`}>Read guide <ArrowRight /></a></div></article>)}</div></section>
-}
+type BlogPost = { slug: string; title: string; description: string; date: string; category: string; readingTime: number }
 
 export default function Index() {
- const [activeCategory, setActiveCategory] = useState("All reviews")
- const [query, setQuery] = useState("")
- const filtered = useMemo(() => reviews.filter((review) => (activeCategory === "All reviews" || review.category === activeCategory) && `${review.name} ${review.description}`.toLowerCase().includes(query.toLowerCase())), [activeCategory, query])
- return <>
-  <section className="hero"><div className="hero-glow" /><div className="container-main hero-inner"><div className="eyebrow accent-label"><Sparkles /> THE INDEPENDENT BUYER'S GUIDE</div><h1>Choose better tools.<br /><em>Build what matters.</em></h1><p className="hero-copy">Clear, independent reviews of the software, financial products, and digital tools powering modern business.</p><div className="hero-search"><Search /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search tools, categories, or use cases..." aria-label="Search reviews" /><kbd>⌘ K</kbd></div><div className="hero-trust"><span><ShieldCheck /> Independent research</span><span><Check /> No pay-to-rank</span><span><TrendingUp /> Updated weekly</span></div></div></section>
-  <section className="container-main section-pad"><div className="section-heading"><div><span className="eyebrow">CURATED FOR YOU</span><h2>Find your next advantage</h2></div><Link className="text-link" to="/compare">See all comparisons <ArrowRight /></Link></div><div className="category-pills">{categories.map((category) => <button key={category} className={activeCategory === category ? "pill active" : "pill"} onClick={() => setActiveCategory(category)}>{category}</button>)}</div><div className="review-grid">{filtered.map((review) => <ReviewCard key={review.slug} review={review} />)}</div></section>
-  <section className="compare-banner"><div className="container-main compare-inner"><div><span className="eyebrow">THE SHORTLIST</span><h2>Stop tab-hopping.<br /><em>Start comparing.</em></h2><p>Side-by-side analysis that turns a long software search into a confident shortlist.</p></div><Link to="/compare" className="button button-light">Explore comparisons <ArrowRight /></Link></div></section>
-  <BlogTeaser />
-  <section className="network-strip"><div className="container-main network-inner"><div><span className="eyebrow">OUR NETWORK</span><p>Prophetic is part of a small family of independent sites. Same standards, different questions.</p></div><nav className="network-links" aria-label="Our other websites"><a href="https://www.pro-reviewer.cyou/" target="_blank" rel="noopener">Pro Reviewer <ArrowUpRight /></a><a href="https://propheticguidance2026.blogspot.com/" target="_blank" rel="noopener">Prophetic Guidance 2026 <ArrowUpRight /></a><a href="https://www.bmrcalc.bond/" target="_blank" rel="noopener">BmrCalc — BMR calculator <ArrowUpRight /></a></nav></div></section>
-  <section className="container-main section-pad"><div className="section-heading"><div><span className="eyebrow">OUR PROMISE</span><h2>Useful over noisy.</h2></div></div><div className="promise-grid"><div><span className="promise-number">01</span><h3>Evidence-led</h3><p>We test workflows, pricing, support, and the details that sales pages leave out.</p></div><div><span className="promise-number">02</span><h3>Human judgment</h3><p>Scores help you scan. Nuanced recommendations help you decide.</p></div><div><span className="promise-number">03</span><h3>Clear incentives</h3><p>When a link supports our work, we label it. Our rankings stay independent.</p></div></div></section>
-  <section className="container-main section-pad testimonials"><div className="section-heading"><div><span className="eyebrow">FROM THE COMMUNITY</span><h2>Readers are building smarter.</h2></div></div><div className="testimonial-grid">{testimonials.map((item) => <figure key={item.name}><div className="stars">★★★★★</div><blockquote>“{item.quote}”</blockquote><figcaption><strong>{item.name}</strong><span>{item.role}</span></figcaption></figure>)}</div></section>
-  <section className="newsletter"><div className="container-main newsletter-inner"><div><span className="eyebrow">THE SIGNAL</span><h2>One smart email.<br /><em>Zero inbox clutter.</em></h2></div><form onSubmit={(e) => e.preventDefault()}><input type="email" placeholder="you@company.com" aria-label="Email address" required /><button className="button">Join the signal <ArrowRight /></button><small>Weekly insights. Unsubscribe anytime.</small></form></div></section>
- </>
+  const [posts, setPosts] = useState<BlogPost[]>([])
+  useEffect(() => {
+    let alive = true
+    fetch("/blog/manifest.json", { headers: { Accept: "application/json" } })
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => { if (alive && Array.isArray(data?.posts)) setPosts(data.posts.filter((post: BlogPost) => post).slice(0, 6)) })
+      .catch(() => undefined)
+    return () => { alive = false }
+  }, [])
+
+  return <div className="container-main page-shell">
+    <section className="about-hero">
+      <span className="eyebrow accent-label">ASTROLOGY · ASTRONOMY · CHART GUIDES</span>
+      <h1>Understand the sky.<br /><em>Explore the symbolism.</em></h1>
+      <p>Independent guides to planetary cycles, moon phases, eclipses, birth-chart concepts and reflective practices. We distinguish observable astronomy from symbolic astrological interpretation.</p>
+      <div className="about-cta">
+        <Link className="button" to="/blog/">Explore all guides</Link>
+        <Link className="button button-ghost" to="/about/">About Prophetic</Link>
+      </div>
+    </section>
+    <section className="section-pad">
+      <div className="section-heading"><div><span className="eyebrow">LATEST GUIDES</span><h2>Recent articles</h2></div><Link className="text-link" to="/blog/">All articles</Link></div>
+      <div className="review-grid">
+        {posts.map((post) => <article key={post.slug} className="review-card">
+          <div className="card-top"><span className="eyebrow">{post.category}</span><span>{post.readingTime} min read</span></div>
+          <h3><a href={`/blog/${post.slug}/`}>{post.title}</a></h3>
+          <p>{post.description}</p>
+          <div className="card-meta"><span>{post.date}</span><a href={`/blog/${post.slug}/`}>Read guide →</a></div>
+        </article>)}
+      </div>
+    </section>
+    <section className="about-grid">
+      <div><h2>Our approach</h2><p>Astronomical observations are measurable and should be checked against reliable references. Astrology is presented as a cultural and symbolic tradition, not as a scientifically established prediction method.</p></div>
+      <div><h2>Editorial standards</h2><p>We identify sources where available, explain uncertainty and time zones, and welcome corrections. We do not claim independent verification unless it is documented.</p><Link to="/editorial/">Read our editorial policy →</Link></div>
+    </section>
+  </div>
 }
