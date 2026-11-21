@@ -307,7 +307,7 @@ function loadPosts() {
 
 // ------------------------------------------------------------------ layout
 function page({ title, description, url, body, active, ld = [], extraCss = "", image = DEFAULT_IMAGE, type = "website", noindex = false, published, modified, lang = "en", feed = true }) {
-  const org = { "@context": "https://schema.org", "@type": "Organization", "@id": SITE + "/#organization", name: SITE_NAME, url: SITE + "/", logo: { "@type": "ImageObject", url: SITE + "/logo.svg" }, sameAs: ["https://twitter.com/PropheticAI"] };
+  const org = { "@context": "https://schema.org", "@type": "Organization", "@id": SITE + "/#organization", name: SITE_NAME, url: SITE + "/", logo: { "@type": "ImageObject", url: SITE + "/logo.svg" } };
   const webPage = { "@context": "https://schema.org", "@type": "WebPage", "@id": url + "#webpage", url, name: title, description, isPartOf: { "@id": SITE + "/#website" }, publisher: { "@id": SITE + "/#organization" }, inLanguage: lang === "en" ? "en-US" : lang };
   const schemas = [...ld.filter(Boolean), org, webPage, faqSchemaFromHtml(body)].filter(Boolean);
   const ldTags = schemas.map((j) => `<script type="application/ld+json">${typeof j === "string" ? j : JSON.stringify(j)}</script>`).join("\n");
