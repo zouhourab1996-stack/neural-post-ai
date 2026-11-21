@@ -9,7 +9,7 @@ export const STATIC_FAQ = {
   ],
   "/terms/": [
     ["Can I quote or share your guides?",
-     "Short passages with attribution and a link, yes. Republishing a guide in full, reselling it, or passing our computed dates off as your own work is not permitted."],
+     "Short passages with attribution and a link may be quoted. Republishing a guide in full or presenting our content as your own is not permitted."],
     ["Are the dates guaranteed accurate?",
      "No date is guaranteed by this site. Consult the cited astronomical source and confirm the relevant time zone, especially for time-sensitive events."],
     ["Do you use affiliate links?",
