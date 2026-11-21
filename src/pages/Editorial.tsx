@@ -3,9 +3,9 @@ import { ArrowRight, CalendarClock, Mail, ScrollText, ShieldCheck, TriangleAlert
 import { Link } from "react-router-dom"
 
 const STANDARDS = [
-  { icon: <CalendarClock />, title: "Dates come from ephemeris data", body: "Retrograde stations, eclipses, moon phases and meteor shower peaks are computed from astronomical ephemerides, not copied from other astrology sites. We publish the time to the minute in UTC and mark the shadow and storm windows around each station." },
-  { icon: <ScrollText />, title: "Prices are checked, then dated", body: "When a guide quotes what a reading, report or sketch costs, that figure comes from the seller's own published pricing on the day we checked it — and we print the date of the check next to it. Prices move; we say when we looked." },
-  { icon: <ShieldCheck />, title: "Cons are published with pros", body: "A service guide that lists only advantages is advertising. Every scored guide on Prophetic carries the limits, the refund terms and the cases where we would tell you not to buy." },
+  { icon: <CalendarClock />, title: "Dates are linked to references", body: "Dated guides should identify the reference, method and time zone used. Different sources may report dates differently; check the cited material before relying on an exact time." },
+  { icon: <ScrollText />, title: "Prices require current source checks", body: "Prices and service terms can change. Confirm current details with the provider; an article should state a verification date only when a check was actually completed." },
+  { icon: <ShieldCheck />, title: "Cons are published with pros", body: "A service guide that lists only advantages is advertising. Service guides should explain limitations, relevant terms and uncertainties, and should not make unsupported recommendations." },
   { icon: <TriangleAlert />, title: "We say when we cannot verify", body: "Where a seller does not publish a price, or a claim cannot be sourced, we write that plainly instead of filling the gap with a plausible number. No invented sellers, no invented testimonials, no invented credentials." },
 ]
 
@@ -33,7 +33,7 @@ export default function Editorial() {
       <div>
         <span className="eyebrow">WHO IS ACCOUNTABLE</span>
         <h2>Edited by Hedi Touati.</h2>
-        <p>Every guide on Prophetic is edited and signed off by <Link to="/author/hedi-touati">Hedi Touati</Link>, the site's founder and editor. He computes the dates from ephemeris data, checks the prices quoted in the service guides against each seller's own terms, and owns the corrections. No article is published unreviewed, and no byline on this site is a pseudonym or a generated persona.</p>
+        <p>Guides on Prophetic are published under the responsibility of <Link to="/author/hedi-touati">Hedi Touati</Link>, the site's founder and editor. He is responsible for the publication's editorial direction and corrections. Sources and verification methods should be stated on the relevant pages; no blanket claim of independent verification is made.</p>
         <p>That accountability is the reason each guide carries the date it was last checked. If a figure is wrong, the person who published it is named on the page.</p>
       </div>
       <div>
