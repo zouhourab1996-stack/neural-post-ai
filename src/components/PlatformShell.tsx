@@ -8,7 +8,7 @@ export default function PlatformShell() {
   const { theme, setTheme } = useTheme()
   const isDark = theme === "dark"
   return <div className="min-h-screen bg-background text-foreground">
-    <div className="announcement"><span className="pulse-dot" /> The signal behind better software decisions <Link to="/about">Our editorial standards <ArrowUpRight /></Link></div>
+    <div className="announcement"><span className="pulse-dot" /> Astrology, birth charts & sky-event guides <Link to="/about">Our editorial standards <ArrowUpRight /></Link></div>
     <header className="site-header">
       <div className="container-main nav-inner">
         <Link to="/" className="brand"><span className="brand-mark">P</span><span>prophetic<span className="brand-dot">.</span>pw <small className="brand-tag">/ signal</small></span></Link>
@@ -19,6 +19,6 @@ export default function PlatformShell() {
       </div>
     </header>
     <main><Outlet /></main>
-    <footer className="site-footer"><div className="container-main footer-grid"><div><Link to="/" className="brand"><span className="brand-mark">P</span><span>prophetic<span className="brand-dot">.</span>pw <small className="brand-tag">/ signal</small></span></Link><p>Independent reviews for the tools shaping modern business.</p></div><div><strong>Explore</strong><Link to="/">Latest reviews</Link><Link to="/compare">Comparisons</Link><Link to="/about">About Prophetic</Link><a href="/blog/">Blog &amp; guides</a></div><div><strong>Company</strong><Link to="/contact">Contact us</Link><Link to="/disclaimer">Affiliate disclosure</Link><Link to="/privacy">Privacy policy</Link></div><div><strong>Our network</strong><a href="https://www.pro-reviewer.cyou/" target="_blank" rel="noopener" title="Pro Reviewer — honest product reviews">Pro Reviewer <ArrowUpRight /></a><a href="https://propheticguidance2026.blogspot.com/" target="_blank" rel="noopener" title="Prophetic Guidance 2026 — spiritual reflection and mindfulness">Prophetic Guidance 2026 <ArrowUpRight /></a><a href="https://www.bmrcalc.bond/" target="_blank" rel="noopener" title="BmrCalc — free BMR and calorie calculator">BmrCalc <ArrowUpRight /></a></div></div><div className="container-main footer-bottom"><span>© 2026 Prophetic. Built for better decisions.</span><span>We research. You decide.</span></div></footer>
+    <footer className="site-footer"><div className="container-main footer-grid"><div><Link to="/" className="brand"><span className="brand-mark">P</span><span>prophetic<span className="brand-dot">.</span>pw <small className="brand-tag">/ signal</small></span></Link><p>Independent guides to astrology, birth-chart concepts and observable sky events.</p></div><div><strong>Explore</strong><Link to="/">Home</Link><a href="/topics/">Topics</a><Link to="/about">About Prophetic</Link><a href="/blog/">Blog &amp; guides</a></div><div><strong>Company</strong><Link to="/contact">Contact us</Link><Link to="/disclaimer">Disclaimer</Link><Link to="/privacy">Privacy policy</Link></div><div><strong>Guides</strong><a href="/blog/">All articles</a><a href="/topics/">Browse topics</a><a href="/editorial/">Editorial policy</a></div></div><div className="container-main footer-bottom"><span>© 2026 Prophetic. Built for better decisions.</span><span>We research. You decide.</span></div></footer>
   </div>
 }
