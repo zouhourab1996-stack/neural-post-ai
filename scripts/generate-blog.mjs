@@ -34,7 +34,7 @@ const BLOG_DESCRIPTION = "Long-form astrology guides with dates computed to the 
 const DEFAULT_AUTHOR = "Hedi Touati";
 const AUTHOR_SLUG = "/author/hedi-touati/";
 const AUTHOR_TITLE = "Founder & Editor";
-const AUTHOR_BIO = "Hedi Touati is the founder and editor of Prophetic. He computes the site's astrology dates from ephemeris data rather than copying them, and edits every guide before it is published.";
+const AUTHOR_BIO = "Hedi Touati is the founder and editor of Prophetic. The publication focuses on accessible astrology explainers, chart concepts and dated sky-event guides. Astrological interpretations are presented as symbolic perspectives, distinct from measurable astronomical observations.";
 // E-E-A-T: a named, linkable Person author, not an unnamed editorial team.
 const AUTHOR_PERSON = {
   "@type": "Person",
@@ -295,7 +295,7 @@ function loadPosts() {
       tags: uniq(meta.tags.map(String)), category: String(meta.category || meta.tags[0] || "Guides"),
       image, imageAlt: fitAlt(meta.imageAlt || meta.title), showImage: meta.showImage !== false && !!meta.image,
       readingTime: Math.max(1, Math.round(wordCount(html.replace(/<table[\s\S]*?<\/table>/gi, " ")) / WORDS_PER_MINUTE)),
-      canonical: meta.canonical || `${SITE}/blog/${slug}/`, url: `${SITE}/blog/${slug}/`, lang: String(meta.lang || "en"),
+      canonical: `${SITE}/blog/${slug}/`, url: `${SITE}/blog/${slug}/`, lang: String(meta.lang || "en"),
       noindex: meta.noindex === true,
     });
   }
@@ -427,7 +427,7 @@ function renderList_(posts, { title, heading, description, url, base, pageNo, pa
   const body = `<section class="pb-hero"><div class="pb-container"><span class="eyebrow accent">${tag ? "Topic" : "The Prophetic Blog"}</span><h1>${heading}</h1><p>${esc(description)}</p>${tagBar}</div></section>
 <main class="pb-container">${grid}${pager}${allPosts ? `<section class="pb-related pb-allposts"><h2>All ${allPosts.length} guides</h2><ul>${allPosts.map((p) => `<li><a href="/blog/${p.slug}/">${esc(p.title)}</a></li>`).join("")}</ul></section>` : ""}</main>`;
   const ld = [{ "@context": "https://schema.org", "@type": tag ? "CollectionPage" : "Blog", "@id": tag ? url : SITE + "/blog/#blog", name: title, description, url,
-    blogPost: posts.map((p) => ({ "@type": "BlogPosting", headline: p.title, url: p.url, datePublished: isoDate(p.date) })) },
+    mainEntity: { "@type": "ItemList", itemListElement: posts.map((p, index) => ({ "@type": "ListItem", position: index + 1, name: p.title, url: p.url })) } },
     { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [ { "@type": "ListItem", position: 1, name: "Home", item: SITE + "/" }, { "@type": "ListItem", position: 2, name: "Blog", item: SITE + "/blog/" }, ...(tag ? [{ "@type": "ListItem", position: 3, name: tag, item: url }] : []) ] }];
   return page({ title, description, url, body, active: "blog", ld, noindex: pageNo > 1 || tagNoindex });
 }
