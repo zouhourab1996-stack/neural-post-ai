@@ -168,7 +168,7 @@ var EXPLORE_LIST = '<ul>' + [
 ].map(function(x){ return '<li><a href="' + x[0] + '">' + x[1] + '</a></li>'; }).join('') + '</ul>';
 var HOMEPAGE_BODY = ''
  + '<h1>Astrology guides with dates you can check</h1>'
- + '<p>Prophetic publishes astrology guides with their dates computed to the minute — retrogrades and their shadow periods, eclipses, moon phases, meteor showers and portals — alongside plain-language explainers for reading your own chart, and honest cost guides for readings and spiritual services. No filler: every guide is dated, sourced, and updated when the sky changes.</p>'
+ + '<p>Prophetic is an independent editorial guide to astrology, birth-chart concepts and lunar and sky-event calendars. We distinguish observable astronomical events from astrological interpretations, explain our sources and limits, and update pages when verified information changes.</p>'
  + '<section><h2>Latest astrology guides</h2>' + postsList(true) + '</section>'
  + adHomepage()
  + '<section><h2>Free calculators and tools</h2><ul>'
@@ -206,9 +206,9 @@ function topicsBody() {
 }
 
 var PAGE_INTRO = {
- "/about/": '<p>Prophetic is an independent astrology publisher. Every guide on this site is built from primary ephemeris data — the same astronomical tables professional astrologers use — and published with the date and time of each event to the minute, in UTC and in your local timezone where it matters. When a retrograde station or a moon phase moves, we update the article rather than publishing a new one.</p>'
+ "/about/": '<p>Prophetic is an independent publication about astrology, birth-chart concepts and sky events. We distinguish astronomical observations that can be checked against external references from astrological interpretations, which are symbolic traditions rather than scientifically established predictions. Each guide should identify its sources, explain relevant time zones and make clear when information was last checked.</p>'
    + '<h2>What we publish</h2><p>Three things: dated event guides (retrogrades, eclipses, moon phases, meteor showers, portals), chart explainers (what a planet, house or aspect actually means when you read it in your own chart), and honest cost guides for readings and spiritual services — what you get at $15, at $60 and at $300, and where the marketplace sits in between.</p>'
-   + '<h2>How we work</h2><p>Dates come from ephemeris computation, not from copying other astrology sites. Claims about services come from their published pricing and terms on the day we check them, and we say which day that was. Where we cannot verify something, we say so instead of inventing a number.</p>'
+   + '<h2>How we work</h2><p>We aim to explain where dates and factual claims come from and link to primary references where available. We do not claim that astrological interpretations are scientific findings. If a source or detail cannot be verified, we say so rather than inventing an answer.</p>'
    + '<h2>Independence and corrections</h2><p>Prophetic carries no affiliate links and accepts no payment for coverage. Errors are corrected in place and the correction is noted in the article it affects — email the editor and the fix is published with the next update.</p>'
    + '<h2>What astrology is — and is not</h2><p>We treat astrology as a symbolic and reflective practice with a long history, not as a prediction engine and not as a substitute for medical, legal or financial advice. That boundary is stated on every page that touches health, money or major life decisions.</p>',
  "/contact/": '<p>The fastest way to reach the Prophetic editorial team is email: <a href="mailto:anistouati74@gmail.com">anistouati74@gmail.com</a>. We read everything and usually reply within two working days.</p><h2>What to write about</h2><p>Corrections (include the page address and the source you are relying on), questions about a guide, privacy requests, and advertising or partnership enquiries. Corrections are published with the next update of the article they concern.</p><h2>Who you are writing to</h2><p>Prophetic is edited by <a href="/author/hedi-touati/">Hedi Touati</a>. Read more <a href="/about/">about Prophetic</a> and our <a href="/editorial/">editorial policy</a>.</p>',
@@ -234,7 +234,7 @@ var PAGE_INTRO = {
 //   * static pages: STATIC_LASTMOD below — bump it only when their copy changes.
 //   * homepage and /blog/: newest of STATIC_LASTMOD and the newest post (they list posts).
 // No changefreq/priority (Google ignores both).
-var STATIC_LASTMOD = "2026-11-14"; // SPA removed + new static chrome for all static pages
+var STATIC_LASTMOD = "2026-11-21"; // editorial identity and methodology copy updated
 var today = new Date().toISOString().slice(0,10);
 var dayOnly = function(d){ return String(d || "").slice(0,10); };
 function gitDate(file) {
