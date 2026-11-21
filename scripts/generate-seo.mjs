@@ -168,14 +168,14 @@ var EXPLORE_LIST = '<ul>' + [
 ].map(function(x){ return '<li><a href="' + x[0] + '">' + x[1] + '</a></li>'; }).join('') + '</ul>';
 var HOMEPAGE_BODY = ''
  + '<h1>Astrology guides with context and sources</h1>'
- + '<p>Prophetic is an independent editorial guide to astrology, birth-chart concepts and lunar and sky-event calendars. We distinguish observable astronomical events from astrological interpretations, explain our sources and limits, and update pages when verified information changes.</p>'
+ + '<p>Prophetic is an independent guide to astrology, birth-chart concepts and observable sky events. We distinguish astronomical observations from symbolic astrological interpretations, link to references where available, and explain uncertainty and time zones.</p>'
  + '<section><h2>Latest astrology guides</h2>' + postsList(true) + '</section>'
  + adHomepage()
- + '<section><h2>Free calculators and tools</h2><ul>'
- + '<li><a href="/blog/mercury-retrograde-2026/">Mercury retrograde chart checker</a> — find out whether you were born with Mercury retrograde and whether the 2026 stations touch your chart.</li>'
- + '<li><a href="/blog/venus-retrograde-2026/">Venus retrograde calculator</a> — check any birth chart against the 2026 Venus stations.</li>'
- + '<li><a href="/blog/jupiter-retrograde-2026/">Jupiter retrograde guide</a> — the quiet background review running underneath the 2026 retrograde season.</li>'
- + '<li><a href="https://daysuntil.bond/" rel="noopener">daysuntil.bond</a> — live countdowns to every eclipse, full moon and retrograde station.</li>'
+ + '<section><h2>Explore related guides</h2><ul>'
+ + '<li><a href="/blog/mercury-retrograde-2026/">Mercury retrograde 2026</a> — an explainer on the retrograde period, its dates and astrological context.</li>'
+ + '<li><a href="/blog/venus-retrograde-2026/">Venus retrograde 2026</a> — a guide to the cycle and its astrological interpretation.</li>'
+ + '<li><a href="/blog/jupiter-retrograde-2026/">Jupiter retrograde 2026</a> — background on the cycle and how it is discussed in astrology.</li>'
+
  + '</ul></section>'
  + '<section><h2>Explore Prophetic</h2>' + EXPLORE_LIST + '</section>'
  ;
@@ -207,7 +207,7 @@ function topicsBody() {
 
 var PAGE_INTRO = {
  "/about/": '<p>Prophetic is an independent publication about astrology, birth-chart concepts and sky events. We distinguish astronomical observations that can be checked against external references from astrological interpretations, which are symbolic traditions rather than scientifically established predictions. Each guide should identify its sources, explain relevant time zones and make clear when information was last checked.</p>'
-   + '<h2>What we publish</h2><p>Three things: dated event guides (retrogrades, eclipses, moon phases, meteor showers, portals), chart explainers (what a planet, house or aspect actually means when you read it in your own chart), and honest cost guides for readings and spiritual services — what you get at $15, at $60 and at $300, and where the marketplace sits in between.</p>'
+   + '<h2>What we publish</h2><p>Three things: dated sky-event explainers (retrogrades, eclipses, moon phases and meteor showers), chart explainers (planets, houses and aspects), and reflective-practice guides that distinguish tradition from evidence.</p>'
    + '<h2>How we work</h2><p>We aim to explain where dates and factual claims come from and link to primary references where available. We do not claim that astrological interpretations are scientific findings. If a source or detail cannot be verified, we say so rather than inventing an answer.</p>'
    + '<h2>Independence and corrections</h2><p>Prophetic carries no affiliate links and accepts no payment for coverage. Errors are corrected in place and the correction is noted in the article it affects — email the editor and the fix is published with the next update.</p>'
    + '<h2>What astrology is — and is not</h2><p>We treat astrology as a symbolic and reflective practice with a long history, not as a prediction engine and not as a substitute for medical, legal or financial advice. That boundary is stated on every page that touches health, money or major life decisions.</p>',
