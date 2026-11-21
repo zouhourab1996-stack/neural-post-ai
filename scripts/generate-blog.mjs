@@ -422,10 +422,13 @@ ${insertAds(p.html, p.words)}
 
 function renderList_(posts, { title, heading, description, url, base, pageNo, pages, tag, allTags, noindex: tagNoindex = false, allPosts = null }) {
   const pager = pages > 1 ? `<nav class="pb-pager" aria-label="Pagination">${Array.from({ length: pages }, (_, k) => k + 1).map((n) => n === pageNo ? `<span class="current">${n}</span>` : `<a href="${n === 1 ? base : `${base}page/${n}/`}">${n}</a>`).join("")}</nav>` : "";
-  const tagBar = `<div class="pb-tags"><a class="pill${!tag ? " active" : ""}" href="/blog/">All posts</a>${allTags.map((t) => `<a class="pill${tag === t ? " active" : ""}" href="/blog/tag/${slugify(t)}/">${esc(t)}</a>`).join("")}</div>`;
+  const tagCounts = (allPosts || posts).reduce((counts, p) => { p.tags.forEach((t) => { counts[t] = (counts[t] || 0) + 1; }); return counts; }, {});
+  const navTags = allTags.filter((t) => (tagCounts[t] || 0) >= 3).slice(0, 12);
+  const tagBar = `<div class="pb-tags"><a class="pill${!tag ? " active" : ""}" href="/blog/">All posts</a>${navTags.map((t) => `<a class="pill${tag === t ? " active" : ""}" href="/blog/tag/${slugify(t)}/">${esc(t)}</a>`).join("")}</div>`;
   const grid = posts.length ? `<div class="pb-grid">${posts.map((p, k) => card(p, pageNo === 1 && k === 0 && !tag)).join("")}</div>` : `<p class="pb-empty">No posts yet.</p>`;
+  const indexIntro = !tag && pageNo === 1 ? `<section class="pb-intro"><p>Browse ${allPosts ? allPosts.length : posts.length} guides on planetary cycles, moon phases, eclipses, meteor showers, birth-chart concepts and reflective practices. Each topic is approached on its own terms: astronomical observations are measurable and should be checked against their references, while astrological meanings are symbolic interpretations rather than scientific predictions.</p><p>For dated events, pay attention to the source and time zone shown in the guide; the same event can fall on different local calendar dates. For birth charts, the recorded birth time and birthplace affect the Ascendant and house calculations. For personal reflection, use the exercises as prompts rather than guarantees about outcomes.</p><p>Start with <a href="/topics/">the topic guide</a>, or use the links below to explore recent articles.</p></section>` : "";
   const body = `<section class="pb-hero"><div class="pb-container"><span class="eyebrow accent">${tag ? "Topic" : "The Prophetic Blog"}</span><h1>${heading}</h1><p>${esc(description)}</p>${tagBar}</div></section>
-<main class="pb-container">${grid}${pager}${allPosts ? `<section class="pb-related pb-allposts"><h2>All ${allPosts.length} guides</h2><ul>${allPosts.map((p) => `<li><a href="/blog/${p.slug}/">${esc(p.title)}</a></li>`).join("")}</ul></section>` : ""}</main>`;
+<main class="pb-container">${indexIntro}${grid}${pager}${allPosts ? `<section class="pb-related pb-allposts"><h2>All ${allPosts.length} guides</h2><ul>${allPosts.map((p) => `<li><a href="/blog/${p.slug}/">${esc(p.title)}</a></li>`).join("")}</ul></section>` : ""}</main>`;
   const ld = [{ "@context": "https://schema.org", "@type": tag ? "CollectionPage" : "Blog", "@id": tag ? url : SITE + "/blog/#blog", name: title, description, url,
     mainEntity: { "@type": "ItemList", itemListElement: posts.map((p, index) => ({ "@type": "ListItem", position: index + 1, name: p.title, url: p.url })) } },
     { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [ { "@type": "ListItem", position: 1, name: "Home", item: SITE + "/" }, { "@type": "ListItem", position: 2, name: "Blog", item: SITE + "/blog/" }, ...(tag ? [{ "@type": "ListItem", position: 3, name: tag, item: url }] : []) ] }];
@@ -477,7 +480,7 @@ for (let n = 1; n <= pages; n++) {
   const slice = posts.slice((n - 1) * POSTS_PER_PAGE, n * POSTS_PER_PAGE);
   const rel = n === 1 ? "blog/index.html" : `blog/page/${n}/index.html`;
   const url = n === 1 ? `${SITE}/blog/` : `${SITE}/blog/page/${n}/`;
-  writeFile(rel, renderList_(slice, { title: n === 1 ? `${BLOG_TITLE} — Guides, Forecasts & Deep Dives` : `${BLOG_TITLE} — Page ${n}`, heading: `Guides, forecasts<br><em>and deep dives.</em>`, description: BLOG_DESCRIPTION, url, base: "/blog/", pageNo: n, pages, tag: null, allTags, allPosts: n === 1 ? posts.filter((p) => !p.noindex) : null }));
+  writeFile(rel, renderList_(slice, { title: n === 1 ? `${BLOG_TITLE} — Astrology, Chart & Sky Guides` : `${BLOG_TITLE} — Page ${n}`, heading: `Astrology, chart<br><em>and sky-event guides.</em>`, description: BLOG_DESCRIPTION, url, base: "/blog/", pageNo: n, pages, tag: null, allTags, allPosts: n === 1 ? posts.filter((p) => !p.noindex) : null }));
 }
 // Thin-content guard: a tag archive with only one or two posts is a doorway page,
 // not a useful hub. Those are kept reachable (and followed) but kept out of the index.
