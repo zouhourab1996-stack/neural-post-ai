@@ -23,16 +23,16 @@ export const FONT_LINKS = `<link rel="preconnect" href="https://fonts.googleapis
 export function chrome(active) {
   const link = (href, label, key) => `<a href="${href}"${active === key ? ' class="active"' : ""}>${label}</a>`;
   return {
-    header: `<div class="pb-announce"><span class="pb-dot"></span> Astrology dates computed to the minute <a href="/editorial/">Our editorial standards ↗</a></div>
+    header: `<div class="pb-announce"><span class="pb-dot"></span> Astrology, astronomy & chart guides <a href="/editorial/">Our editorial standards ↗</a></div>
 <header class="pb-header"><div class="pb-container pb-nav">
  ${BRAND}
  <nav class="pb-links" aria-label="Primary navigation">${link("/", "Home", "home")}${link("/blog/", "Blog", "blog")}${link("/topics/", "Topics", "topics")}${link("/about/", "About", "about")}${link("/contact/", "Contact", "contact")}</nav>
  <div class="pb-actions"><a href="/blog/feed.xml" class="pb-iconbtn" aria-label="RSS feed" title="RSS feed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg></a><button id="pb-theme" class="pb-iconbtn" aria-label="Toggle theme" type="button">${SUN}${MOON}</button></div>
 </div></header>`,
     footer: `<footer class="pb-footer"><div class="pb-container pb-footgrid">
- <div>${BRAND}<p>Astrology guides with dates computed to the minute.</p></div>
+ <div>${BRAND}<p>Astrology, astronomy and chart guides — with clear sources and context.</p></div>
  <div class="col"><strong>Explore</strong><a href="/blog/">All guides</a><a href="/topics/">Guides by topic</a><a href="/sitemap/">Site index</a><a href="/editorial/">Editorial policy</a><a href="/ai-policy/">AI policy</a><a href="/blog/feed.xml">RSS feed</a></div>
  <div class="col"><strong>Company</strong><a href="/about/">About Prophetic</a><a href="/author/hedi-touati/">Hedi Touati, editor</a><a href="/contact/">Contact us</a><a href="/disclaimer/">Disclaimer</a><a href="/privacy/">Privacy policy</a><a href="/terms/">Terms</a></div>
-</div><div class="pb-container pb-footbottom"><span>© ${new Date().getUTCFullYear()} ${SITE_NAME}. Astrology dates you can check.</span><span>We compute. You decide.</span></div></footer>${TOGGLE_SCRIPT}`,
+</div><div class="pb-container pb-footbottom"><span>© ${new Date().getUTCFullYear()} ${SITE_NAME}. Astrology, astronomy and chart guides.</span><span>Explore thoughtfully. Decide for yourself.</span></div></footer>${TOGGLE_SCRIPT}`,
   };
 }
