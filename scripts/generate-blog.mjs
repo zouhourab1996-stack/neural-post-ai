@@ -325,7 +325,7 @@ function page({ title, description, url, body, active, ld = [], extraCss = "", i
 <meta property="og:type" content="${type}"><meta property="og:site_name" content="${SITE_NAME}"><meta property="og:url" content="${esc(url)}">
 <meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(description)}"><meta property="og:image" content="${esc(image)}">
 ${published ? `<meta property="article:published_time" content="${published}"><meta property="article:modified_time" content="${modified || published}">` : ""}
-<meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@PropheticAI"><meta name="twitter:title" content="${esc(title)}"><meta name="twitter:description" content="${esc(description)}"><meta name="twitter:image" content="${esc(image)}">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${esc(title)}"><meta name="twitter:description" content="${esc(description)}"><meta name="twitter:image" content="${esc(image)}">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="apple-touch-icon" href="/icon-192.png"><link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#0a0f1e">
 ${TRACKING_HEAD}
