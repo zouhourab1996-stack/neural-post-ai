@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+<title id="title">Venus returns to Scorpio</title><desc id="desc">A luminous golden planet above a midnight ocean, with the Scorpio constellation and a stylized scorpion in the foreground.</desc>
+<defs>
+ <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#080d2a"/><stop offset=".56" stop-color="#242044"/><stop offset="1" stop-color="#a34d4b"/></linearGradient>
+ <radialGradient id="glow"><stop stop-color="#ffe9a8" stop-opacity=".85"/><stop offset=".45" stop-color="#e6a54e" stop-opacity=".25"/><stop offset="1" stop-color="#e6a54e" stop-opacity="0"/></radialGradient>
+ <radialGradient id="planet" cx=".35" cy=".3"><stop stop-color="#fff2c7"/><stop offset=".35" stop-color="#e9b967"/><stop offset=".75" stop-color="#a85c3c"/><stop offset="1" stop-color="#542c3c"/></radialGradient>
+ <linearGradient id="sea" x2="0" y2="1"><stop stop-color="#27314b"/><stop offset="1" stop-color="#080e22"/></linearGradient>
+ <linearGradient id="rock" x2=".2" y2="1"><stop stop-color="#3d3544"/><stop offset="1" stop-color="#0b1020"/></linearGradient>
+ <filter id="blur"><feGaussianBlur stdDeviation="24"/></filter>
+</defs>
+<rect width="1200" height="675" fill="url(#sky)"/>
+<circle cx="310" cy="185" r="190" fill="url(#glow)" filter="url(#blur)"/>
+<circle cx="310" cy="185" r="76" fill="url(#planet)" stroke="#f5d89a" stroke-opacity=".7" stroke-width="2"/>
+<path d="M250 162q40-28 105-4M248 198q49-18 113 4M280 125q20 16 63 12" fill="none" stroke="#fff0c6" stroke-opacity=".22" stroke-width="5"/>
+<g fill="#fff6df">
+ <circle cx="80" cy="93" r="2"/><circle cx="158" cy="248" r="1.8"/><circle cx="480" cy="72" r="2"/><circle cx="555" cy="180" r="1.5"/><circle cx="665" cy="88" r="2"/><circle cx="760" cy="210" r="1.8"/><circle cx="875" cy="90" r="2"/><circle cx="1050" cy="120" r="1.5"/><circle cx="1120" cy="240" r="2"/><circle cx="945" cy="300" r="1.5"/><circle cx="600" cy="300" r="1.5"/><circle cx="390" cy="315" r="1.5"/><circle cx="102" cy="370" r="1.5"/><circle cx="730" cy="42" r="1.5"/>
+</g>
+<g fill="none" stroke="#ffd88b" stroke-width="2.4" stroke-opacity=".9">
+ <path d="M760 170L825 130 890 155 930 220 995 245 1030 305 1082 330 1100 390"/>
+</g>
+<g fill="#ffe5a1"><circle cx="760" cy="170" r="4"/><circle cx="825" cy="130" r="4"/><circle cx="890" cy="155" r="4"/><circle cx="930" cy="220" r="4"/><circle cx="995" cy="245" r="4"/><circle cx="1030" cy="305" r="4"/><circle cx="1082" cy="330" r="4"/><circle cx="1100" cy="390" r="4"/></g>
+<path d="M0 460q140-55 260-8t240 0 250-12 220 14 230-6v227H0Z" fill="#171d32"/>
+<path d="M0 500q180-28 330 6t280-7 290 0 300-6v182H0Z" fill="url(#sea)"/>
+<path d="M230 510h740" stroke="#e3a76e" stroke-opacity=".2" stroke-width="3"/>
+<path d="M275 535q130 10 250 0t260 4 220-2" stroke="#d99d6c" stroke-opacity=".24" stroke-width="2" fill="none"/>
+<path d="M390 572q90 6 175 0t190 4" stroke="#d99d6c" stroke-opacity=".18" stroke-width="2" fill="none"/>
+<path d="M760 580l90-74 85-18 74 32 73 72 118 83H660Z" fill="url(#rock)"/>
+<g fill="none" stroke="#080d19" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M880 554q-30-24-56-8l-34 28m110-20q32-28 59-15l30 20m-87 5q-2 39-35 47l-28 4m93-49q15 34 47 32l27-8" stroke-width="19"/>
+ <path d="M888 535q-14-38 12-57 22-16 43-1 20 14 6 39l-20 26" stroke-width="20"/>
+ <path d="M929 517q43-19 59-58 12-31-7-44-17-10-30 8" stroke-width="18"/>
+ <path d="M944 417q-8-35 18-52 21-12 34 4" stroke-width="15"/>
+ <path d="M850 559l-28 12m100-16 28 17m-126 30-25 14m177-42 25 9" stroke-width="12"/>
+</g>
+<g fill="#202033" stroke="#8e5c55" stroke-width="2">
+ <ellipse cx="891" cy="541" rx="54" ry="25"/><ellipse cx="852" cy="541" rx="22" ry="15"/><ellipse cx="930" cy="542" rx="22" ry="15"/>
+ <path d="M846 535q-42-36-59-9-12 21 17 31l42-5m100-16q45-34 59-8 10 19-18 30l-42-6" />
+</g>
+<g fill="#f6c77d"><circle cx="855" cy="533" r="3"/><circle cx="920" cy="533" r="3"/></g>
+<path d="M0 0h1200v675H0Z" fill="none" stroke="#fff" stroke-opacity=".08" stroke-width="3"/>
+</svg>
