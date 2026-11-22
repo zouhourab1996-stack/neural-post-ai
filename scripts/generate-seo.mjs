@@ -174,22 +174,23 @@ var HOMEPAGE_BODY = ''
  + '<section><h2>Latest astrology guides</h2>' + postsList(true) + '</section>'
  + adHomepage()
  + '<section><h2>Explore related guides</h2><ul>'
- + '<li><a href="/blog/mercury-retrograde-2026/">Mercury retrograde 2026</a> — an explainer on the retrograde period, its dates and astrological context.</li>'
- + '<li><a href="/blog/venus-retrograde-2026/">Venus retrograde 2026</a> — a guide to the cycle and its astrological interpretation.</li>'
- + '<li><a href="/blog/jupiter-retrograde-2026/">Jupiter retrograde 2026</a> — background on the cycle and how it is discussed in astrology.</li>'
+ + '<li><a href="/blog/mercury-retrograde/">Mercury retrograde explained</a> — the apparent-motion effect, with astronomy references.</li>'
+ + '<li><a href="/blog/ephemeris-astrology-how-to-check-planetary-dates/">How to check planetary dates with an ephemeris</a> — how to compare sources and time zones.</li>'
+ + '<li><a href="/blog/annual-profections-2027-time-lord-guide/">Annual profections and the Time Lord</a> — a traditional timing technique explained.</li>'
 
  + '</ul></section>'
  + '<section><h2>Explore Prophetic</h2>' + EXPLORE_LIST + '</section>'
  ;
 // ---- /topics/: the topic hub. Every indexable post appears under exactly one cluster.
 var CLUSTERS = [
-  ["retrogrades", "Retrogrades", /retrograde/, "Mercury, Venus, Mars and Jupiter retrogrades: station dates and times, shadow periods, and what each one is read as in a chart."],
-  ["saturn", "Saturn and major transits", /saturn/, "Slow-moving transits that mark life phases, starting with the Saturn return."],
-  ["seasons", "Zodiac seasons and calendars", /season|zodiac-sign-dates|astrology-calendar/, "When each zodiac season starts, with exact ingress times, and month-by-month astrology calendars."],
-  ["moon-sky", "Moon phases and sky events", /moon|meteor|portal|gardening/, "Full and new moons, meteor showers and other dated sky events, with times and viewing notes."],
-  ["birth-chart", "Birth chart basics", /natal|planets-mean|sun-moon-rising|read-birth-chart|chart-generator|astro-com|horoscope-platform|compatibility/, "How to read your own chart: the big three, what each planet means, working without a birth time, and which free chart tools to use."],
-  ["numerology-tarot", "Numerology and tarot", /life-path|tarot-spreads/, "Life path numbers and beginner tarot spreads, explained step by step."],
-  ["readings", "Readings, costs and services", /./, "What paid readings cost, what to expect, red flags to watch for, and how the marketplaces that sell them compare."]
+  ["retrogrades", "Retrogrades", /retrograde/, "Mercury and other planetary retrogrades: apparent motion, date references and astrological interpretation."],
+  ["saturn", "Saturn and major transits", /saturn/, "Slow-moving transits and the traditional idea of the Saturn return."],
+  ["seasons", "Zodiac seasons and calendars", /season|zodiac-sign-dates|astrology-calendar/, "Zodiac seasons and month-by-month astrology calendars."],
+  ["moon-sky", "Moon phases and sky events", /moon|meteor|eclipse|solstice|portal|gardening/, "Full and new moons, eclipses, meteor showers and other dated sky events."],
+  ["birth-chart", "Birth chart basics", /natal|planets-mean|sun-moon-rising|read-birth-chart|chart-generator|astro-com|horoscope-platform|compatibility/, "How to read a natal chart: planets, houses, aspects, the big three and birth-time limitations."],
+  ["numerology-tarot", "Numerology and tarot", /life-path|tarot-spreads/, "Life path numbers and beginner tarot spreads, explained as reflective practices."],
+  ["readings", "Readings and services", /reading|compatibility|cost|service|astrologer|platform/, "What to expect from a reading, how to compare services and which questions to ask before paying."],
+  ["other-guides", "Other guides", /./, "Additional astrology and sky-event explainers from the Prophetic editorial archive."]
 ];
 function topicsBody() {
   var groups = CLUSTERS.map(function(c){ return { c: c, posts: [] }; });
