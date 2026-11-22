@@ -143,3 +143,6 @@ Prefer a source that identifies its data or calculation method, states the coord
 - [Hong Kong Observatory: Apparent motion of planets explained](https://www.hko.gov.hk/en/education/astronomy-and-time/astronomy/00405-apparent-motion-of-planets-explained.html) — an astronomy reference covering planetary apparent motion.
 
 *Editorial note: Astronomical positions and event times are calculable; astrological interpretations are symbolic and should be read as reflection or entertainment, not as scientific forecasts or professional advice.*
+
+- [NASA/JPL: Horizons system manual](https://ssd.jpl.nasa.gov/horizons/manual.html) — explains how JPL generates ephemerides and the time and observer settings that affect an output.
+- [Astrodienst: Swiss Ephemeris information](https://www.astro.com/swisseph/swephinfo_e.htm) — describes the Swiss Ephemeris data sources and its relationship to JPL planetary ephemerides.
