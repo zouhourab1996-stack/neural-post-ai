@@ -1,5 +1,5 @@
 ---
-title: Venus Returns to Scorpio in December 2026: Meaning for Every Zodiac Sign
+title: Venus in Scorpio December 2026: Dates and Meaning
 description: Venus re-enters Scorpio on December 4, 2026. Explore the post-retrograde story, exact timing, key dates, relationship themes and all 12 signs.
 date: 2026-11-22
 updated: 2026-11-22
@@ -7,14 +7,10 @@ author: Hedi Touati
 category: Astrology
 tags: [Venus in Scorpio, Venus Transit 2026, Astrology Transits, Love Astrology, Zodiac Signs]
 image: /images/blog/venus-returns-scorpio-december-2026.svg
+imageAlt: Golden Venus above a night sea with the Scorpio constellation and a scorpion
 showImage: true
 toc: true
 ---
-
-<figure class="article-hero">
-  <img src="/images/blog/venus-returns-scorpio-december-2026.svg" alt="Original illustration of a golden Venus-like planet above a midnight ocean, with the Scorpio constellation and a scorpion in the foreground" width="1200" height="675" fetchpriority="high" />
-  <figcaption>Venus returns to Scorpio on December 4, bringing the sign's themes of trust, intimacy and shared values back into focus. Original Prophetic illustration.</figcaption>
-</figure>
 
 :::tldr The short answer
 - **Venus enters Scorpio on Friday, December 4, 2026, at about 08:12 UTC** — 3:12 a.m. EST and 9:12 a.m. CET.
