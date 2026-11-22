@@ -255,7 +255,7 @@ var maxDate = function(list){ return list.filter(Boolean).sort().pop() || ""; };
 
 var indexable = staticPages.filter(function(p){ return !isNoindex(p[0]); });
 var sitemapUrls = []; // [loc, lastmod]
-var indexablePosts = blog.posts.filter(function(p){ return !p.noindex && (!p.canonical || p.canonical === p.url) && (p.rankyak || /\/$/.test(p.url)); });
+var indexablePosts = blog.posts.filter(function(p){ return !p.noindex && (!p.canonical || p.canonical === p.url) && /\/$/.test(p.url); });
 var newestPost = maxDate(indexablePosts.map(postLastmod));
 indexable.forEach(function(p){
   sitemapUrls.push([p[0], (p[0] === "/" || p[0] === "/topics/") ? maxDate([STATIC_LASTMOD, newestPost]) : STATIC_LASTMOD]);
