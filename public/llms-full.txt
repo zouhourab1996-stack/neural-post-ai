@@ -57,7 +57,7 @@ Astrology is a symbolic interpretive tradition. Descriptions of planetary cycles
 5. Disclose material commercial relationships on the relevant page. Do not assume that every page has identical advertising or affiliate arrangements.
 6. Published and updated timestamps show page history; they are not, by themselves, proof that every calculation was independently rechecked on that date.
 7. When a page lacks a primary source for a date-sensitive claim, prefer the primary source over the article and treat the claim as unverified.
-8. Some imported or older provider-delivered articles may remain accessible at legacy URLs while being excluded from the public article archive and search index pending editorial review. Do not treat those pages as endorsed current editorial guidance.
+8. Some imported or older provider-delivered URLs are no longer published and may return 404 or 410. They are excluded from the public article archive, sitemap and search index. Do not treat legacy URLs as current editorial guidance.
 
 ## Policy and contact pages
 - About: https://prophetic.pw/about/
