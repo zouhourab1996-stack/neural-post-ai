@@ -14,17 +14,18 @@ export const STATIC_EXTRA = {
  <p>Check the time zone first. A large share of the date disagreements we are sent turn out to be a UTC time compared against a local one, and the fix takes seconds. If the issue is a price, check the date printed on the page — sellers change terms, and a figure that was right in March may simply be stale.</p>`,
 
   "/privacy/": `
- <h2>What a page view records</h2>
- <p>A request for a page tells our host which page was asked for, roughly when, and the country the request came from. That is the standard minimum for any website to function. We do not run accounts, there are no comment forms, and nothing you type into a calculator is transmitted anywhere — the calculators run on your device and discard the input when you close the tab.</p>
- <h2>Advertising and analytics</h2>
- <p>We may load third-party analytics and advertising scripts. Those third parties set their own cookies and build their own profiles under their own policies, which is how interest-based advertising works across the web generally. None of them see anything you enter into a tool on this site, because nothing you enter leaves your device in the first place.</p>
- <p>You can opt out of personalised advertising through Google's ad settings, or industry-wide through the Network Advertising Initiative and the Digital Advertising Alliance. Blocking third-party cookies in your browser achieves much the same, and every page here works without them.</p>
- <h2>Your rights</h2>
- <p>Because we hold no accounts and collect no personal information, there is normally nothing for us to produce, correct or delete — and we will tell you that plainly rather than going quiet. If you are in a jurisdiction with access or erasure rights and want them exercised, email us. If our answer does not satisfy you, your local data protection authority is the escalation route.</p>
+ <h2>Information collected when you visit</h2>
+ <p>Prophetic does not offer visitor accounts or comments. Our hosting and security providers may process technical request data such as IP address, browser information, requested URL and request time to deliver and protect the site. Google Analytics processes usage information such as pages viewed, device type and approximate location. Calculator inputs are processed locally in your browser and are not sent to Prophetic by the calculator.</p>
+ <h2>Advertising and cookies</h2>
+ <p>Prophetic uses Google advertising services and an authorised advertising partner. These services and their vendors may use cookies, web beacons, IP addresses and similar identifiers to deliver, measure and personalise ads where permitted. Their data practices are governed by their own policies. We do not receive or store the values entered into the on-page calculators.</p>
+ <p>You can manage personalised advertising through <a href="https://adssettings.google.com/">Google Ads Settings</a> and manage cookies through your browser. Where consent is legally required, personalised advertising must not be enabled until an appropriate consent mechanism has been configured for the visitor's region. The publisher should verify the site's consent-management configuration before requesting another ad review.</p>
+ <h2>Data requests and contact</h2>
+ <p>Although Prophetic does not maintain visitor accounts, third-party analytics, advertising and hosting providers may process technical or usage data. For a privacy question or request, contact us at <a href="mailto:anistouati74@gmail.com">anistouati74@gmail.com</a>. We will review the request and explain which data we can access and which requests must be directed to the relevant provider.</p>
  <h2>Children</h2>
- <p>The site is general-audience and not directed at children. Since nothing is collected in the first place, there is nothing to collect from a child either.</p>`,
+ <p>Prophetic is a general-audience publication and is not directed to children under 13. We do not knowingly collect personal information from children.</p>`,
 
-  "/terms/": `
+
+  "/terms/": 
  <h2>Using the guides and calculators</h2>
  <p>The pages on prophetic.pw are free to read and use for your own purposes. You may quote short passages with attribution and a link. You may not republish a guide in full, resell it, or present our computed dates as your own work without saying where they came from.</p>
  <h2>What the dates are provided for</h2>
