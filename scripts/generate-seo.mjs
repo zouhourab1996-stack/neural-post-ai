@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
-import { TRACKING_HEAD } from "./head-tags.mjs";
+import { TRACKING_HEAD, ADSENSE_HEAD } from "./head-tags.mjs";
 import { fitDesc, fitTitle } from "./seo-fit.mjs";
 import { chrome, themeCss, THEME_SCRIPT, FONT_LINKS } from "./site-chrome.mjs";
 import { ADS_CSS, adHomepage } from "./ads.mjs";
@@ -129,6 +129,7 @@ function html(url,title,description,body,json,robots,active) {
     '<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="apple-touch-icon" href="/icon-192.png"><link rel="manifest" href="/manifest.json">' +
     '<meta name="theme-color" content="#0a0f1e">' +
     TRACKING_HEAD +
+    ([SITE + "/", SITE + "/topics/", SITE + "/profection-year-calculator/"].includes(url) ? ADSENSE_HEAD : "") +
     '<link rel="alternate" type="application/rss+xml" title="Prophetic Blog" href="' + SITE + '/blog/feed.xml">' +
     FONT_LINKS + THEME_SCRIPT +
     '<style>' + themeCss + (url === SITE + "/" ? ADS_CSS : "") + '</style>' + schemaTag + '</head><body>' + c.header +
