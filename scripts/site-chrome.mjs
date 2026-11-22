@@ -15,7 +15,7 @@ export const TOGGLE_SCRIPT = `<script>(function(){var b=document.getElementById(
 const SUN = '<svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>';
 const MOON = '<svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>';
 
-const BRAND = `<a href="/" class="pb-brand"><span class="pb-mark">P</span><span>Prophetic</span></a>`;
+const BRAND = `<a href="/" class="pb-brand" aria-label="Prophetic home"><img src="/brand-mark.svg" class="pb-brand-mark" width="38" height="38" alt=""><span>Prophetic</span></a>`;
 
 export const FONT_LINKS = `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap">`;
