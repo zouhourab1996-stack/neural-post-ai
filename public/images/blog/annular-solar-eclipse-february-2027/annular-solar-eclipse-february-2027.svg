@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="t d">
+<title id="t">Annular solar eclipse of February 6, 2027</title><desc id="d">A luminous golden ring eclipse above a curved blue Earth horizon and a star-filled sky.</desc>
+<defs>
+ <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#050817"/><stop offset=".72" stop-color="#12294a"/><stop offset="1" stop-color="#1a3655"/></linearGradient>
+ <radialGradient id="glow"><stop stop-color="#f9c96a" stop-opacity=".52"/><stop offset=".48" stop-color="#e99a3c" stop-opacity=".15"/><stop offset="1" stop-color="#e99a3c" stop-opacity="0"/></radialGradient>
+ <linearGradient id="ring" x2="0" y2="1"><stop stop-color="#fff0bd"/><stop offset=".45" stop-color="#ffb743"/><stop offset="1" stop-color="#f28a25"/></linearGradient>
+ <linearGradient id="earth" x2="0" y2="1"><stop stop-color="#e8b75f"/><stop offset=".07" stop-color="#315d83"/><stop offset=".45" stop-color="#102a49"/><stop offset="1" stop-color="#071321"/></linearGradient>
+ <linearGradient id="water" x2="0" y2="1"><stop stop-color="#f7b84e" stop-opacity=".7"/><stop offset="1" stop-color="#f7b84e" stop-opacity="0"/></linearGradient>
+ <filter id="blur"><feGaussianBlur stdDeviation="28"/></filter>
+</defs>
+<rect width="1200" height="675" fill="url(#sky)"/>
+<g fill="#fff3d2" opacity=".8"><circle cx="70" cy="88" r="2"/><circle cx="145" cy="177" r="1.5"/><circle cx="245" cy="72" r="1.6"/><circle cx="338" cy="130" r="1.2"/><circle cx="440" cy="54" r="1.7"/><circle cx="555" cy="145" r="1.3"/><circle cx="690" cy="63" r="1.5"/><circle cx="830" cy="100" r="1.8"/><circle cx="955" cy="58" r="1.4"/><circle cx="1090" cy="122" r="1.6"/><circle cx="1140" cy="210" r="1.2"/><circle cx="78" cy="290" r="1.2"/><circle cx="1020" cy="270" r="1.3"/><circle cx="920" cy="180" r="1.1"/></g>
+<path d="M0 235 Q230 20 450 200 T900 190 T1200 140" fill="none" stroke="#8aa4c7" stroke-opacity=".14" stroke-width="70" filter="url(#blur)"/>
+<circle cx="610" cy="260" r="235" fill="url(#glow)"/>
+<circle cx="610" cy="260" r="137" fill="#05070d" stroke="url(#ring)" stroke-width="10"/>
+<circle cx="610" cy="260" r="149" fill="none" stroke="#ffca68" stroke-opacity=".45" stroke-width="3"/>
+<path d="M0 510 Q300 455 600 490 T1200 500 L1200 675H0Z" fill="url(#earth)"/>
+<path d="M0 510 Q300 455 600 490 T1200 500" fill="none" stroke="#ffe1a0" stroke-width="7" opacity=".85"/>
+<path d="M525 505 Q610 490 695 505 L815 675H395Z" fill="url(#water)" opacity=".7"/>
+<path d="M0 550 Q180 500 350 545 L400 675H0Z" fill="#071a2a"/><path d="M860 530 Q1030 495 1200 535V675H820Z" fill="#08192a"/>
+<g fill="#f4c16d" opacity=".85"><circle cx="105" cy="585" r="2"/><circle cx="145" cy="610" r="2"/><circle cx="190" cy="570" r="1.8"/><circle cx="255" cy="624" r="2"/><circle cx="310" cy="590" r="1.7"/><circle cx="900" cy="580" r="2"/><circle cx="960" cy="610" r="1.7"/><circle cx="1030" cy="568" r="2"/><circle cx="1100" cy="625" r="1.7"/></g>
+<path d="M0 0H1200V675H0Z" fill="none" stroke="#d9b66b" stroke-opacity=".35" stroke-width="3"/>
+</svg>
