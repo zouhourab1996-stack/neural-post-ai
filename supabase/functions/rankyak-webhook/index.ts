@@ -22,11 +22,17 @@ Deno.serve(async req => {
     const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     if (!url || !key) return json({ error: "Article storage is not configured" }, 500);
     const client = createClient(url, key, { auth: { persistSession: false } });
+    // Provider deliveries are stored as drafts only. A webhook event must
+    // never publish content to the public site without editorial review.
     const { error } = await client.from("rankyak_articles").upsert({
-      ...payload.article, status: payload.status, received_at: new Date().toISOString(),
+      ...payload.article, status: "draft", received_at: new Date().toISOString(),
     }, { onConflict: "id" });
     if (error) return json({ error: "Unable to save article" }, 500);
-    return json({ url: `${SITE_URL}/blog/${payload.article.slug}/` });
+    return json({
+      status: "draft",
+      message: "Article received. Editorial review is required before publication.",
+      url: `${SITE_URL}/blog/${payload.article.slug}/`,
+    });
   } catch {
     return json({ error: "Unable to process request" }, 500);
   }
