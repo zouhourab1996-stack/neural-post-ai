@@ -1,15 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
-  <!-- Prophetic Logo: Stylized all-seeing eye / foresight symbol -->
-  <!-- Outer eye shape -->
-  <path d="M100 50C60 50 25 80 10 100C25 120 60 150 100 150C140 150 175 120 190 100C175 80 140 50 100 50Z" stroke="#3b82f6" stroke-width="6" fill="none"/>
-  <!-- Inner iris circle -->
-  <circle cx="100" cy="100" r="28" stroke="#3b82f6" stroke-width="5" fill="none"/>
-  <!-- Pupil -->
-  <circle cx="100" cy="100" r="12" fill="#3b82f6"/>
-  <!-- Light reflection -->
-  <circle cx="108" cy="92" r="5" fill="#60a5fa" opacity="0.8"/>
-  <!-- Top accent line - foresight rays -->
-  <path d="M100 30L100 42" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
-  <path d="M130 35L125 46" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
-  <path d="M70 35L75 46" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 112" role="img" aria-labelledby="title desc">
+<title id="title">Prophetic</title><desc id="desc">A celestial compass and crescent symbol beside the Prophetic wordmark.</desc>
+<defs><linearGradient id="gold" x1="8" y1="8" x2="94" y2="96" gradientUnits="userSpaceOnUse"><stop stop-color="#F4D99A"/><stop offset="1" stop-color="#B78A42"/></linearGradient></defs>
+<g transform="translate(8 8)"><rect x="2" y="2" width="92" height="92" rx="26" fill="#101827" stroke="#B78A42" stroke-opacity=".45" stroke-width="2"/>
+<circle cx="48" cy="48" r="30" stroke="url(#gold)" stroke-width="2.5" fill="none"/>
+<path d="M56 20a29 29 0 1 0 18 49A31 31 0 0 1 56 20Z" fill="url(#gold)"/>
+<path d="m48 27 5.2 15.8L69 48l-15.8 5.2L48 69l-5.2-15.8L27 48l15.8-5.2L48 27Z" fill="#F8E8C2"/>
+<circle cx="48" cy="48" r="3.5" fill="#101827"/>
+<path d="M48 8v7M88 48h-7M48 88v-7M8 48h7" stroke="#D6B36A" stroke-width="2" stroke-linecap="round"/></g>
+<text x="118" y="61" fill="#F4EBD9" font-family="Georgia,serif" font-size="48" font-weight="700" letter-spacing="-1.6">Prophetic</text>
+<text x="121" y="86" fill="#C7A66A" font-family="Arial,sans-serif" font-size="11" font-weight="600" letter-spacing="3.2">ASTROLOGY · SKY · INSIGHT</text>
 </svg>
