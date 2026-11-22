@@ -168,3 +168,7 @@ Not by itself. A description can feel familiar for many reasons. Use a known tim
 Astrology is a historical and symbolic practice, not a scientifically validated method for predicting events or diagnosing people. Use it for reflection and meaning-making, and rely on qualified professionals for high-stakes decisions.
 
 <p class="article-disclaimer">This article is for educational and reflective purposes. It does not provide medical, legal, financial, or mental-health advice.</p>
+
+## Sources and further reading
+- [Astrodienst: Birth time and its importance](https://www.astro.com/faq/fq_de_time_e.htm) — explains why the Ascendant and houses depend on an accurate birth time, and how an unknown time is handled in its chart tool.
+- [The Astrology Podcast: How to Read a Natal Chart With No Birth Time](https://theastrologypodcast.com/transcripts/tap-ep-270-transcript-how-to-read-a-natal-chart-with-no-birth-time/) — discusses which chart factors remain useful and which techniques depend on a known time.
