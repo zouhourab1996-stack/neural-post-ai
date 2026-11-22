@@ -21,7 +21,13 @@ export default function Index() {
       <p>Independent guides to planetary cycles, moon phases, eclipses, birth-chart concepts and reflective practices. We distinguish observable astronomy from symbolic astrological interpretation.</p>
       <div className="about-cta">
         <Link className="button" to="/blog/">Explore all guides</Link>
-        <Link className="button button-ghost" to="/about/">About Prophetic</Link>
+        <a className="button button-ghost" href="/profection-year-calculator/">Free Profection Calculator</a>
+      </div>
+    </section>
+    <section className="section-pad">
+      <div className="about-grid">
+        <div><span className="eyebrow accent-label">FREE ASTROLOGY TOOL</span><h2>Annual Profection Year Calculator</h2><p>Find your active annual profection house, profected zodiac sign and traditional Lord of the Year using your completed age and natal rising sign. The calculator uses whole-sign houses and explains the method behind the result.</p><a className="text-link" href="/profection-year-calculator/">Use the free Profection Year Calculator →</a></div>
+        <div><h2>What the calculator uses</h2><p>Annual profections are a traditional timing technique: each completed year of age activates a house in a repeating twelve-year cycle. You provide your rising sign; the tool calculates the corresponding house, sign and traditional time lord. It does not calculate your Ascendant or make scientifically verified predictions.</p></div>
       </div>
     </section>
     <section className="section-pad">
@@ -37,7 +43,7 @@ export default function Index() {
     </section>
     <section className="about-grid">
       <div><h2>Our approach</h2><p>Astronomical observations are measurable and should be checked against reliable references. Astrology is presented as a cultural and symbolic tradition, not as a scientifically established prediction method.</p></div>
-      <div><h2>Editorial standards</h2><p>We identify sources where available, explain uncertainty and time zones, and welcome corrections. We do not claim independent verification unless it is documented.</p><Link to="/editorial/">Read our editorial policy →</Link></div>
+      <div><h2>Editorial standards</h2><p>We identify sources where available, explain uncertainty and time zones, and welcome corrections. We do not claim independent verification unless it is documented.</p><Link to="/about/">Read our editorial standards →</Link></div>
     </section>
   </div>
 }
