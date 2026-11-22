@@ -467,37 +467,38 @@ for (const p of posts) {
   p.description = ensureDescription(p.description || p.excerpt, p.title, p.category || p.tags?.join(", "));
   p.imageAlt = fitAlt(p.imageAlt || p.title);
 }
-const allTags = uniq(posts.flatMap((p) => p.tags)).sort((a, b) => a.localeCompare(b));
+const publicPosts = posts.filter((p) => !p.noindex);
+const allTags = uniq(publicPosts.flatMap((p) => p.tags)).sort((a, b) => a.localeCompare(b));
 fs.mkdirSync(blogDist, { recursive: true });
 
-posts.forEach((p) => writeFile(`blog/${p.slug}/index.html`, renderPost(p, posts)));
+// Render individual pages, but never promote noindex pages into related links,
+// archives, pagination, tag hubs, feeds or the public article manifest.
+posts.forEach((p) => writeFile(`blog/${p.slug}/index.html`, renderPost(p, publicPosts)));
 
-const pages = Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE));
+const pages = Math.max(1, Math.ceil(publicPosts.length / POSTS_PER_PAGE));
 for (let n = 1; n <= pages; n++) {
-  const slice = posts.slice((n - 1) * POSTS_PER_PAGE, n * POSTS_PER_PAGE);
+  const slice = publicPosts.slice((n - 1) * POSTS_PER_PAGE, n * POSTS_PER_PAGE);
   const rel = n === 1 ? "blog/index.html" : `blog/page/${n}/index.html`;
   const url = n === 1 ? `${SITE}/blog/` : `${SITE}/blog/page/${n}/`;
-  writeFile(rel, renderList_(slice, { title: n === 1 ? `${BLOG_TITLE} — Astrology, Chart & Sky Guides` : `${BLOG_TITLE} — Page ${n}`, heading: `Astrology, chart<br><em>and sky-event guides.</em>`, description: BLOG_DESCRIPTION, url, base: "/blog/", pageNo: n, pages, tag: null, allTags, allPosts: n === 1 ? posts.filter((p) => !p.noindex) : null }));
+  writeFile(rel, renderList_(slice, { title: n === 1 ? `${BLOG_TITLE} — Astrology, Chart & Sky Guides` : `${BLOG_TITLE} — Page ${n}`, heading: `Astrology, chart<br><em>and sky-event guides.</em>`, description: BLOG_DESCRIPTION, url, base: "/blog/", pageNo: n, pages, tag: null, allTags, allPosts: n === 1 ? publicPosts : null }));
 }
-// Thin-content guard: a tag archive with only one or two posts is a doorway page,
-// not a useful hub. Those are kept reachable (and followed) but kept out of the index.
-// A tag archive is also thin when its own unique text (heading + intro, i.e. excluding
-// the post cards that duplicate each post's description) is under MIN_TAG_WORDS words.
+// Thin-content guard: a tag archive with only one or two public posts is a doorway page,
+// not a useful hub. Thin tags remain reachable (and followed) but are kept out of the index.
 const MIN_TAG_POSTS = 3;
 const MIN_TAG_WORDS = 300;
-const tagDescription = (t) => { const n = posts.filter((p) => p.tags.includes(t)).length; return `Explore ${n} Prophetic astrology ${n === 1 ? "guide" : "guides"} about ${t}, with clear explanations, useful context and related dates checked by the editorial team.`; };
+const tagDescription = (t) => { const n = publicPosts.filter((p) => p.tags.includes(t)).length; return `Explore ${n} Prophetic astrology ${n === 1 ? "guide" : "guides"} about ${t}, with clear explanations, useful context and related dates checked by the editorial team.`; };
 const tagUniqueWords = (t) => wordCount(`${t} ${tagDescription(t)}`);
-const isThinTag = (t) => posts.filter((p) => p.tags.includes(t)).length < MIN_TAG_POSTS || tagUniqueWords(t) < MIN_TAG_WORDS;
+const isThinTag = (t) => publicPosts.filter((p) => p.tags.includes(t)).length < MIN_TAG_POSTS || tagUniqueWords(t) < MIN_TAG_WORDS;
 allTags.forEach((t) => {
-  const slice = posts.filter((p) => p.tags.includes(t));
+  const slice = publicPosts.filter((p) => p.tags.includes(t));
   writeFile(`blog/tag/${slugify(t)}/index.html`, renderList_(slice, { title: fitTitle(`${t} Astrology Guides & Articles | Prophetic`), heading: `${esc(t)}`, description: tagDescription(t), url: `${SITE}/blog/tag/${slugify(t)}/`, base: `/blog/tag/${slugify(t)}/`, pageNo: 1, pages: 1, tag: t, allTags, noindex: isThinTag(t) }));
 });
-writeFile("blog/feed.xml", renderFeed(posts));
-writeFile("blog/manifest.json", JSON.stringify({
+writeFile("blog/feed.xml", renderFeed(publicPosts));
+fs.writeFileSync(path.join(dist, "blog", "manifest.json"), JSON.stringify({
   generatedAt: new Date().toISOString(),
   index: `${SITE}/blog/`,
-  tags: allTags.map((t) => ({ name: t, url: `${SITE}/blog/tag/${slugify(t)}/`, count: posts.filter((p) => p.tags.includes(t)).length, thin: isThinTag(t), uniqueWords: tagUniqueWords(t) })),
+  tags: allTags.map((t) => ({ name: t, url: `${SITE}/blog/tag/${slugify(t)}/`, count: publicPosts.filter((p) => p.tags.includes(t)).length, thin: isThinTag(t), uniqueWords: tagUniqueWords(t) })),
   pages: Array.from({ length: pages }, (_, k) => k === 0 ? `${SITE}/blog/` : `${SITE}/blog/page/${k + 1}/`),
-  posts: posts.map((p) => ({ slug: p.slug, url: p.url, title: p.title, description: p.description, date: p.date, updated: p.updated, tags: p.tags, category: p.category, readingTime: p.readingTime, image: p.image, file: p.file, canonical: p.canonical, noindex: p.noindex, words: p.words, rankyak: !!p.rankyak })),
+  posts: posts.map((p) => ({ slug: p.slug, url: p.url, title: p.title, description: p.description, date: p.date, updated: p.updated, tags: p.tags, category: p.category, readingTime: p.readingTime, image: p.image, file: p.file, canonical: p.canonical, noindex: p.noindex, words: p.words })),
 }, null, 2));
 console.log(`[blog] ${posts.length} post(s), ${allTags.length} tag(s), ${pages} index page(s) → dist/blog/`);
