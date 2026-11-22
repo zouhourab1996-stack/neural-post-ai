@@ -3,7 +3,7 @@ title: How to Read a Birth Chart When You Do Not Know Your Birth Time
 seoTitle: Read a Birth Chart Without a Birth Time: 2026 Guide
 description: No birth time? Learn what you can still read from a natal chart, what becomes unreliable, and a practical method for building an honest first interpretation.
 date: 2026-11-03
-updated: 2026-11-03
+updated: 2026-11-22
 author: Hedi Touati
 category: Astrology
 tags: [Astrology, Natal Chart, Birth Time, Beginners, Birth Chart]
