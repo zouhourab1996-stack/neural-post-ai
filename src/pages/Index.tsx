@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 
-type BlogPost = { slug: string; title: string; description: string; date: string; category: string; readingTime: number }
+type BlogPost = { slug: string; title: string; description: string; date: string; category: string; readingTime: number; noindex?: boolean }
 
 export default function Index() {
   const [posts, setPosts] = useState<BlogPost[]>([])
@@ -9,7 +9,7 @@ export default function Index() {
     let alive = true
     fetch("/blog/manifest.json", { headers: { Accept: "application/json" } })
       .then((response) => response.ok ? response.json() : null)
-      .then((data) => { if (alive && Array.isArray(data?.posts)) setPosts(data.posts.filter((post: BlogPost) => post).slice(0, 6)) })
+      .then((data) => { if (alive && Array.isArray(data?.posts)) setPosts(data.posts.filter((post: BlogPost) => post && !post.noindex).slice(0, 6)) })
       .catch(() => undefined)
     return () => { alive = false }
   }, [])
