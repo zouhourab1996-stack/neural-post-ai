@@ -783,7 +783,21 @@ serve(async (req) => {
 
   try {
     const { category, autoPublish = false } = await req.json();
-    
+
+    // Fail closed: automatic publication is disabled. Draft generation may
+    // only be requested with autoPublish=false and must be reviewed before
+    // publication through the editorial workflow.
+    if (autoPublish === true) {
+      return new Response(JSON.stringify({
+        success: false,
+        published: false,
+        error: "Automatic publication is disabled. Submit drafts for editorial review instead.",
+      }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const NEWSAPI_KEY = Deno.env.get('NEWSAPI_KEY');
     const GOOGLE_AI_API_KEY = Deno.env.get('GOOGLE_AI_API_KEY');
     const PEXELS_API_KEY = Deno.env.get('PEXELS_API_KEY');
