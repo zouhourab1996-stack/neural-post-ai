@@ -1,7 +1,7 @@
 export const STATIC_FAQ = {
   "/privacy/": [
     ["Do the calculators send my birth date anywhere?",
-     "No. Every calculator on this site runs in your browser. Birth dates, times and numbers are processed on your device and discarded when you close the tab — nothing is transmitted to us or to anyone else."],
+     "The annual profection calculator runs in your browser. The age and rising-sign values you enter are used locally to calculate the result and are not sent to Prophetic's content database."],
     ["Do you use cookies?",
      "The site itself sets nothing beyond what a static page needs to load. Third-party advertising and analytics scripts set their own cookies under their own policies, and you can block those without affecting anything on the site."],
     ["Can I have my data deleted?",
@@ -17,7 +17,7 @@ export const STATIC_FAQ = {
   ],
   "/disclaimer/": [
     ["Is astrology predictive?",
-     "Not in any sense we would claim. We treat it as a symbolic and reflective practice with real internal logic, and we publish accurate dates without telling you what they mean for your life."],
+     "Astrology is a symbolic interpretive tradition, not a scientifically established prediction method. Astronomical dates are separate factual claims and should be checked against the primary references linked in the relevant guide."],
     ["Is anything here professional advice?",
      "No. Nothing on this site is medical, legal, financial or psychological advice, and that boundary is stated on the pages that touch those areas rather than buried here."],
     ["What happens when two sources disagree on a date?",
@@ -49,11 +49,11 @@ export const STATIC_FAQ = {
   ],
   "/sitemap/": [
     ["How often is content updated?",
-     "Dated guides are updated whenever the underlying computation is refined or a date moves. Research-based guides are re-checked when a price or term changes, with the verification date printed on the page."],
+     "There is no fixed update schedule. A dated guide should be updated when a source, calculation or relevant detail changes; a verification date should appear only when a check was actually completed."],
     ["What is the difference between the blog and the guides?",
-     "Guides are maintained reference pages; blog posts are published once and left as they were. If you want the answer that will still be right next year, use a guide."],
+     "Both guides and blog articles may be updated when corrections or new source information justify a change. Check the published and updated dates shown on the individual page."],
     ["Which page should I start on?",
-     "The Mercury retrograde tool if you want to check a date quickly, or the blog index for everything else in reverse order of publication."],
+     "Start with the annual profection calculator if you want to explore a chart-based timing technique, or use the blog index to browse all public guides."],
   ],
   "/author/hedi-touati/": [
     ["Does Hedi offer personal readings?",
