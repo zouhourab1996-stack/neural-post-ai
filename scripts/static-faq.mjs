@@ -5,7 +5,7 @@ export const STATIC_FAQ = {
     ["Do you use cookies?",
      "The site itself sets nothing beyond what a static page needs to load. Third-party advertising and analytics scripts set their own cookies under their own policies, and you can block those without affecting anything on the site."],
     ["Can I have my data deleted?",
-     "There is normally nothing to delete, because we hold no accounts and collect no personal information. If you want that confirmed or exercised formally, email us and we will answer rather than go quiet."],
+     "Prophetic does not maintain visitor accounts, but hosting, analytics and advertising providers may process technical or usage data. Email us with your request and we will explain what we can access and which provider may need to handle it."],
   ],
   "/terms/": [
     ["Can I quote or share your guides?",
