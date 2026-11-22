@@ -1,7 +1,22 @@
 import { Link, NavLink, Outlet } from "react-router-dom"
 import { ArrowUpRight, Menu, Moon, Search, Sun, X } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, type MouseEvent } from "react"
 import { useTheme } from "@/components/ThemeProvider"
+
+function openPrivacySettings(event: MouseEvent<HTMLAnchorElement>) {
+  event.preventDefault()
+  const host = window as Window & {
+    googlefc?: {
+      callbackQueue?: Array<Record<string, () => void>>
+      showRevocationMessage?: () => void
+    }
+  }
+  host.googlefc = host.googlefc || {}
+  host.googlefc.callbackQueue = host.googlefc.callbackQueue || []
+  host.googlefc.callbackQueue.push({
+    CONSENT_API_READY: () => host.googlefc?.showRevocationMessage?.(),
+  })
+}
 
 export default function PlatformShell() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -26,6 +41,6 @@ export default function PlatformShell() {
       </div>
     </header>
     <main><Outlet /></main>
-    <footer className="site-footer"><div className="container-main footer-grid"><div><Brand /><p>Independent guides to astrology, birth-chart concepts and observable sky events.</p></div><div><strong>Explore</strong><Link to="/">Home</Link><a href="/blog/">Topics &amp; guides</a><Link to="/about">About Prophetic</Link><a href="/blog/">Blog &amp; guides</a></div><div><strong>Company</strong><Link to="/contact">Contact us</Link><Link to="/disclaimer">Disclaimer</Link><Link to="/privacy">Privacy policy</Link></div><div><strong>Guides</strong><a href="/profection-year-calculator/">Profection calculator</a><a href="/blog/">All articles</a><a href="/blog/">Browse guides</a><Link to="/about">Editorial standards</Link></div></div><div className="container-main footer-bottom"><span>© 2026 Prophetic. Built for better decisions.</span><span>We research. You decide.</span></div></footer>
+    <footer className="site-footer"><div className="container-main footer-grid"><div><Brand /><p>Independent guides to astrology, birth-chart concepts and observable sky events.</p></div><div><strong>Explore</strong><Link to="/">Home</Link><a href="/blog/">Topics &amp; guides</a><Link to="/about">About Prophetic</Link><a href="/blog/">Blog &amp; guides</a></div><div><strong>Company</strong><Link to="/contact">Contact us</Link><Link to="/disclaimer">Disclaimer</Link><Link to="/privacy">Privacy policy</Link><a href="#privacy-settings" onClick={openPrivacySettings}>Privacy and cookie settings</a></div><div><strong>Guides</strong><a href="/profection-year-calculator/">Profection calculator</a><a href="/blog/">All articles</a><a href="/blog/">Browse guides</a><Link to="/about">Editorial standards</Link></div></div><div className="container-main footer-bottom"><span>© 2026 Prophetic. Built for better decisions.</span><span>We research. You decide.</span></div></footer>
   </div>
 }
