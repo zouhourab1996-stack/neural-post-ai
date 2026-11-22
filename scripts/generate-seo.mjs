@@ -13,7 +13,7 @@ const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_KEY;
 
 const staticPages = [
-  ["/", "Prophetic — Astrology Guides, Retrograde Dates & Chart Tools", "Independent astrology guides, birth-chart explainers and sky-event calendars. Explore symbolic interpretations alongside clearly identified astronomical references and practical context."],
+  ["/", "Prophetic — Astrology Guides & Free Profection Calculator", "Explore astrology guides, moon phases, eclipses and birth-chart tools. Use our free annual profection calculator to find your house, zodiac sign and Time Lord."],
   ["/about/", "About Prophetic — Our Editorial Approach", "Who publishes Prophetic, how we distinguish astronomy from astrological interpretation, how we handle sources and corrections, and our editorial standards."],
   ["/contact/", "Contact the Prophetic Editorial Team", "Contact the Prophetic editorial team with corrections, sourcing questions, feedback, or a carefully researched pitch."],
   ["/privacy/", "Prophetic Privacy Policy & Data Practices", "Read Prophetic's privacy policy, including the limited data collected by the site, analytics, advertising, and your available choices."],
@@ -169,6 +169,7 @@ var EXPLORE_LIST = '<ul>' + [
 var HOMEPAGE_BODY = ''
  + '<h1>Astrology guides with context and sources</h1>'
  + '<p>Prophetic is an independent guide to astrology, birth-chart concepts and observable sky events. We distinguish astronomical observations from symbolic astrological interpretations, link to references where available, and explain uncertainty and time zones.</p>'
+ + '<section><h2>Free Annual Profection Year Calculator</h2><p>Calculate your annual profection house, profected zodiac sign and traditional Lord of the Year using your completed age and natal rising sign. The tool uses whole-sign houses and explains the method and its limitations.</p><p><a href="/profection-year-calculator/">Use the free Profection Year Calculator</a></p></section>'
  + '<section><h2>Latest astrology guides</h2>' + postsList(true) + '</section>'
  + adHomepage()
  + '<section><h2>Explore related guides</h2><ul>'
