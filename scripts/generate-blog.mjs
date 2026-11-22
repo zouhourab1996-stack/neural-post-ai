@@ -16,7 +16,6 @@ import { TRACKING_HEAD, ADSENSE_HEAD } from "./head-tags.mjs";
 import { fitDesc, fitTitle } from "./seo-fit.mjs";
 import { chrome, themeCss, THEME_SCRIPT, FONT_LINKS } from "./site-chrome.mjs";
 import { ADS_CSS, insertAds, adMultiplex, adRail, hasRail } from "./ads.mjs";
-import { loadRankyakPosts } from "./rankyak-source.mjs";
 
 const SITE = "https://prophetic.pw";
 const SITE_NAME = "Prophetic";
@@ -461,18 +460,8 @@ ${items}
 }
 
 // ------------------------------------------------------------------ main
-const localPosts = loadPosts();
-const incoming = await loadRankyakPosts();
-const localSlugs = new Set(localPosts.map(p => p.slug));
-// RankYak deliveries are unreviewed third-party drafts. Keep their old URLs
-// available as noindex pages, but never mix them into the public archive,
-// feed, tags, manifest or sitemap until an editor has reviewed and imported
-// each item into content/blog/.
-const unreviewedIncoming = incoming
-  .filter(p => !localSlugs.has(p.slug))
-  .map(p => ({ ...p, noindex: true }));
-const posts = localPosts.sort((a, b) => b.date.localeCompare(a.date));
-for (const p of [...posts, ...unreviewedIncoming]) {
+const posts = loadPosts().sort((a, b) => b.date.localeCompare(a.date));
+for (const p of posts) {
   p.heading = fitTitle(stripTags(p.heading || p.title));
   p.seoTitle = pageTitle(p.seoTitle || p.title);
   p.description = ensureDescription(p.description || p.excerpt, p.title, p.category || p.tags?.join(", "));
@@ -482,8 +471,6 @@ const allTags = uniq(posts.flatMap((p) => p.tags)).sort((a, b) => a.localeCompar
 fs.mkdirSync(blogDist, { recursive: true });
 
 posts.forEach((p) => writeFile(`blog/${p.slug}/index.html`, renderPost(p, posts)));
-// Preserve inbound URLs for old provider deliveries without indexing or promoting them.
-unreviewedIncoming.forEach((p) => writeFile(`blog/${p.slug}/index.html`, renderPost(p, posts)));
 
 const pages = Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE));
 for (let n = 1; n <= pages; n++) {
