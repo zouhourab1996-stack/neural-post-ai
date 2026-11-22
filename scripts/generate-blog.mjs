@@ -12,7 +12,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { TRACKING_HEAD } from "./head-tags.mjs";
+import { TRACKING_HEAD, ADSENSE_HEAD } from "./head-tags.mjs";
 import { fitDesc, fitTitle } from "./seo-fit.mjs";
 import { chrome, themeCss, THEME_SCRIPT, FONT_LINKS } from "./site-chrome.mjs";
 import { ADS_CSS, insertAds, adMultiplex, adRail, hasRail } from "./ads.mjs";
@@ -329,6 +329,7 @@ ${published ? `<meta property="article:published_time" content="${published}"><m
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="apple-touch-icon" href="/icon-192.png"><link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#0a0f1e">
 ${TRACKING_HEAD}
+${noindex ? "" : ADSENSE_HEAD}
 ${feed ? `<link rel="alternate" type="application/rss+xml" title="${BLOG_TITLE}" href="${SITE}/blog/feed.xml">` : ""}
 ${FONT_LINKS}
 ${THEME_SCRIPT}
