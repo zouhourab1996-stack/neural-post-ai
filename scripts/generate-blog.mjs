@@ -501,4 +501,4 @@ fs.writeFileSync(path.join(dist, "blog", "manifest.json"), JSON.stringify({
   pages: Array.from({ length: pages }, (_, k) => k === 0 ? `${SITE}/blog/` : `${SITE}/blog/page/${k + 1}/`),
   posts: posts.map((p) => ({ slug: p.slug, url: p.url, title: p.title, description: p.description, date: p.date, updated: p.updated, tags: p.tags, category: p.category, readingTime: p.readingTime, image: p.image, file: p.file, canonical: p.canonical, noindex: p.noindex, words: p.words })),
 }, null, 2));
-console.log(`[blog] ${posts.length} post(s), ${allTags.length} tag(s), ${pages} index page(s) → dist/blog/`);
+console.log(`[blog] ${publicPosts.length} public post(s), ${posts.length} total source post(s), ${allTags.length} tag(s), ${pages} index page(s) → dist/blog/`);
