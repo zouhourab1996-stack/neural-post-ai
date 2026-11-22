@@ -102,3 +102,5 @@ You can use our [Profection Year Calculator](/profection-year-calculator/) to id
 ## Method & sources
 
 This article describes the traditional 12-house annual profection sequence and traditional planetary sign rulers. Interpretations are presented as astrological symbolism, not scientific evidence or guaranteed forecasts. For the actual house and time lord, use the birth chart calculation and verify the birth time where possible.
+
+- [Astro.com: Annual Profections, Lots and Zodiacal Releasing](https://www.astro.com/astrology/tma_article190314_e.htm) — a detailed introduction to the annual profection technique in the Hellenistic tradition.
