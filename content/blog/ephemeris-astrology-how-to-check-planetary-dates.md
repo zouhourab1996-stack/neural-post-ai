@@ -3,6 +3,7 @@ title: What Is an Ephemeris in Astrology? How Planetary Dates Are Calculated
 seoTitle: What Is an Ephemeris in Astrology? A Clear Guide
 description: Learn what an ephemeris records, how astrologers use it to calculate planetary positions, and how to verify retrograde, Moon and transit dates.
 date: 2026-11-18
+updated: 2026-11-22
 author: Hedi Touati
 category: Astrology
 tags: [Astrology, Ephemeris, Planetary Transits, Retrograde, Moon Phases, Astrology Basics]
