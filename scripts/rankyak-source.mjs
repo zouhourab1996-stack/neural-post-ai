@@ -32,7 +32,7 @@ export async function loadRankyakPosts() {
       image: row.header_image_url || "", imageAlt: row.title, showImage: !!row.header_image_url,
       readingTime: Math.max(1, Math.round(words / 200)),
       canonical: `${RANKYAK_SITE}/blog/${row.slug}/`, url: `${RANKYAK_SITE}/blog/${row.slug}/`,
-      lang: "en", noindex: false, rankyak: true,
+      lang: "en", noindex: true, rankyak: true,
     };
   });
 }
