@@ -8,12 +8,15 @@
 export const ADSENSE_CLIENT = "ca-pub-3898992716389443";
 export const GA_ID = "G-1W7PC1JDKH";
 
-export const TRACKING_HEAD = [
-  `<!-- Awin -->`,
-  `<meta name="awin-site-verification" content="Awin">`,
+export const ADSENSE_HEAD = [
   `<meta name="google-adsense-account" content="${ADSENSE_CLIENT}">`,
   `<link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>`,
   `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}" crossorigin="anonymous"></script>`,
+].join("\n");
+
+export const TRACKING_HEAD = [
+  `<!-- Awin site verification -->`,
+  `<meta name="awin-site-verification" content="Awin">`,
   `<script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>`,
   `<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${GA_ID}');</script>`,
 ].join("\n");
