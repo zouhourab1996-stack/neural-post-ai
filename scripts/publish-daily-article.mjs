@@ -87,7 +87,10 @@ const article = result.article;
 const checked = validate(article);
 fs.mkdirSync(contentDir, { recursive: true });
 const output = path.join(contentDir, checked.slug + ".html");
-if (fs.existsSync(output)) throw new Error("Refusing to overwrite an existing article: " + checked.slug);
+const markdownOutput = path.join(contentDir, checked.slug + ".md");
+if (fs.existsSync(output) || fs.existsSync(markdownOutput)) {
+  throw new Error("Refusing to duplicate or overwrite an existing article: " + checked.slug);
+}
 const tagsByCategory = {
   "Transits": ["Astrology", "Planetary Transits", "2026"],
   "Moon Phases": ["Moon Phases", "Lunar Cycle", "Astrology"],
