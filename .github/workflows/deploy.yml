@@ -29,6 +29,9 @@ jobs:
         with:
           node-version: "22"
 
+      - name: Validate daily publisher JavaScript
+        run: node --check scripts/publish-daily-article.mjs
+
       - name: Check Supabase deployment credential for scheduled publishing
         id: supabase_token
         if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
