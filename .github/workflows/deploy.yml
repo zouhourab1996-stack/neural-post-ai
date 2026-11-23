@@ -32,9 +32,8 @@ jobs:
       - name: Validate daily publisher JavaScript
         run: node --check scripts/publish-daily-article.mjs
 
-      - name: Check Supabase deployment credential for scheduled publishing
+      - name: Check Supabase deployment credential
         id: supabase_token
-        if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
         shell: bash
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
@@ -47,13 +46,13 @@ jobs:
           fi
 
       - name: Setup Supabase CLI
-        if: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && steps.supabase_token.outputs.available == 'true' }}
+        if: ${{ steps.supabase_token.outputs.available == 'true' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && contains(join(github.event.head_commit.modified, ','), 'supabase/functions/generate-article/index.ts'))) }}
         uses: supabase/setup-cli@v1
         with:
           version: latest
 
       - name: Deploy secured article generator
-        if: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && steps.supabase_token.outputs.available == 'true' }}
+        if: ${{ steps.supabase_token.outputs.available == 'true' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && contains(join(github.event.head_commit.modified, ','), 'supabase/functions/generate-article/index.ts'))) }}
         run: supabase functions deploy generate-article --project-ref bltytefghazluwicnaii --no-verify-jwt
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
