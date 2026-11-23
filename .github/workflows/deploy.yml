@@ -7,10 +7,9 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "25 8 * * *"
-    - cron: "25 18 * * *"
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -20,6 +19,8 @@ concurrency:
 
 jobs:
   build:
+    needs: deploy-supabase
+    if: ${{ always() && (needs.deploy-supabase.result == 'success' || needs.deploy-supabase.result == 'skipped' || needs.deploy-supabase.result == 'failure') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -30,25 +31,17 @@ jobs:
         with:
           node-version: "22"
 
-      # Morning scheduled run only: generate the daily article BEFORE building SSG
-      # so the new article is part of the static build and the sitemap.
-      # (The evening run only rebuilds; it does not create a second article.)
-      - name: Generate daily article (morning scheduled run only)
-        if: github.event_name == 'schedule' && github.event.schedule == '25 8 * * *'
-        run: |
-          echo "Triggering daily-automation..."
-          RESULT=$(curl -s -w "\nHTTP:%{http_code}" -X POST \
-            "$VITE_SUPABASE_URL/functions/v1/daily-automation" \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $VITE_SUPABASE_KEY" \
-            -d '{}')
-          echo "$RESULT"
-          echo "Waiting 60s for articles to be saved..."
-          sleep 60
+      # Generate a validated draft and commit it into the static blog before building.
+      - name: Generate and publish one validated daily article
+        if: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && needs.deploy-supabase.result == 'success' && needs.deploy-supabase.outputs.ready == 'true' }}
+        run: node scripts/publish-daily-article.mjs
         env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          ARTICLE_API_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
 
+      - name: Report why daily publishing was skipped
+        if: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && (needs.deploy-supabase.result != 'success' || needs.deploy-supabase.outputs.ready != 'true') }}
+        run: echo "::warning::Daily article generation skipped: Supabase function deployment credential unavailable or deployment failed."
       - name: Install dependencies and build
         run: |
           npm install
@@ -100,24 +93,37 @@ jobs:
           path: "./dist"
 
   deploy-supabase:
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && vars.ENABLE_SUPABASE_DEPLOY == 'true') }}
     runs-on: ubuntu-latest
-    needs: build
-    # Only run when pushing to main AND an access token is configured
-    if: github.event_name == 'push' && vars.ENABLE_SUPABASE_DEPLOY == 'true'
+    outputs:
+      ready: ${{ steps.token-check.outputs.available }}
     steps:
+      - name: Check Supabase deployment credential
+        id: token-check
+        shell: bash
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          if [ -n "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::SUPABASE_ACCESS_TOKEN is not configured; daily publishing will be skipped."
+          fi
+
       - name: Checkout repository
+        if: steps.token-check.outputs.available == 'true'
         uses: actions/checkout@v4
 
       - name: Setup Supabase CLI
+        if: steps.token-check.outputs.available == 'true'
         uses: supabase/setup-cli@v1
         with:
           version: latest
 
-      - name: Deploy Edge Functions to Supabase
-        run: |
-          supabase functions deploy generate-article --project-ref bltytefghazluwicnaii --no-verify-jwt
-          supabase functions deploy daily-automation --project-ref bltytefghazluwicnaii --no-verify-jwt
-          supabase functions deploy google-indexing --project-ref bltytefghazluwicnaii --no-verify-jwt
+      - name: Deploy secured article generator
+        if: steps.token-check.outputs.available == 'true'
+        run: supabase functions deploy generate-article --project-ref bltytefghazluwicnaii --no-verify-jwt
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
 
