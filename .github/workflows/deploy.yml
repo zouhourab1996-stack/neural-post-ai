@@ -65,7 +65,8 @@ jobs:
 
       - name: Report why daily publishing was skipped
         if: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && steps.supabase_token.outputs.available != 'true' }}
-        run: echo "::warning::Daily article generation skipped: Supabase function deployment credential unavailable or deployment failed."
+        run: |
+          echo "::warning::Daily article generation skipped: Supabase function deployment credential unavailable or deployment failed."
       - name: Install dependencies and build
         run: |
           npm install
