@@ -20,7 +20,7 @@ concurrency:
 jobs:
   build:
     needs: deploy-supabase
-    if: ${{ always() && (needs.deploy-supabase.result == 'success' || needs.deploy-supabase.result == 'skipped' || needs.deploy-supabase.result == 'failure') }}
+    if: ${{ always() && (needs['deploy-supabase'].result == 'success' || needs['deploy-supabase'].result == 'skipped' || needs['deploy-supabase'].result == 'failure') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -33,14 +33,14 @@ jobs:
 
       # Generate a validated draft and commit it into the static blog before building.
       - name: Generate and publish one validated daily article
-        if: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && needs.deploy-supabase.result == 'success' && needs.deploy-supabase.outputs.ready == 'true' }}
+        if: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && needs['deploy-supabase'].result == 'success' && needs['deploy-supabase'].outputs.ready == 'true' }}
         run: node scripts/publish-daily-article.mjs
         env:
           ARTICLE_API_URL: ${{ secrets.VITE_SUPABASE_URL }}
           SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
 
       - name: Report why daily publishing was skipped
-        if: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && (needs.deploy-supabase.result != 'success' || needs.deploy-supabase.outputs.ready != 'true') }}
+        if: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && (needs['deploy-supabase'].result != 'success' || needs['deploy-supabase'].outputs.ready != 'true') }}
         run: echo "::warning::Daily article generation skipped: Supabase function deployment credential unavailable or deployment failed."
       - name: Install dependencies and build
         run: |
