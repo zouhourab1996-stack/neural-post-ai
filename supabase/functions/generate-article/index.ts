@@ -1,5 +1,27 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createRemoteJWKSet, jwtVerify } from "npm:jose@5.9.6";
+
+
+const GITHUB_ACTIONS_JWKS = createRemoteJWKSet(
+  new URL("https://token.actions.githubusercontent.com/.well-known/jwks"),
+);
+async function verifyTrustedPublisher(req: Request): Promise<void> {
+  const header = req.headers.get("authorization") || "";
+  if (!header.startsWith("Bearer ")) throw new Error("Missing GitHub Actions identity token");
+  const { payload } = await jwtVerify(header.slice(7), GITHUB_ACTIONS_JWKS, {
+    issuer: "https://token.actions.githubusercontent.com",
+    audience: "prophetic-daily-publisher",
+  });
+  const expectedWorkflow = "zouhourab1996-stack/neural-post-ai/.github/workflows/deploy.yml@refs/heads/main";
+  if (
+    payload.repository !== "zouhourab1996-stack/neural-post-ai" ||
+    payload.repository_owner !== "zouhourab1996-stack" ||
+    payload.ref !== "refs/heads/main" ||
+    payload.workflow_ref !== expectedWorkflow ||
+    !["schedule", "workflow_dispatch"].includes(String(payload.event_name || ""))
+  ) throw new Error("Publisher identity is not an approved scheduled workflow");
+}
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -266,6 +288,7 @@ async function selectFreshHeadline(
   category: string,
   supabaseUrl?: string | null,
   serviceRoleKey?: string | null,
+  externalExistingTitles: string[] = [],
 ) {
   if (!supabaseUrl || !serviceRoleKey) {
     return headlines[0];
@@ -292,6 +315,7 @@ async function selectFreshHeadline(
     ]);
 
     const usedHeadlines = new Set([
+      ...externalExistingTitles.map((title) => normalizeHeadlineKey(title)),
       ...(recentKeywords || []).map((item: any) => normalizeHeadlineKey(item.keyword || '')),
       ...(recentArticles || []).map((item: any) => normalizeHeadlineKey(item.title || '')),
     ]);
@@ -782,7 +806,11 @@ serve(async (req) => {
   }
 
   try {
-    const { category, autoPublish = false } = await req.json();
+    await verifyTrustedPublisher(req);
+    const { category, autoPublish = false, avoidTitles = [] } = await req.json();
+    const callerTitles = Array.isArray(avoidTitles)
+      ? avoidTitles.slice(0, 150).map((value: unknown) => String(value || "").trim()).filter(Boolean)
+      : [];
 
     // Fail closed: automatic publication is disabled. Draft generation may
     // only be requested with autoPublish=false and must be reviewed before
@@ -832,6 +860,7 @@ serve(async (req) => {
       selectedCategory,
       SUPABASE_URL,
       SUPABASE_SERVICE_ROLE_KEY,
+      callerTitles,
     );
     console.log(`Selected headline: ${selectedHeadline.title} (${selectedHeadline.source})`);
 
@@ -840,7 +869,7 @@ serve(async (req) => {
     console.log(`Target keywords: ${keywords.map(k => k.keyword).join(', ')}`);
 
     // Phase 4: Get recent article titles to avoid repetition
-    let existingTitles: string[] = [];
+    let existingTitles: string[] = [...callerTitles];
     if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
       const adminClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
       const { data: recent } = await adminClient
@@ -848,7 +877,10 @@ serve(async (req) => {
         .select('title')
         .order('created_at', { ascending: false })
         .limit(30);
-      existingTitles = (recent || []).map((a: any) => a.title);
+      existingTitles = [...new Set([
+        ...existingTitles,
+        ...(recent || []).map((a: any) => String(a.title || "")),
+      ])].slice(0, 200);
     }
 
     // Guard against duplicate title before spending tokens
