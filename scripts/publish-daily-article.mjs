@@ -119,12 +119,14 @@ fs.writeFileSync(output, frontMatter + "\n" + checked.html.trim() + "\n", "utf8"
 execFileSync("git", ["config", "user.name", "github-actions[bot]"]);
 execFileSync("git", ["config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com"]);
 execFileSync("git", ["add", path.relative(root, output)]);
+let stagedChanges = false;
 try {
   execFileSync("git", ["diff", "--cached", "--quiet"], { stdio: "ignore" });
-  throw new Error("Generated article produced no staged changes.");
 } catch (error) {
-  if (error.status === 0) throw error;
+  if (error.status === 1) stagedChanges = true;
+  else throw error;
 }
+if (!stagedChanges) throw new Error("Generated article produced no staged changes.");
 execFileSync("git", ["commit", "-m", "chore(content): publish daily article [skip ci]"], { stdio: "inherit" });
 execFileSync("git", ["push", "origin", "HEAD:main"], { stdio: "inherit" });
 console.log("Validated and committed daily article: /blog/" + checked.slug + "/ (" + checked.words + " words, " + category + ").");
