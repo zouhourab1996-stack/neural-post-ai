@@ -6,6 +6,7 @@ import { createRemoteJWKSet, jwtVerify } from "npm:jose@5.9.6";
 const GITHUB_ACTIONS_JWKS = createRemoteJWKSet(
   new URL("https://token.actions.githubusercontent.com/.well-known/jwks"),
 );
+// Invoked by the static-site publisher only; the request is verified against GitHub OIDC claims.
 async function verifyTrustedPublisher(req: Request): Promise<void> {
   const header = req.headers.get("authorization") || "";
   if (!header.startsWith("Bearer ")) throw new Error("Missing GitHub Actions identity token");
