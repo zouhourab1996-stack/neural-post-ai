@@ -807,19 +807,27 @@ serve(async (req) => {
 
   try {
     await verifyTrustedPublisher(req);
+  } catch {
+    return new Response(JSON.stringify({ success: false, error: "Unauthorized publisher" }), {
+      status: 401,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
+  try {
     const { category, autoPublish = false, avoidTitles = [] } = await req.json();
     const callerTitles = Array.isArray(avoidTitles)
       ? avoidTitles.slice(0, 150).map((value: unknown) => String(value || "").trim()).filter(Boolean)
       : [];
 
-    // Fail closed: automatic publication is disabled. Draft generation may
-    // only be requested with autoPublish=false and must be reviewed before
-    // publication through the editorial workflow.
+    // Direct database auto-publication remains disabled. The protected GitHub
+    // Actions workflow receives this validated draft, applies a second quality
+    // gate, commits it into content/blog, then builds and deploys the static page.
     if (autoPublish === true) {
       return new Response(JSON.stringify({
         success: false,
         published: false,
-        error: "Automatic publication is disabled. Submit drafts for editorial review instead.",
+        error: "Direct database publication is disabled. Use the protected static publishing workflow.",
       }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
