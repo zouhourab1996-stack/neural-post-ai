@@ -237,7 +237,7 @@ var PAGE_INTRO = {
 //   * static pages: STATIC_LASTMOD below — bump it only when their copy changes.
 //   * homepage and /blog/: newest of STATIC_LASTMOD and the newest post (they list posts).
 // No changefreq/priority (Google ignores both).
-var STATIC_LASTMOD = "2026-11-21"; // editorial identity and methodology copy updated
+var STATIC_LASTMOD = "2026-11-23"; // editorial identity and methodology copy updated
 var today = new Date().toISOString().slice(0,10);
 var dayOnly = function(d){ return String(d || "").slice(0,10); };
 function gitDate(file) {
