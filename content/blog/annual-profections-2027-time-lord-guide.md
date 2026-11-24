@@ -2,7 +2,7 @@
 title: Annual Profections 2027: Find Your Activated House and Time Lord
 description: Learn how annual profections work, calculate the house activated by your age in 2027, identify its planetary time lord and read the year without overclaiming.
 date: 2026-11-22
-updated: 2026-11-22
+updated: 2026-11-24
 author: Hedi Touati
 category: Astrology
 tags: [Annual Profections, Astrology, Time Lord, 2027, Birth Chart]
@@ -54,6 +54,17 @@ A quick calculation is:
 | 35, 47, 59, 71 | 12th | Rest, solitude, endings, hidden matters |
 
 The table shows the repeating pattern, not a prediction for any particular person. Your exact year depends on your birthday and the house system and chart framework used by the calculator.
+
+
+### A practical 2027 check before you interpret the result
+
+Before using a 2027 profection, write down three details:
+
+1. **The birthday that starts the year:** your 2027 profection changes on your birthday, not automatically on January 1.
+2. **Your completed age on that birthday:** use the age you have just reached, not the age you will reach later in the calendar year.
+3. **A reliable rising sign:** the rising sign depends on birth time and location. If the recorded time is uncertain, treat the house and time-lord result as provisional.
+
+You can check the house, sign and traditional ruler with the [free Profection Year Calculator](/profection-year-calculator/). Then use this guide to understand the method rather than treating the result as a prediction of a specific event.
 
 ## Find the planetary time lord
 

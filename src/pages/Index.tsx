@@ -26,7 +26,8 @@ export default function Index() {
     </section>
     <section className="section-pad">
       <div className="about-grid">
-        <div><span className="eyebrow accent-label">FREE ASTROLOGY TOOL</span><h2>Annual Profection Year Calculator</h2><p>Find your active annual profection house, profected zodiac sign and traditional Lord of the Year using your completed age and natal rising sign. The calculator uses whole-sign houses and explains the method behind the result.</p><a className="text-link" href="/profection-year-calculator/">Use the free Profection Year Calculator →</a></div>
+        <div><span className="eyebrow accent-label">FREE ASTROLOGY TOOL</span><h2>Annual Profection Year Calculator</h2><p>Find your active annual profection house, profected zodiac sign and traditional Lord of the Year using your completed age and natal rising sign. The calculator uses whole-sign houses and explains the method behind the result.</p><a className="text-link" href="/profection-year-calculator/">Use the free Profection Year Calculator →</a>
+          <p className="mt-2 text-sm"><a href="/blog/annual-profections-2027-time-lord-guide/" className="text-link">Read the 2027 annual profections guide →</a></p></div>
         <div><h2>What the calculator uses</h2><p>Annual profections are a traditional timing technique: each completed year of age activates a house in a repeating twelve-year cycle. You provide your rising sign; the tool calculates the corresponding house, sign and traditional time lord. It does not calculate your Ascendant or make scientifically verified predictions.</p></div>
       </div>
     </section>
