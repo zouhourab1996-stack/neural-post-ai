@@ -3,6 +3,7 @@
 // archives that only those posts used). 410 tells search engines the removal is permanent.
 export const config = {
   matcher: [
+    "/",
     "/blog/best-fiverr-ai-agent-developers-2026", "/blog/best-fiverr-ai-agent-developers-2026/",
     "/blog/best-fiverr-claude-code-developers-2026", "/blog/best-fiverr-claude-code-developers-2026/",
     "/blog/best-fiverr-ai-ugc-video-ads-2026", "/blog/best-fiverr-ai-ugc-video-ads-2026/",
@@ -33,7 +34,14 @@ const GONE_TAGS = new Set(["ai", "ai-agents", "ai-developers", "ai-ugc", "automa
 const BODY = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Page removed | Prophetic</title></head><body style="font-family:system-ui,sans-serif;max-width:640px;margin:60px auto;padding:0 20px"><h1>This page has been removed</h1><p>It is no longer part of Prophetic.</p><p><a href="/">Prophetic home</a> · <a href="/blog/">All astrology guides</a> · <a href="/topics/">Guides by topic</a></p></body></html>';
 
 export default function middleware(request) {
-  const p = new URL(request.url).pathname.toLowerCase();
+  const requestUrl = new URL(request.url);
+  // Blogger appends ?m=1 to mobile links. Strip only that legacy parameter while
+  // preserving every unrelated query parameter, so the canonical URL is stable.
+  if (requestUrl.pathname === "/" && requestUrl.searchParams.has("m")) {
+    requestUrl.searchParams.delete("m");
+    return Response.redirect(requestUrl, 308);
+  }
+  const p = requestUrl.pathname.toLowerCase();
   const norm = p.endsWith("/") ? p : p + "/";
   const tag = norm.match(/^\/blog\/tag\/([^/]+)\/$/);
   if (GONE_POSTS.has(norm) || (tag && GONE_TAGS.has(tag[1])) || norm.startsWith("/compare/") || norm.startsWith("/guides/") || GONE_PREFIX.test(norm)) {
