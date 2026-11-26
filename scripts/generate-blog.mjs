@@ -469,6 +469,12 @@ ${items}
 
 // ------------------------------------------------------------------ main
 const posts = loadPosts().sort((a, b) => b.date.localeCompare(a.date));
+// Keep legacy AI/dev marketplace reviews accessible to existing readers, but do not
+// expose them as indexable blog content. The same classifier is used by relatedPosts()
+// so off-niche reviews never enter the astrology discovery graph.
+for (const p of posts) {
+  if (isOffNiche(p)) p.noindex = true;
+}
 for (const p of posts) {
   p.heading = fitTitle(stripTags(p.heading || p.title));
   p.seoTitle = pageTitle(p.seoTitle || p.title);
