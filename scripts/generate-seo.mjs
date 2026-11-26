@@ -295,7 +295,7 @@ var sitemapXml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://
   sitemapUrls.map(function(u){
     return "  <url><loc>" + esc(/^https:\/\//.test(u[0]) ? u[0] : SITE + u[0]) + "</loc>" + (u[1] ? "<lastmod>" + u[1] + "</lastmod>" : "") + "</url>";
   }).join("\n") + '\n</urlset>\n';
-var sitemapLocs = Array.from(sitemapXml.matchAll(/<loc>(.*?)<\\/loc>/g), function(m) { return m[1]; });
+var sitemapLocs = Array.from(sitemapXml.matchAll(/<loc>(.*?)<\/loc>/g), function(m) { return m[1]; });
 if (sitemapLocs.length !== sitemapUrls.length) throw new Error("Sitemap validation failed: URL count mismatch.");
 if (new Set(sitemapLocs).size !== sitemapLocs.length) throw new Error("Sitemap validation failed: duplicate URLs.");
 if (sitemapLocs.some(function(u) { return !u.startsWith(SITE + "/") || !u.endsWith("/"); })) throw new Error("Sitemap validation failed: non-canonical host or trailing slash.");
