@@ -396,10 +396,13 @@ function renderPost(p, all) {
     { "@type": "ListItem", position: 3, name: p.title, item: p.url } ] };
   const share = encodeURIComponent(p.url), shareT = encodeURIComponent(p.title);
   const rail = hasRail() ? adRail() : "";
+  // Noindex articles may carry legacy tags that have no public archive. Keep those
+  // labels visible but unlinked; only link tags backed by a public archive.
+  const publicTags = new Set(all.flatMap((post) => post.tags));
   const body = `<main class="pb-container">${rail ? '<div class="pb-layout">' : ""}<article class="pb-post">
  <nav class="pb-crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/blog/">Blog</a> › <span>${esc(p.category)}</span></nav>
  <header class="pb-post-head">
-  <div>${p.tags.map((t) => `<a class="kicker" href="/blog/tag/${slugify(t)}/" style="margin:0 6px 6px 0">${esc(t)}</a>`).join("")}</div>
+  <div>${p.tags.map((t) => publicTags.has(t) ? `<a class="kicker" href="/blog/tag/${slugify(t)}/" style="margin:0 6px 6px 0">${esc(t)}</a>` : `<span class="kicker" style="margin:0 6px 6px 0">${esc(t)}</span>`).join("")}</div>
   <h1>${esc(p.heading)}</h1>
   <p class="pb-lede">${esc(p.description)}</p>
   <div class="pb-meta"><span><span class="av">${esc(p.author.slice(0, 1))}</span><a rel="author" href="${AUTHOR_SLUG}">${esc(p.author)}</a></span><span>Published <time datetime="${isoDate(p.date)}">${fmtDate(p.date)}</time></span>${p.updated !== p.date ? `<span>Updated <time datetime="${isoDate(p.updated)}">${fmtDate(p.updated)}</time></span>` : ""}<span>${p.readingTime} min read</span><span>${p.words.toLocaleString("en-US")} words</span></div>
