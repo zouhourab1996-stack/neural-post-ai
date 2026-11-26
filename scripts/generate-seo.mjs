@@ -209,6 +209,20 @@ function topicsBody() {
     + '<section><h2>Explore Prophetic</h2>' + EXPLORE_LIST + '</section>';
 }
 
+function sitemapBody() {
+  var posts = blog.posts.filter(function(p) { return !p.noindex && p.category !== "Fiverr Reviews"; })
+    .sort(function(a, b) { return String(b.date || "").localeCompare(String(a.date || "")); });
+  var rows = posts.map(function(p) {
+    var date = String(p.date || "").slice(0, 10);
+    return '<li><a href="/blog/' + esc(p.slug) + '/">' + esc(p.title) + '</a>' +
+      (date ? ' <time datetime="' + esc(date) + '">' + esc(date) + '</time>' : '') + '</li>';
+  }).join("");
+  return '<h1>All Prophetic astrology and astronomy guides</h1>' +
+    '<p>Browse the complete public article archive. Guides are grouped by publication date; each page links to its related topic cluster and source references.</p>' +
+    '<p><strong>' + posts.length + ' published guides</strong></p><ol class="pb-sitemap-list">' + rows + '</ol>' +
+    '<p><a href="/topics/">Browse guides by topic</a> · <a href="/blog/">Open the blog archive</a></p>';
+}
+
 var PAGE_INTRO = {
  "/about/": '<p>Prophetic is an independent publication about astrology, birth-chart concepts and sky events. We distinguish astronomical observations that can be checked against external references from astrological interpretations, which are symbolic traditions rather than scientifically established predictions. Each guide should identify its sources, explain relevant time zones and make clear when information was last checked.</p>'
    + '<h2>What we publish</h2><p>Three things: dated sky-event explainers (retrogrades, eclipses, moon phases and meteor showers), chart explainers (planets, houses and aspects), and reflective-practice guides that distinguish tradition from evidence.</p>'
@@ -277,11 +291,19 @@ var seenLoc = {};
 sitemapUrls = sitemapUrls.filter(function(u){ if (seenLoc[u[0]] || (!/^https:\/\//.test(u[0]) && !/\/$/.test(u[0]))) return false; seenLoc[u[0]] = 1; return true; });
 var urls = sitemapUrls.map(function(u){ return u[0]; });
 
-fs.writeFileSync(path.join(dist,"sitemap.xml"),
-  '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+var sitemapXml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
   sitemapUrls.map(function(u){
     return "  <url><loc>" + esc(/^https:\/\//.test(u[0]) ? u[0] : SITE + u[0]) + "</loc>" + (u[1] ? "<lastmod>" + u[1] + "</lastmod>" : "") + "</url>";
-  }).join("\n") + '\n</urlset>\n',"utf8");
+  }).join("\n") + '\n</urlset>\n';
+var sitemapLocs = Array.from(sitemapXml.matchAll(/<loc>(.*?)<\\/loc>/g), function(m) { return m[1]; });
+if (sitemapLocs.length !== sitemapUrls.length) throw new Error("Sitemap validation failed: URL count mismatch.");
+if (new Set(sitemapLocs).size !== sitemapLocs.length) throw new Error("Sitemap validation failed: duplicate URLs.");
+if (sitemapLocs.some(function(u) { return !u.startsWith(SITE + "/") || !u.endsWith("/"); })) throw new Error("Sitemap validation failed: non-canonical host or trailing slash.");
+indexablePosts.forEach(function(p) {
+  if (!fs.existsSync(path.join(dist, "blog", p.slug, "index.html"))) throw new Error("Sitemap URL has no generated article file: " + p.url);
+});
+if (sitemapLocs.length > 50000) throw new Error("Sitemap validation failed: URL limit exceeded.");
+fs.writeFileSync(path.join(dist,"sitemap.xml"), sitemapXml, "utf8");
 fs.writeFileSync(path.join(dist,"sitemap.txt"), sitemapUrls.map(function(u){ return /^https:\/\//.test(u[0]) ? u[0] : SITE + u[0]; }).join("\n") + "\n", "utf8");
 
 // Preserve the hand-written robots.txt from public/ (explicit Allow rules for AI
@@ -326,6 +348,8 @@ staticPages.concat(reviewPages).forEach(function(p){
     body = HOMEPAGE_BODY;
   } else if (p[0] === "/topics/") {
     body = topicsBody();
+  } else if (p[0] === "/sitemap/") {
+    body = sitemapBody();
   } else {
     body = "<h1>"+esc(heading)+"</h1><p>"+esc(p[2])+"</p>"
          + (PAGE_INTRO[p[0]] || "")
