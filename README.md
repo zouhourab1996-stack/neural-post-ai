@@ -5,7 +5,7 @@
 Prophetic publishes practical explainers about astrology, natal-chart concepts, annual profections, lunar phases, planetary cycles and observable sky events. Astronomical calculations are distinguished from astrological interpretation; astrology is presented as a symbolic practice, not as scientifically established prediction or professional advice.
 
 ## Technology
-Static HTML + Vite build tooling · GitHub Pages · Cloudflare DNS
+Static HTML + Node.js build scripts · GitHub Pages · Cloudflare DNS
 
 ## Publishing standards
 - Articles are maintained as editorial source files in `content/blog/`.
@@ -15,7 +15,7 @@ Static HTML + Vite build tooling · GitHub Pages · Cloudflare DNS
 - Pricing and product comparisons require dated checks against the provider's own published terms.
 
 ## Build and SEO
-- Build: `npm run build`
+- Build: `npm run build` (Node.js only; no runtime packages or database)
 - Hosting: GitHub Pages, deployed automatically from `main` via GitHub Actions
 - DNS and domain security: Cloudflare
 - The production site is static; it does not require a database or server runtime

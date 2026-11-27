@@ -26,10 +26,8 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Install dependencies and build
-        run: |
-          npm install
-          npm run build
+      - name: Build static site
+        run: npm run build
 
 
       - name: Copy essential static assets to dist
