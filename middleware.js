@@ -50,6 +50,14 @@ export default function middleware(request) {
   }
   const p = requestUrl.pathname.toLowerCase();
   const norm = p.endsWith("/") ? p : p + "/";
+  const legacyRedirects = new Map([
+    ["/2026/09/total-solar-eclipse-august-2027-leo-century.html/", "/blog/solar-eclipse-2027/"],
+    ["/2026/08/venus-retrograde-2026-dates-meaning.html/", "/blog/venus-retrograde-2026/"],
+  ]);
+  const legacyDestination = legacyRedirects.get(norm);
+  if (legacyDestination) {
+    return Response.redirect(new URL(legacyDestination, requestUrl.origin), 301);
+  }
   const tag = norm.match(/^\/blog\/tag\/([^/]+)\/$/);
   if (GONE_POSTS.has(norm) || (tag && GONE_TAGS.has(tag[1])) || norm.startsWith("/compare/") || norm.startsWith("/guides/") || GONE_PREFIX.test(norm) || GONE_LEGACY_BLOGGER.test(norm)) {
     return new Response(BODY, { status: 410, headers: { "content-type": "text/html; charset=utf-8", "x-robots-tag": "noindex", "cache-control": "public, max-age=3600" } });
