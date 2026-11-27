@@ -1,7 +1,6 @@
 // Shared header/footer/theme for every statically generated page (blog posts, blog
 // archives and the static site pages built by generate-seo.mjs). All internal links
-// use the trailing-slash canonical form, because vercel.json 308-redirects the
-// slash-less form.
+// use the trailing-slash canonical form, because generated static routes use canonical trailing slashes.
 import fs from "node:fs";
 import path from "node:path";
 
