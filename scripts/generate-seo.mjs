@@ -9,8 +9,6 @@ import { STATIC_FAQ } from "./static-faq.mjs";
 
 const dist = path.resolve("dist");
 const SITE = "https://prophetic.pw";
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
-const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_KEY;
 
 const staticPages = [
   ["/", "Prophetic — Astrology Guides & Free Profection Calculator", "Explore astrology guides, moon phases, eclipses and birth-chart tools. Use our free annual profection calculator to find your house, zodiac sign and Time Lord."],
@@ -28,73 +26,17 @@ const staticPages = [
   ["/author/hedi-touati/", "Meet Hedi Touati, Prophetic Founder & Editor", "Meet Hedi Touati, founder and editor of Prophetic, who computes the site's astrology dates and edits every guide before publication."]
 ];
 
-const reviewPages = []; // /review/* (old software/business reviews) returns 410 Gone (middleware.js); nothing is built there.
+const reviewPages = []; // Retired review pages are not generated.
 
 // Off-topic / thin pages: kept live for readers and existing links, but kept OUT of
 // Google's index and OUT of the sitemap so prophetic.pw reads as one topical site
 // (astrology). `follow` keeps internal link equity flowing to the astrology cluster.
-// /compare/ and /guides/ were removed on 2026-11-14 and return 410 (middleware.js).
+// Legacy off-topic routes are not generated.
 const NOINDEX = [];
 const isNoindex = (route) => NOINDEX.includes(route) || route.startsWith("/review/");
 
 function esc(v) {
   return String(v || "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;");
-}
-
-function markdown(text) {
-  return String(text || "").replace(/\r\n?/g,"\n").split("\n").map(function(line) {
-    var s = line.trim();
-    if (!s) return "";
-    if (/^###\s+/.test(s)) return "<h3>" + esc(s.replace(/^###\s+/,"")) + "</h3>";
-    if (/^##\s+/.test(s)) return "<h2>" + esc(s.replace(/^##\s+/,"")) + "</h2>";
-    if (/^#\s+/.test(s)) return "<h2>" + esc(s.replace(/^#\s+/,"")) + "</h2>";
-    if (/^[-*]\s+/.test(s)) return "<ul><li>" + esc(s.replace(/^[-*]\s+/,"")) + "</li></ul>";
-    return "<p>" + esc(s) + "</p>";
-  }).join("\n");
-}
-
-async function getArticles() {
-  if (!SUPABASE_URL || !SUPABASE_KEY) {
-    console.warn("Supabase SEO source is not configured; generating static routes only.");
-    return [];
-  }
-  var rows = [];
-  for (var offset = 0; offset < 50000; offset += 1000) {
-    var url = new URL("/rest/v1/articles", SUPABASE_URL);
-    url.searchParams.set("select","slug,title,meta_description,content,category,image_url,created_at,updated_at");
-    url.searchParams.set("order","created_at.desc");
-    url.searchParams.set("limit","1000");
-    url.searchParams.set("offset",String(offset));
-    var res = await fetch(url, { headers: { apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY } });
-    if (!res.ok) throw new Error("Supabase articles request failed: HTTP " + res.status);
-    var batch = await res.json();
-    rows = rows.concat(batch);
-    if (batch.length < 1000) break;
-  }
-  // 2026-11-16: no affiliate/marketplace promotion anywhere on the site. Legacy rows that
-  // promote Fiverr/ClickBank are not built (middleware.js returns 410 for them), and any
-  // line linking to such content is stripped from the remaining legacy pages.
-  var PROMO = /fiverr|clickbank|hop\.clickbank/i;
-  return rows.filter(function(a) { return a && a.slug && a.title && !PROMO.test(a.slug) && !PROMO.test(a.title); })
-    .map(function(a) { a.content = String(a.content || "").split("\n").filter(function(l){ return !PROMO.test(l); }).join("\n"); return a; });
-}
-
-function schema(article) {
-  var url = SITE + "/article/" + article.slug + "/";
-  return {
-    "@context":"https://schema.org",
-    "@type":"Article",
-    "headline":article.title,
-    "description":article.meta_description,
-    "datePublished":article.created_at,
-    "dateModified":article.updated_at || article.created_at,
-    "author":{"@type":"Person","@id":SITE + "/author/hedi-touati/#person","name":"Hedi Touati","url":SITE + "/author/hedi-touati/","jobTitle":"Founder & Editor"},
-    "publisher":{"@type":"Organization","name":"Prophetic","url":SITE,"logo":{"@type":"ImageObject","url":SITE + "/logo.svg"}},
-    "mainEntityOfPage":{"@type":"WebPage","@id":url},
-    "url":url,
-    "articleSection":article.category,
-    "inLanguage":"en-US"
-  };
 }
 
 // Static pages are pure static HTML — no SPA bundle. (Until 2026-11-14 they loaded the
@@ -146,9 +88,7 @@ function writeRoute(route, content) {
 }
 
 fs.mkdirSync(dist,{recursive:true});
-// 2026-11-16: the 434 legacy "The Signal" tech/AI/business news rows in Supabase `articles`
-// are off-niche for an astrology site. They are no longer built; /article/* returns 410 Gone
-// (middleware.js). getArticles() is kept only for reference and is not called.
+// All public articles are maintained as static source files in content/blog/.
 var articles = [];
 
 // Blog pages are generated by scripts/generate-blog.mjs (runs before this script) and
@@ -393,4 +333,4 @@ fs.writeFileSync(path.join(dist,"404.html"),
   if(fs.existsSync(src)){fs.copyFileSync(src,dst);}
 });
 fs.writeFileSync(path.join(dist,"CNAME"),"prophetic.pw\n","utf8");
-console.log("SEO build generated " + articles.length + " article pages and " + urls.length + " sitemap URLs.");
+console.log("SEO build generated " + urls.length + " sitemap URLs.");
