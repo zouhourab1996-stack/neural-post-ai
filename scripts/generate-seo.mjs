@@ -298,7 +298,22 @@ var sitemapXml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://
 var sitemapLocs = Array.from(sitemapXml.matchAll(/<loc>(.*?)<\/loc>/g), function(m) { return m[1]; });
 if (sitemapLocs.length !== sitemapUrls.length) throw new Error("Sitemap validation failed: URL count mismatch.");
 if (new Set(sitemapLocs).size !== sitemapLocs.length) throw new Error("Sitemap validation failed: duplicate URLs.");
-if (sitemapLocs.some(function(u) { return !u.startsWith(SITE + "/") || !u.endsWith("/"); })) throw new Error("Sitemap validation failed: non-canonical host or trailing slash.");
+if (sitemapLocs.some(function(u) { return !u.startsWith(SITE + "/") || !u.endsWith("/") || /[?#]/.test(u); })) throw new Error("Sitemap validation failed: non-canonical host, query string, fragment or trailing slash.");
+
+// Validate every sitemap URL against the actual static output, not just the article subset.
+// This catches stale routes, missing generated pages, accidental noindex entries and
+// canonical mismatches before Vercel can publish a broken sitemap.
+sitemapLocs.forEach(function(loc) {
+  var pathname = new URL(loc).pathname;
+  var relative = pathname === "/" ? "index.html" : path.join(pathname.replace(/^\\/+|\\/+$/g, ""), "index.html");
+  var file = path.join(dist, relative);
+  if (!fs.existsSync(file)) throw new Error("Sitemap URL has no generated HTML file: " + loc);
+  var html = fs.readFileSync(file, "utf8");
+  var canonical = html.match(/<link\\s+rel=["']canonical["']\\s+href=["']([^"']+)["']/i);
+  if (!canonical || canonical[1] !== loc) throw new Error("Sitemap URL canonical mismatch: " + loc);
+  var robots = html.match(/<meta\\s+name=["']robots["']\\s+content=["']([^"']+)["']/i);
+  if (!robots || /noindex/i.test(robots[1])) throw new Error("Sitemap contains a noindex or robots-missing page: " + loc);
+});
 indexablePosts.forEach(function(p) {
   if (!fs.existsSync(path.join(dist, "blog", p.slug, "index.html"))) throw new Error("Sitemap URL has no generated article file: " + p.url);
 });
