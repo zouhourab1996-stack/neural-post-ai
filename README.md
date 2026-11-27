@@ -5,7 +5,7 @@
 Prophetic publishes practical explainers about astrology, natal-chart concepts, annual profections, lunar phases, planetary cycles and observable sky events. Astronomical calculations are distinguished from astrological interpretation; astrology is presented as a symbolic practice, not as scientifically established prediction or professional advice.
 
 ## Technology
-React + TypeScript + Vite · Tailwind CSS · Supabase (legacy services) · Vercel
+Static HTML + Vite build tooling · GitHub Pages · Cloudflare DNS
 
 ## Publishing standards
 - Articles are maintained as editorial source files in `content/blog/`.
@@ -16,6 +16,9 @@ React + TypeScript + Vite · Tailwind CSS · Supabase (legacy services) · Verce
 
 ## Build and SEO
 - Build: `npm run build`
+- Hosting: GitHub Pages, deployed automatically from `main` via GitHub Actions
+- DNS and domain security: Cloudflare
+- The production site is static; it does not require a database or server runtime
 - Sitemap: https://prophetic.pw/sitemap.xml
 - Robots: https://prophetic.pw/robots.txt
 - Blog feed: https://prophetic.pw/blog/feed.xml
