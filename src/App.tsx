@@ -7,7 +7,6 @@ import PlatformShell from "@/components/PlatformShell"
 
 const Home = lazy(() => import("@/pages/Index"))
 const Review = lazy(() => import("@/pages/Review"))
-const Article = lazy(() => import("@/pages/Article"))
 const Blog = lazy(() => import("@/pages/Blog"))
 const BlogArticle = lazy(() => import("@/pages/BlogArticle"))
 const Comparison = lazy(() => import("@/pages/Comparison"))
