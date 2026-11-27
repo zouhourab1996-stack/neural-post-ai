@@ -1,7 +1,9 @@
+import { next } from "@vercel/functions";
 // Vercel Routing Middleware: returns 410 Gone for off-niche content removed on 2026-11-14 and 2026-11-16
 // (off-niche AI/dev Fiverr posts, the old /compare/ and /guides/ pages, and tag
 // archives that only those posts used). 410 tells search engines the removal is permanent.
 export const config = {
+  runtime: "edge",
   matcher: [
     "/",
     "/blog/best-fiverr-ai-agent-developers-2026", "/blog/best-fiverr-ai-agent-developers-2026/",
@@ -52,5 +54,6 @@ export default function middleware(request) {
   if (GONE_POSTS.has(norm) || (tag && GONE_TAGS.has(tag[1])) || norm.startsWith("/compare/") || norm.startsWith("/guides/") || GONE_PREFIX.test(norm) || GONE_LEGACY_BLOGGER.test(norm)) {
     return new Response(BODY, { status: 410, headers: { "content-type": "text/html; charset=utf-8", "x-robots-tag": "noindex", "cache-control": "public, max-age=3600" } });
   }
-  // otherwise fall through to the normal static response
+  // Continue to the generated static page for every route not handled above.
+  return next();
 }
