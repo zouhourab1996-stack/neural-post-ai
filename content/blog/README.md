@@ -93,8 +93,8 @@ share links, author box, related posts, prev/next, RSS, sitemap).
 ## 5. Preview locally
 
 ```
-npm install
-npm run build && npx vite preview   # then open /blog/
+npm run build
+python -m http.server 8000 --directory dist   # then open http://localhost:8000/blog/
 ```
 
 ## 6. Publish
