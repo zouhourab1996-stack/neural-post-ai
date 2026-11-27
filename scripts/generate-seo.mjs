@@ -305,13 +305,13 @@ if (sitemapLocs.some(function(u) { return !u.startsWith(SITE + "/") || !u.endsWi
 // canonical mismatches before Vercel can publish a broken sitemap.
 sitemapLocs.forEach(function(loc) {
   var pathname = new URL(loc).pathname;
-  var relative = pathname === "/" ? "index.html" : path.join(pathname.replace(/^\\/+|\\/+$/g, ""), "index.html");
+  var relative = pathname === "/" ? "index.html" : path.join(pathname.replace(/^\/+|\/+$/g, ""), "index.html");
   var file = path.join(dist, relative);
   if (!fs.existsSync(file)) throw new Error("Sitemap URL has no generated HTML file: " + loc);
   var html = fs.readFileSync(file, "utf8");
-  var canonical = html.match(/<link\\s+rel=["']canonical["']\\s+href=["']([^"']+)["']/i);
+  var canonical = html.match(/<link\s+rel=["']canonical["']\s+href=["']([^"']+)["']/i);
   if (!canonical || canonical[1] !== loc) throw new Error("Sitemap URL canonical mismatch: " + loc);
-  var robots = html.match(/<meta\\s+name=["']robots["']\\s+content=["']([^"']+)["']/i);
+  var robots = html.match(/<meta\s+name=["']robots["']\s+content=["']([^"']+)["']/i);
   if (!robots || /noindex/i.test(robots[1])) throw new Error("Sitemap contains a noindex or robots-missing page: " + loc);
 });
 indexablePosts.forEach(function(p) {
