@@ -3,7 +3,7 @@ import { next } from "@vercel/functions";
 // (off-niche AI/dev Fiverr posts, the old /compare/ and /guides/ pages, and tag
 // archives that only those posts used). 410 tells search engines the removal is permanent.
 export const config = {
-  runtime: "edge",
+  runtime: "nodejs",
   matcher: [
     "/",
     "/blog/best-fiverr-ai-agent-developers-2026", "/blog/best-fiverr-ai-agent-developers-2026/",
