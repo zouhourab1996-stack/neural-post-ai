@@ -14,6 +14,8 @@ export const config = {
     "/article", "/article/", "/article/:path*",
     "/review", "/review/", "/review/:path*",
     "/category", "/category/", "/category/:path*",
+    // Legacy Blogger article paths were retired when Prophetic moved to /blog/<slug>/.
+    "/2026/:year/:month/:path*",
   ],
 };
 
@@ -27,6 +29,7 @@ const GONE_POSTS = new Set([
 // /article/* (434 AI/tech/business/science news pages), /review/* (software/business reviews)
 // and /category/* (news category archives).
 const GONE_PREFIX = /^\/(article|review|category)\//;
+const GONE_LEGACY_BLOGGER = /^\/2026\/\d{2}\//;
 const GONE_TAGS = new Set(["ai", "ai-agents", "ai-developers", "ai-ugc", "automation", "claude-code", "video-ads", "video-editing", "arabic",
   // 2026-11-16: tags used only by the removed affiliate/review posts
   "review", "bazi", "chinese-astrology", "consumer-protection", "costs", "dreams", "energy-healing", "fiverr", "interpretation", "kasamba", "keen", "law-of-attraction", "online-readings", "reiki", "reviews", "scams", "self-study", "cafe-astrology", "soulmate-sketch", "twin-flame", "clickbank"]);
@@ -37,14 +40,16 @@ export default function middleware(request) {
   const requestUrl = new URL(request.url);
   // Blogger appends ?m=1 to mobile links. Strip only that legacy parameter while
   // preserving every unrelated query parameter, so the canonical URL is stable.
-  if (requestUrl.pathname === "/" && requestUrl.searchParams.has("m")) {
+  if (requestUrl.pathname === "/" && (requestUrl.searchParams.has("m") || requestUrl.searchParams.has("tool"))) {
+    // Normalize legacy Blogger mobile URLs and retired homepage-tool query URLs.
     requestUrl.searchParams.delete("m");
+    requestUrl.searchParams.delete("tool");
     return Response.redirect(requestUrl, 308);
   }
   const p = requestUrl.pathname.toLowerCase();
   const norm = p.endsWith("/") ? p : p + "/";
   const tag = norm.match(/^\/blog\/tag\/([^/]+)\/$/);
-  if (GONE_POSTS.has(norm) || (tag && GONE_TAGS.has(tag[1])) || norm.startsWith("/compare/") || norm.startsWith("/guides/") || GONE_PREFIX.test(norm)) {
+  if (GONE_POSTS.has(norm) || (tag && GONE_TAGS.has(tag[1])) || norm.startsWith("/compare/") || norm.startsWith("/guides/") || GONE_PREFIX.test(norm) || GONE_LEGACY_BLOGGER.test(norm)) {
     return new Response(BODY, { status: 410, headers: { "content-type": "text/html; charset=utf-8", "x-robots-tag": "noindex", "cache-control": "public, max-age=3600" } });
   }
   // otherwise fall through to the normal static response
