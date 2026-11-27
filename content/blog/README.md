@@ -2,7 +2,7 @@
 
 Every file in this folder becomes a page at `https://prophetic.pw/blog/<slug>/`.
 The blog is built by `scripts/generate-blog.mjs` during `npm run build` — no database,
-no CMS, no extra dependencies. Push to `main` and Vercel/GitHub Pages rebuild automatically.
+no CMS, no extra dependencies. Push to `main`; GitHub Actions builds and deploys the static site to GitHub Pages.
 
 ## 1. Create a post
 
@@ -105,8 +105,7 @@ git commit -m "blog: <title>"
 git push origin main
 ```
 
-Vercel deploys in ~1–2 minutes. The sitemap (`/sitemap.xml`), RSS (`/blog/feed.xml`) and
-`/blog/manifest.json` update automatically; the GitHub Pages workflow pings IndexNow.
+GitHub Pages deploys automatically after the workflow succeeds. The sitemap (`/sitemap.xml`), RSS (`/blog/feed.xml`) and `/blog/manifest.json` update automatically; the workflow pings IndexNow.
 
 ## Outputs (generated, never edit by hand)
 
