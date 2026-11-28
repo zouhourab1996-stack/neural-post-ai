@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -89,6 +92,7 @@ jobs:
 
 
   deploy:
+    if: github.event_name == 'push'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -127,3 +131,20 @@ jobs:
             echo "IndexNow $EP -> HTTP $STATUS"
             [ "$STATUS" = "200" ] && break
           done
+  verify-live:
+    if: github.event_name == 'push'
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Smoke-test the live site
+        run: |
+          sleep 60
+          node scripts/smoke-test.mjs https://prophetic.pw
