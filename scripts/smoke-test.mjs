@@ -31,15 +31,15 @@ const robotsResponse = await getWithRetry(base + "/robots.txt");
 const robots = await text(robotsResponse);
 check(robotsResponse.status === 200, `robots.txt returned HTTP ${robotsResponse.status}`);
 check(robots.includes(`Sitemap: ${base}/sitemap.xml`), "robots.txt does not advertise the canonical sitemap");
-check(!/^Disallow:\\s*\\/\\s*$/m.test(robots), "robots.txt blocks the entire site");
+check(!/^Disallow:\s*\/\s*$/m.test(robots), "robots.txt blocks the entire site");
 
 const sitemapResponse = await getWithRetry(base + "/sitemap.xml");
 const xml = await text(sitemapResponse);
 check(sitemapResponse.status === 200, `sitemap.xml returned HTTP ${sitemapResponse.status}`);
 check(/xml/i.test(sitemapResponse.headers.get("content-type") || ""), "sitemap.xml has a non-XML content type");
 check(!/attachment/i.test(sitemapResponse.headers.get("content-disposition") || ""), "sitemap.xml is served as a download");
-check(/<urlset[\\s>]/i.test(xml), "sitemap.xml has no urlset root");
-const urls = [...xml.matchAll(/<loc>([^<]+)<\\/loc>/gi)].map((match) => match[1].trim());
+check(/<urlset[\s>]/i.test(xml), "sitemap.xml has no urlset root");
+const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/gi)].map((match) => match[1].trim());
 check(urls.length >= 50, `sitemap contains only ${urls.length} URLs`);
 check(urls.every((url) => url.startsWith(base + "/")), "sitemap contains URLs outside the canonical host");
 check(!/vercel|supabase|lovable|blogspot|localhost/i.test(xml), "sitemap contains a legacy or development hostname");
@@ -62,23 +62,23 @@ async function inspectPage(url) {
   const html = await text(response);
   check(response.status === 200, `${url} returned HTTP ${response.status}`);
 
-  const canonicalTag = html.match(/<link\\b[^>]*rel=["']canonical["'][^>]*>/i)?.[0] || "";
+  const canonicalTag = html.match(/<link\b[^>]*rel=["']canonical["'][^>]*>/i)?.[0] || "";
   const canonical = canonicalTag.match(/href=["']([^"']+)["']/i)?.[1];
   check(canonical === url, `${url} canonical mismatch (found ${canonical || "none"})`);
-  check(!/<meta\\b[^>]*name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(html), `${url} unexpectedly contains noindex`);
-  check(/<title>[^<]{10,}<\\/title>/i.test(html), `${url} is missing a useful title`);
-  check(/<meta\\b[^>]*name=["']description["'][^>]*content=["'][^"']{50,}/i.test(html), `${url} is missing a useful meta description`);
-  check((html.match(/<h1(?:\\s|>)/gi) || []).length === 1, `${url} does not contain exactly one H1`);
+  check(!/<meta\b[^>]*name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(html), `${url} unexpectedly contains noindex`);
+  check(/<title>[^<]{10,}<\/title>/i.test(html), `${url} is missing a useful title`);
+  check(/<meta\b[^>]*name=["']description["'][^>]*content=["'][^"']{50,}/i.test(html), `${url} is missing a useful meta description`);
+  check((html.match(/<h1(?:\s|>)/gi) || []).length === 1, `${url} does not contain exactly one H1`);
 
   if (url.includes("/blog/") && !url.endsWith("/blog/")) {
     const visibleText = html
-      .replace(/<script[\\s\\S]*?<\\/script>|<style[\\s\\S]*?<\\/style>/gi, " ")
+      .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ")
       .replace(/<[^>]+>/g, " ");
-    check(visibleText.split(/\\s+/).filter(Boolean).length > 500, `${url} appears unexpectedly thin`);
-    check(/adsbygoogle\\.js\\?client=ca-pub-3898992716389443/i.test(html), `${url} is missing the configured AdSense loader`);
+    check(visibleText.split(/\s+/).filter(Boolean).length > 500, `${url} appears unexpectedly thin`);
+    check(/adsbygoogle\.js\?client=ca-pub-3898992716389443/i.test(html), `${url} is missing the configured AdSense loader`);
   }
 
-  for (const match of html.matchAll(/\\bhref=["']([^"'#]+)["']/gi)) {
+  for (const match of html.matchAll(/\bhref=["']([^"'#]+)["']/gi)) {
     const href = match[1].trim();
     if (!href || /^(?:mailto:|tel:|javascript:|data:)/i.test(href)) continue;
     try {
@@ -112,7 +112,7 @@ const missingResponse = await get(base + "/__prophetic_smoke_test_missing_page__
 check(missingResponse.status === 404, `unknown URL returned HTTP ${missingResponse.status}, expected 404`);
 
 if (failures.length) {
-  console.error(`\\nSmoke test failed: ${failures.length} issue(s)`);
+  console.error(`\nSmoke test failed: ${failures.length} issue(s)`);
   process.exit(1);
 }
 console.log(`OK: ${urls.length} sitemap URLs and ${internalLinks.size} internal destinations verified.`);
