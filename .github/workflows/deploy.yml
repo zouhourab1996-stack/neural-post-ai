@@ -60,6 +60,21 @@ jobs:
               assert loc is not None and loc.text and loc.text.startswith("https://prophetic.pw/"), loc.text if loc is not None else "missing loc"
           print("Sitemap XML valid:", len(urls), "URLs")
           PY
+          python - <<'PY'
+          import json, pathlib, re, sys
+          checked = 0
+          pattern = re.compile(r'<script\\b[^>]*type=["\\']application/ld\\+json["\\'][^>]*>(.*?)</script>', re.I | re.S)
+          for path in pathlib.Path("./dist").rglob("*.html"):
+              html = path.read_text(encoding="utf-8")
+              for match in pattern.finditer(html):
+                  checked += 1
+                  try:
+                      json.loads(match.group(1).strip())
+                  except Exception as exc:
+                      print(f"Invalid JSON-LD in {path}: {exc}", file=sys.stderr)
+                      raise SystemExit(1)
+          print("JSON-LD blocks valid:", checked)
+          PY
           grep -Fq "Sitemap: https://prophetic.pw/sitemap.xml" ./dist/robots.txt
           grep -Fq 'meta name="robots"' ./dist/index.html
           echo "robots.txt and sitemap.xml validation passed."
