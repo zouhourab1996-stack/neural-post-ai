@@ -63,7 +63,7 @@ jobs:
           python - <<'PY'
           import json, pathlib, re, sys
           checked = 0
-          pattern = re.compile(r'<script\\b[^>]*type=["\\']application/ld\\+json["\\'][^>]*>(.*?)</script>', re.I | re.S)
+          pattern = re.compile(r'<script type="application/ld\\+json">(.*?)</script>', re.I | re.S)
           for path in pathlib.Path("./dist").rglob("*.html"):
               html = path.read_text(encoding="utf-8")
               for match in pattern.finditer(html):
