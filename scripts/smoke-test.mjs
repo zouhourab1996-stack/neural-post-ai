@@ -101,8 +101,19 @@ for (let i = 0; i < urls.length; i += 6) {
 for (const target of internalLinks) {
   if (urls.includes(target)) continue;
   try {
-    const response = await get(target);
-    check(response.status === 200, `internal link ${target} returned HTTP ${response.status}`);
+    let response = await get(target);
+    if (response.status === 301 || response.status === 308) {
+      const location = response.headers.get("location");
+      check(Boolean(location), `internal link ${target} redirected without a Location header`);
+      if (!location) continue;
+      const destination = new URL(location, target);
+      check(destination.origin === new URL(base).origin, `internal link ${target} redirects off the canonical host`);
+      if (destination.origin !== new URL(base).origin) continue;
+      response = await get(destination.href);
+      check(response.status === 200, `internal link ${target} redirect destination returned HTTP ${response.status} (redirect chains are not allowed)`);
+    } else {
+      check(response.status === 200, `internal link ${target} returned HTTP ${response.status}`);
+    }
   } catch (error) {
     check(false, `internal link ${target} request failed: ${error.message}`);
   }
